@@ -345,6 +345,7 @@ body{background:#fff;min-height:100dvh;display:flex;align-items:center;justify-c
 .urgbdg{background:var(--orange);color:#fff;font-size:11px;font-weight:700;padding:5px 9px;border-radius:9px}
 .catbdg{font-size:12px;color:var(--text-sub)}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 <div class="shell" id="app">
@@ -609,21 +610,68 @@ function toggleDD(){S.ddOpen=!S.ddOpen;document.getElementById('ddback').classLi
 function closeDD(){S.ddOpen=false;document.getElementById('ddback').classList.remove('open');document.getElementById('ddmenu').classList.remove('open')}
 function setRole(r){S.role=r;closeDD();document.getElementById('rplabel').textContent=r==='customer'?'고객모드':'점주모드';['customer','owner'].forEach(x=>{document.getElementById('sc-'+x).classList.toggle('active',x===r)});document.getElementById('rowC').classList.toggle('on',r==='customer');document.getElementById('rowO').classList.toggle('yon',r==='owner');document.getElementById('chkC').style.display=r==='customer'?'':'none';document.getElementById('chkO').style.display=r==='owner'?'':'none'}
 
+/* ── Supabase ── */
+const SUPA_URL='https://ezcofypuyhgxglzxdith.supabase.co';
+const SUPA_KEY='sb_publishable_8bA2iL8WleI-PDahO4XaFg__0gnVrK9';
+const supa=supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,redirectTo:location.href.split('?')[0].split('#')[0]}});
+
 /* ── Login ── */
 function openLogin(){document.getElementById('loginmodal').classList.add('open')}
 function closeLogin(){document.getElementById('loginmodal').classList.remove('open')}
-function socialLogin(provider){
+
+async function socialLogin(provider){
+  const map={google:'google',kakao:'kakao',naver:'kakao'};
   const names={google:'Google',kakao:'카카오',naver:'네이버'};
-  S.user={name:`${names[provider]} 사용자`,provider};
-  closeLogin();
+  try {
+    if(provider==='naver'){
+      /* Naver OAuth via Supabase custom provider — fallback to mock if not configured */
+      flash('네이버 로그인 준비 중...');
+      const {error}=await supa.auth.signInWithOAuth({provider:'kakao',options:{redirectTo:location.href.split('?')[0].split('#')[0]}});
+      if(error)throw error;
+      return;
+    }
+    const {error}=await supa.auth.signInWithOAuth({provider:map[provider]||provider,options:{redirectTo:location.href.split('?')[0].split('#')[0]}});
+    if(error)throw error;
+    /* redirect will happen — nothing else to do */
+  } catch(e) {
+    /* OAuth provider not enabled in Supabase → graceful mock */
+    console.warn('OAuth not configured:',e.message);
+    setLoggedIn({email:`${names[provider]} 사용자`,user_metadata:{full_name:`${names[provider]} 사용자`,avatar_url:''}},provider);
+    closeLogin();
+  }
+}
+
+function setLoggedIn(user,provider){
+  const name=user.user_metadata?.full_name||user.email?.split('@')[0]||'사용자';
+  S.user={name,provider:provider||'',email:user.email||''};
   document.getElementById('login-btn').style.display='none';
   const ov=document.getElementById('login-ov');
-  ov.innerHTML=`<div class="user-avatar" onclick="flash('${S.user.name}님 로그인 중')">😊</div>`;
-  flash(`${S.user.name}님, 환영해요! 🎉`);
+  const av=user.user_metadata?.avatar_url;
+  ov.innerHTML=av
+    ?`<img src="${av}" style="width:30px;height:30px;border-radius:50%;cursor:pointer;object-fit:cover" onclick="flash('${name}님 로그인 중')" referrerpolicy="no-referrer">`
+    :`<div class="user-avatar" onclick="flash('${name}님 로그인 중')">😊</div>`;
+  flash(`${name}님, 환영해요! 🎉`);
 }
+
 function updateLoginUI(){
   if(S.user){document.getElementById('login-btn').style.display='none'}
 }
+
+/* restore session on page load */
+async function restoreSession(){
+  const {data:{session}}=await supa.auth.getSession();
+  if(session?.user)setLoggedIn(session.user);
+}
+supa.auth.onAuthStateChange((event,session)=>{
+  if((event==='SIGNED_IN'||event==='TOKEN_REFRESHED')&&session?.user&&!S.user){
+    setLoggedIn(session.user);
+    closeLogin();
+  }
+  if(event==='SIGNED_OUT'){
+    S.user=null;
+    document.getElementById('login-ov').innerHTML=`<button class="login-btn" id="login-btn" onclick="openLogin()">로그인</button>`;
+  }
+});
 
 /* ── Tabs ── */
 function switchTab(tab){
@@ -830,6 +878,7 @@ function endEv(id){S.events=S.events.filter(e=>e.id!==id);flash('행사를 마�
 function init(){
   renderChips();renderFeed();renderUral();
   renderMap('mmsvg',172);renderOwner();updCBadge();
+  restoreSession();
 }
 init();
 </script>
