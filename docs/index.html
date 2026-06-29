@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>동네할인</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0E1116;
+  --bg-dark: #0B0E13;
+  --card: #161B22;
+  --card-input: #1E242E;
+  --border: #262D38;
+  --border2: #2E3744;
+  --yellow: #FFC93C;
+  --orange: #FF6B4A;
+  --orange-text: #FF8A6E;
+  --orange-bg: #19120F;
+  --orange-border: #3A2018;
+  --green: #46D17A;
+  --green-text: #7FE6A3;
+  --green-bg: #162016;
+  --green-border: #2A4A2A;
+  --gift-bg: #0F1A12;
+  --gift-border: #224A2A;
+  --gift-text: #A8E6BE;
+  --purple: #C9A0FF;
+  --purple-text: #D9C2FF;
+  --purple-bg: #1A1622;
+  --purple-border: #4A3A5E;
+  --text: #F5F6F8;
+  --text-sub: #9AA3AF;
+  --text-dim: #6B7280;
+  --text-dim2: #5B636E;
+  --blue: #74B8FF;
+  --mono: 'Space Mono', monospace;
+  --radius-app: 44px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: #0a0c10;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+  overflow: hidden;
+}
+
+/* ── Phone shell ── */
+.phone-shell {
+  width: 100%;
+  max-width: 430px;
+  height: 100dvh;
+  max-height: 932px;
+  background: var(--bg);
+  border-radius: var(--radius-app);
+  box-shadow: 0 0 0 8px #1a1d24, 0 40px 80px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.07);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 480px) {
+  body { background: var(--bg); align-items: flex-start; }
+  .phone-shell { max-width: 100%; max-height: 100dvh; border-radius: 0; box-shadow: none; }
+}
+
+/* ── Status bar ── */
+.status-bar {
+  height: 44px;
+  padding: 14px 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+.status-time { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
+.status-icons { display: flex; align-items: center; gap: 6px; }
+.status-icons span { font-size: 13px; color: var(--text); }
+
+/* ── Screens ── */
+.screen { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+.screen.active { display: flex; }
+
+/* ── Role pill overlay ── */
+.role-overlay {
+  position: absolute;
+  top: 54px;
+  left: 18px;
+  z-index: 50;
+}
+.role-pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--card);
+  border: 1px solid #2A323D;
+  border-radius: 22px;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.role-pill:active { opacity: .75; }
+.role-swap { color: var(--yellow); font-size: 14px; }
+.role-label { font-size: 13px; font-weight: 800; color: var(--text); }
+.role-chevron { color: #7A828D; font-size: 14px; }
+
+/* ── Dropdown ── */
+.dropdown-backdrop {
+  position: absolute; inset: 0; z-index: 70;
+  display: none;
+}
+.dropdown-backdrop.open { display: block; }
+.dropdown-menu {
+  position: absolute;
+  left: 18px;
+  top: 106px;
+  z-index: 71;
+  width: 222px;
+  background: #1A1F27;
+  border: 1px solid var(--border2);
+  border-radius: 18px;
+  padding: 7px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.7);
+  display: none;
+}
+.dropdown-menu.open { display: block; }
+.dropdown-title {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-dim);
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  padding: 8px 10px;
+}
+.dropdown-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.dropdown-row:hover, .dropdown-row.active { background: #202A36; }
+.dropdown-row.owner-active:hover, .dropdown-row.owner-active { background: #2A2516; }
+.d-icon {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.d-info { flex: 1; }
+.d-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.d-sub { font-size: 11px; color: #8A929D; margin-top: 1px; }
+.d-check { color: var(--yellow); font-size: 16px; }
+
+/* ── Scrollable content ── */
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-top: 52px;
+}
+.scroll-area::-webkit-scrollbar { display: none; }
+
+/* ── Tab bar ── */
+.tab-bar {
+  height: 82px;
+  background: var(--bg-dark);
+  border-top: 1px solid #1A1F27;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 16px;
+  flex-shrink: 0;
+}
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  padding-bottom: 2px;
+  position: relative;
+}
+.tab-icon { font-size: 22px; line-height: 1; transition: transform .15s; }
+.tab-icon.active-icon { transform: scale(1.08); }
+.tab-label { font-size: 10px; font-weight: 600; color: var(--text-dim2); transition: color .2s; }
+.tab-label.active-label { color: var(--yellow); }
+.coupon-badge {
+  position: absolute;
+  top: -2px; right: 18px;
+  min-width: 16px; height: 16px;
+  background: var(--orange);
+  border-radius: 8px;
+  padding: 0 4px;
+  display: flex; align-items: center; justify-content: center;
+}
+.coupon-badge span { font-size: 9px; font-weight: 800; color: #fff; font-family: var(--mono); }
+
+/* ════ CUSTOMER HOME ════ */
+.home-header { padding: 14px 18px 10px; }
+.loc-label { font-size: 11px; color: var(--text-dim); font-weight: 600; }
+.loc-row { display: flex; align-items: flex-end; gap: 5px; margin-top: 2px; }
+.loc-city { font-size: 19px; font-weight: 800; color: var(--text); letter-spacing: -.3px; }
+.loc-now { font-size: 12px; color: var(--yellow); font-weight: 700; padding-bottom: 2px; }
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 11px 14px;
+  margin: 0 18px 12px;
+}
+.search-icon { font-size: 16px; }
+.search-ph { font-size: 13.5px; color: var(--text-dim2); }
+
+/* section header */
+.sec-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  margin-bottom: 8px;
+}
+.sec-left { display: flex; align-items: center; gap: 7px; }
+.sec-title { font-size: 15px; font-weight: 800; color: var(--text); letter-spacing: -.3px; }
+.sec-right { font-size: 11.5px; color: var(--orange-text); font-family: var(--mono); }
+
+/* blink dot */
+.blink-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+@keyframes blink {
+  0%,100% { opacity: 1; }
+  50% { opacity: .3; }
+}
+
+/* urgent rail */
+.urgent-rail {
+  display: flex;
+  gap: 12px;
+  padding: 6px 18px 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.urgent-rail::-webkit-scrollbar { display: none; }
+
+.urgent-card {
+  min-width: 206px;
+  background: var(--orange-bg);
+  border: 1px solid var(--orange-border);
+  border-radius: 20px;
+  padding: 16px;
+  scroll-snap-align: start;
+  cursor: pointer;
+  transition: transform .15s;
+  flex-shrink: 0;
+}
+.urgent-card:active { transform: scale(.97); }
+.uc-header { display: flex; align-items: center; justify-content: space-between; }
+.uc-badge {
+  background: var(--orange);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  padding: 5px 11px;
+  border-radius: 10px;
+  letter-spacing: -.3px;
+}
+.uc-countdown { display: flex; align-items: center; gap: 4px; }
+.uc-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); animation: blink 1s infinite; }
+.uc-time { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--orange-text); }
+.uc-name { font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -.3px; margin-top: 14px; }
+.uc-meta { font-size: 12px; color: #8A6A5E; margin-top: 3px; }
+.uc-price-row { display: flex; align-items: baseline; gap: 7px; margin-top: 12px; }
+.uc-price { font-size: 19px; font-weight: 800; color: var(--yellow); }
+.uc-strike { font-size: 12px; color: #6B5048; text-decoration: line-through; }
+.uc-qty { font-family: var(--mono); font-size: 11px; color: var(--text-sub); margin-top: 13px; }
+
+/* map preview */
+.map-hdr { display: flex; align-items: center; justify-content: space-between; padding: 0 18px; margin-bottom: 6px; }
+.map-link { font-size: 12.5px; font-weight: 700; color: var(--yellow); cursor: pointer; }
+.map-wrap { margin: 0 18px 20px; border-radius: 18px; overflow: hidden; cursor: pointer; }
+
+/* mini map svg */
+.mini-map {
+  width: 100%;
+  height: 172px;
+  background: #0F141B;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.map-grid line { stroke: #161D26; }
+.map-pin { cursor: pointer; transition: transform .15s; }
+.map-pin:hover { transform: scale(1.1); }
+.live-badge {
+  position: absolute;
+  bottom: 12px; left: 14px;
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(14,17,22,.85);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 7px 12px;
+}
+.live-text { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--yellow); }
+.live-count { font-size: 12px; color: #C4CAD2; font-weight: 600; }
+
+/* cat chips */
+.chips-rail {
+  display: flex;
+  gap: 8px;
+  padding: 0 18px 14px;
+  overflow-x: auto;
+}
+.chips-rail::-webkit-scrollbar { display: none; }
+.chip {
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-sub);
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.chip.active { background: var(--yellow); border-color: var(--yellow); color: var(--bg); }
+
+/* feed */
+.feed-hdr { display: flex; align-items: center; justify-content: space-between; padding: 0 18px; margin-bottom: 12px; }
+.feed-count { font-family: var(--mono); font-size: 11.5px; color: var(--text-sub); }
+.feed-list { display: flex; flex-direction: column; gap: 14px; padding: 0 18px 96px; }
+
+/* store card */
+.store-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .15s;
+}
+.store-card:active { transform: scale(.985); }
+.card-image {
+  height: 152px;
+  background: var(--card-input);
+  position: relative;
+  overflow: hidden;
+}
+.card-stripes {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    135deg,
+    transparent, transparent 10px,
+    #222A33 10px, #222A33 21px
+  );
+}
+.card-badges { position: absolute; left: 12px; top: 12px; display: flex; gap: 6px; }
+.badge-pct {
+  background: var(--yellow);
+  color: var(--bg);
+  font-size: 15px; font-weight: 800;
+  padding: 5px 10px; border-radius: 9px;
+  letter-spacing: -.3px;
+}
+.badge-pct.urgent { background: var(--orange); color: #fff; }
+.badge-urgent {
+  background: var(--orange);
+  color: #fff;
+  font-size: 11px; font-weight: 700;
+  padding: 5px 8px; border-radius: 9px;
+}
+.card-heart {
+  position: absolute; right: 12px; top: 12px;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(4,6,10,.5);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  transition: transform .15s;
+}
+.card-heart:active { transform: scale(1.2); }
+.card-photo-lbl {
+  position: absolute; left: 14px; bottom: 9px;
+  font-family: var(--mono); font-size: 10.5px; color: #7A828D;
+}
+.card-body { padding: 15px; }
+.card-name-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.card-name { font-size: 16.5px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
+.card-dist { font-family: var(--mono); font-size: 12px; color: var(--text-sub); flex-shrink: 0; }
+.card-cat { font-size: 12px; color: var(--text-dim); margin-top: 3px; }
+.card-price-row { display: flex; align-items: baseline; gap: 8px; margin-top: 11px; }
+.card-price { font-size: 20px; font-weight: 800; color: var(--yellow); letter-spacing: -.4px; }
+.card-strike { font-size: 13px; color: var(--text-dim2); text-decoration: line-through; }
+.card-qty-row { display: flex; align-items: center; gap: 9px; margin-top: 13px; }
+.prog-bg { flex: 1; height: 6px; background: #262D38; border-radius: 3px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--yellow); border-radius: 3px; }
+.card-qty { font-family: var(--mono); font-size: 11px; color: var(--text-sub); }
+.card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
+.card-time { font-family: var(--mono); font-size: 12px; font-weight: 700; }
+.coupon-cta {
+  background: var(--yellow);
+  color: var(--bg);
+  font-size: 13px; font-weight: 800;
+  padding: 10px 17px; border-radius: 12px;
+  cursor: pointer;
+  border: none;
+  transition: opacity .15s;
+}
+.coupon-cta:active { opacity: .8; }
+
+/* ════ STORE DETAIL (slide-over) ════ */
+.detail-screen {
+  position: absolute; inset: 0;
+  background: var(--bg);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(.32,.7,.4,1);
+  overflow: hidden;
+}
+.detail-screen.open { transform: translateX(0); }
+
+.detail-hero {
+  height: 280px;
+  background: var(--card-input);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.detail-hero-stripes {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    135deg,
+    transparent, transparent 13px,
+    #222A33 13px, #222A33 26px
+  );
+}
+.detail-back {
+  position: absolute; left: 18px; top: 56px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(4,6,10,.55);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 22px;
+  color: var(--text);
+  border: none;
+  line-height: 1;
+}
+.detail-fav {
+  position: absolute; right: 18px; top: 56px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(4,6,10,.55);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  border: none;
+}
+.detail-hero-lbl { position: absolute; left: 18px; bottom: 10px; font-family: var(--mono); font-size: 10.5px; color: #7A828D; }
+
+.detail-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 20px 110px; margin-top: -30px; position: relative; }
+.detail-scroll::-webkit-scrollbar { display: none; }
+
+.detail-badges { display: flex; align-items: center; gap: 7px; }
+.detail-store-name { font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -.6px; margin-top: 9px; }
+.detail-meta { display: flex; align-items: center; gap: 10px; margin-top: 7px; flex-wrap: wrap; }
+.detail-rating { font-size: 12.5px; color: var(--yellow); font-weight: 700; }
+.detail-divider { color: #3A434F; font-size: 12px; }
+.detail-sub { font-size: 12.5px; color: var(--text-sub); }
+.detail-dist { font-family: var(--mono); font-size: 12.5px; color: var(--text-sub); }
+
+.discount-box {
+  margin-top: 18px;
+  background: var(--orange-bg);
+  border: 1px solid var(--orange-border);
+  border-radius: 18px;
+  padding: 18px;
+}
+.discount-top { display: flex; align-items: center; justify-content: space-between; }
+.discount-left { display: flex; align-items: baseline; gap: 9px; }
+.discount-pct { font-size: 30px; font-weight: 800; color: var(--yellow); letter-spacing: -1px; }
+.discount-lbl { font-size: 14px; color: #8A929D; font-weight: 600; }
+.countdown-row { display: flex; align-items: center; gap: 5px; }
+.countdown-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); animation: blink 1s infinite; }
+.countdown-val { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--orange-text); }
+.price-row { display: flex; align-items: baseline; gap: 9px; margin-top: 13px; }
+.d-price { font-size: 22px; font-weight: 800; color: var(--text); }
+.d-strike { font-size: 14px; color: #6B5048; text-decoration: line-through; }
+.d-progress-row { display: flex; align-items: center; gap: 9px; margin-top: 15px; }
+.d-prog-bg { flex: 1; height: 7px; background: #2A1C16; border-radius: 4px; overflow: hidden; }
+.d-prog-fill { height: 100%; background: var(--yellow); border-radius: 4px; }
+.d-qty { font-family: var(--mono); font-size: 11.5px; color: var(--yellow); font-weight: 700; }
+
+.info-card {
+  margin-top: 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.info-row { display: flex; align-items: center; gap: 12px; padding: 15px; }
+.info-icon { font-size: 18px; }
+.info-text { font-size: 13.5px; color: #C4CAD2; }
+.info-sep { height: 1px; background: var(--card-input); }
+
+.mini-map-wrap {
+  margin-top: 14px;
+  height: 150px;
+  background: #0F141B;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.route-btn {
+  position: absolute; right: 12px; bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+  background: var(--bg);
+  border: 1px solid #3A434F;
+  padding: 9px 15px; border-radius: 11px;
+  cursor: pointer;
+  font-size: 12.5px; font-weight: 700; color: var(--text);
+  transition: opacity .15s;
+}
+.route-btn:active { opacity: .7; }
+
+.detail-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  display: flex;
+  gap: 11px;
+  padding: 13px 13px 28px;
+  background: var(--bg-dark);
+  border-top: 1px solid #1A1F27;
+}
+.fav-btn {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 22px;
+  transition: transform .15s;
+  flex-shrink: 0;
+}
+.fav-btn:active { transform: scale(.92); }
+.get-coupon-btn {
+  flex: 1; height: 52px;
+  background: var(--yellow);
+  border-radius: 14px;
+  border: none;
+  font-size: 15.5px; font-weight: 800; color: var(--bg);
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.get-coupon-btn:active { opacity: .8; }
+
+/* ════ CUSTOMER MAP ════ */
+.map-screen-inner {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+.map-full {
+  width: 100%; height: 100%;
+  background: #0F141B;
+  position: relative;
+}
+.map-full-title {
+  position: absolute; top: 16px; left: 18px;
+  font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -.4px;
+  z-index: 2;
+}
+
+/* ════ COUPONS ════ */
+.page-header { padding: 8px 18px 14px; }
+.page-title { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -.5px; }
+.page-sub { font-size: 12.5px; color: var(--text-dim); margin-top: 3px; }
+
+.coupon-list { display: flex; flex-direction: column; gap: 14px; padding: 0 18px 96px; }
+.coupon-card {
+  display: flex;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.coupon-stub {
+  width: 96px;
+  background: var(--yellow);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  border-right: 2px dashed rgba(0,0,0,.15);
+  padding: 12px 8px;
+  flex-shrink: 0;
+}
+.stub-badge { font-size: 24px; font-weight: 800; color: var(--bg); letter-spacing: -1px; line-height: 1; }
+.stub-label { font-size: 10px; font-weight: 700; color: var(--bg); margin-top: 2px; }
+.coupon-info { flex: 1; padding: 14px; }
+.coupon-store { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
+.coupon-sub2 { font-size: 11.5px; color: var(--text-dim); margin-top: 3px; }
+.coupon-time { font-family: var(--mono); font-size: 11px; margin-top: 8px; }
+.use-btn {
+  margin-top: 11px;
+  background: var(--bg);
+  border: 1px solid #3A3520;
+  border-radius: 11px;
+  padding: 10px;
+  text-align: center;
+  font-size: 13px; font-weight: 800; color: var(--yellow);
+  cursor: pointer;
+  width: 100%;
+  transition: opacity .15s;
+}
+.use-btn:active { opacity: .75; }
+
+.empty-state {
+  display: flex; flex-direction: column;
+  align-items: center; padding-top: 90px; gap: 12px;
+}
+.empty-icon {
+  width: 64px; height: 64px;
+  border-radius: 18px;
+  background: var(--card); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+}
+.empty-title { font-size: 15px; font-weight: 700; color: var(--text-sub); }
+.empty-desc { font-size: 12.5px; color: var(--text-dim2); text-align: center; line-height: 1.6; }
+
+/* ════ FAVORITES ════ */
+.fav-list { display: flex; flex-direction: column; gap: 12px; padding: 0 18px 96px; }
+.fav-card {
+  display: flex; align-items: center; gap: 13px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px;
+  cursor: pointer;
+  transition: transform .15s;
+}
+.fav-card:active { transform: scale(.985); }
+.fav-thumb {
+  width: 62px; height: 62px;
+  border-radius: 14px;
+  background: var(--card-input);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.fav-thumb-badge {
+  position: absolute; left: 5px; top: 5px;
+  background: var(--yellow);
+  padding: 2px 6px; border-radius: 7px;
+  font-size: 11px; font-weight: 800; color: var(--bg);
+}
+.fav-info { flex: 1; }
+.fav-name { font-size: 15.5px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
+.fav-sub { font-size: 11.5px; color: var(--text-dim); margin-top: 2px; }
+.fav-price { font-size: 14.5px; font-weight: 800; color: var(--yellow); margin-top: 6px; }
+.fav-heart-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform .15s;
+}
+.fav-heart-btn:active { transform: scale(1.2); }
+
+/* ════ OWNER HOME ════ */
+.owner-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-top: 52px; }
+.owner-scroll::-webkit-scrollbar { display: none; }
+.owner-store-hdr { padding: 14px 18px 6px; }
+.owner-name { font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -.4px; }
+.owner-status-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.open-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  border-radius: 20px;
+  padding: 4px 10px;
+}
+.open-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: blink 2s infinite; }
+.open-text { font-size: 11.5px; font-weight: 700; color: var(--green-text); }
+.weather-txt { font-family: var(--mono); font-size: 11.5px; color: var(--text-sub); }
+
+.register-cta {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 18px 18px 4px;
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--yellow);
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.register-cta:active { opacity: .88; }
+.cta-title { font-size: 18px; font-weight: 800; color: var(--bg); letter-spacing: -.4px; }
+.cta-sub { font-size: 12.5px; font-weight: 600; color: #5A4708; margin-top: 3px; }
+.cta-icon {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 700; color: var(--yellow);
+  flex-shrink: 0;
+}
+
+.stats-row { display: flex; gap: 10px; padding: 14px 18px; }
+.stat-card {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 13px;
+}
+.stat-lbl { font-size: 11px; color: var(--text-dim); font-weight: 600; }
+.stat-val { font-size: 17px; font-weight: 800; color: var(--text); margin-top: 5px; letter-spacing: -.4px; }
+.stat-up { font-size: 10.5px; font-weight: 700; color: var(--green); margin-top: 3px; }
+.stat-up.yellow { color: var(--yellow); }
+
+.event-hdr { display: flex; align-items: center; justify-content: space-between; padding: 10px 18px 0; }
+.event-hdr-left { display: flex; align-items: center; gap: 7px; }
+.event-count { font-family: var(--mono); font-size: 11.5px; color: var(--text-sub); }
+.event-list { display: flex; flex-direction: column; gap: 12px; padding: 12px 18px; }
+.event-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 15px;
+}
+.event-top { display: flex; align-items: center; gap: 12px; }
+.event-thumb { width: 52px; height: 52px; border-radius: 13px; background: var(--card-input); flex-shrink: 0; }
+.event-name-row { display: flex; align-items: center; gap: 7px; }
+.event-name { font-size: 15.5px; font-weight: 700; color: var(--text); }
+.event-badge { background: var(--yellow); padding: 2px 7px; border-radius: 7px; font-size: 11px; font-weight: 800; color: var(--bg); }
+.event-badge.gift { background: var(--green); color: var(--bg); }
+.event-after { font-size: 14px; font-weight: 800; color: var(--yellow); margin-top: 4px; }
+.event-before { font-size: 11px; color: var(--text-dim2); text-decoration: line-through; }
+.event-gift-text { font-size: 13px; font-weight: 700; color: var(--green-text); margin-top: 4px; }
+.event-cd { text-align: right; }
+.event-cd-val { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--orange-text); }
+.event-cd-lbl { font-size: 10.5px; color: var(--text-dim); margin-top: 2px; }
+.e-prog-row { display: flex; align-items: center; gap: 9px; margin-top: 13px; }
+.e-prog-bg { flex: 1; height: 7px; background: #262D38; border-radius: 4px; overflow: hidden; }
+.e-prog-fill { height: 100%; background: var(--yellow); border-radius: 4px; }
+.e-qty { font-family: var(--mono); font-size: 11px; color: var(--text-sub); }
+.event-btns { display: flex; gap: 8px; margin-top: 13px; }
+.qr-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+  background: var(--yellow); border-radius: 12px; padding: 11px;
+  cursor: pointer; border: none;
+  font-size: 13px; font-weight: 800; color: var(--bg);
+  transition: opacity .15s;
+}
+.qr-btn:active { opacity: .8; }
+.end-btn {
+  background: var(--card-input);
+  border: 1px solid var(--border2);
+  padding: 11px 16px; border-radius: 12px;
+  cursor: pointer;
+  font-size: 13px; font-weight: 700; color: var(--text-sub);
+  transition: opacity .15s;
+}
+.end-btn:active { opacity: .7; }
+
+.coach-card {
+  margin: 14px 18px 18px;
+  background: #161B22;
+  border: 1px solid #3A2A4A;
+  border-radius: 18px;
+  padding: 16px;
+  cursor: pointer;
+}
+.coach-hdr { display: flex; align-items: center; gap: 8px; }
+.coach-icon {
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  background: var(--purple);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.coach-title { font-size: 13.5px; font-weight: 800; color: var(--purple-text); letter-spacing: -.2px; }
+.coach-body { font-size: 14.5px; color: #E8E6F0; line-height: 1.6; margin-top: 11px; font-weight: 600; }
+.coach-hl { color: var(--yellow); }
+.coach-sub { font-size: 12.5px; color: #9A8FB0; margin-top: 8px; }
+.coach-btn {
+  margin-top: 13px;
+  background: #2A1F3A;
+  border: 1px solid var(--purple-border);
+  border-radius: 12px;
+  padding: 11px;
+  text-align: center;
+  font-size: 13.5px; font-weight: 800; color: var(--purple-text);
+}
+
+/* owner tab bar */
+.owner-tab-bar {
+  height: 82px;
+  background: var(--bg-dark);
+  border-top: 1px solid #1A1F27;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 16px;
+  flex-shrink: 0;
+  position: relative;
+}
+.o-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
+.fab-wrap { flex: 1; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; }
+.fab {
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background: var(--yellow);
+  border: 4px solid var(--bg-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 700; color: var(--bg);
+  cursor: pointer;
+  margin-bottom: -8px;
+  transition: transform .15s;
+  line-height: 1;
+}
+.fab:active { transform: scale(.92); }
+
+/* toast */
+.toast {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--text);
+  color: var(--bg);
+  font-size: 13.5px; font-weight: 700;
+  padding: 13px 22px;
+  border-radius: 14px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .2s, transform .2s;
+  z-index: 100;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* urgent badge */
+.urgent-badge-sm {
+  background: var(--orange);
+  color: #fff;
+  font-size: 11px; font-weight: 700;
+  padding: 5px 9px;
+  border-radius: 9px;
+}
+.cat-badge { font-size: 12px; color: var(--text-sub); }
+</style>
+</head>
+<body>
+
+<div class="phone-shell" id="app">
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span class="status-time" id="status-time">9:41</span>
+    <div class="status-icons">
+      <span>●●●</span><span>WiFi</span><span>🔋</span>
+    </div>
+  </div>
+
+  <!-- Role overlay -->
+  <div class="role-overlay">
+    <div class="role-pill" onclick="toggleRoleMenu()">
+      <span class="role-swap">⇅</span>
+      <span class="role-label" id="role-label">고객모드</span>
+      <span class="role-chevron">›</span>
+    </div>
+  </div>
+
+  <!-- Dropdown -->
+  <div class="dropdown-backdrop" id="dropdown-backdrop" onclick="closeRoleMenu()"></div>
+  <div class="dropdown-menu" id="dropdown-menu">
+    <div class="dropdown-title">모드 전환</div>
+    <div class="dropdown-row active" id="row-customer" onclick="selectRole('customer')">
+      <div class="d-icon" style="background:#22303F">👤</div>
+      <div class="d-info">
+        <div class="d-name">고객 모드</div>
+        <div class="d-sub">할인 찾기 · 쿠폰</div>
+      </div>
+      <span class="d-check" id="check-customer">✓</span>
+    </div>
+    <div class="dropdown-row" id="row-owner" onclick="selectRole('owner')">
+      <div class="d-icon" style="background:#3A3320">🏪</div>
+      <div class="d-info">
+        <div class="d-name">점주 모드</div>
+        <div class="d-sub">행사 등록 · 매장 관리</div>
+      </div>
+      <span class="d-check" style="display:none" id="check-owner">✓</span>
+    </div>
+  </div>
+
+  <!-- ══ CUSTOMER SCREENS ══ -->
+  <div class="screen active" id="screen-customer">
+
+    <!-- Tab content -->
+    <div class="scroll-area" id="c-content">
+
+      <!-- HOME TAB -->
+      <div id="tab-home">
+        <div class="home-header">
+          <div class="loc-label">현재 위치</div>
+          <div class="loc-row">
+            <span class="loc-city">성수동</span>
+            <span class="loc-now">· 지금</span>
+          </div>
+        </div>
+
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <span class="search-ph">메뉴, 가게 이름으로 검색</span>
+        </div>
+
+        <div class="sec-hdr">
+          <div class="sec-left">
+            <div class="blink-dot" style="background:var(--orange)"></div>
+            <span class="sec-title">마감 임박</span>
+          </div>
+          <span class="sec-right">지금 안 가면 끝</span>
+        </div>
+
+        <div class="urgent-rail" id="urgent-rail"></div>
+
+        <div class="map-hdr">
+          <span class="sec-title">지도에서 보기</span>
+          <span class="map-link" onclick="switchTab('map')">전체 지도 →</span>
+        </div>
+        <div class="map-wrap" onclick="switchTab('map')">
+          <div class="mini-map">
+            <svg width="100%" height="100%" id="mini-map-svg"></svg>
+            <div class="live-badge">
+              <span class="live-text">LIVE</span>
+              <span class="live-count">내 주변 8곳 할인 중</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chips-rail" id="cat-chips"></div>
+
+        <div class="feed-hdr">
+          <span class="sec-title">내 주변 실시간 할인</span>
+          <span class="feed-count" id="feed-count">8곳</span>
+        </div>
+        <div class="feed-list" id="store-feed"></div>
+      </div>
+
+      <!-- MAP TAB -->
+      <div id="tab-map" style="display:none">
+        <div class="map-screen-inner" style="height:calc(100dvh - 170px); max-height:762px;">
+          <div class="map-full">
+            <svg width="100%" height="100%" id="map-full-svg"></svg>
+            <div class="map-full-title">지도</div>
+            <div class="live-badge" style="z-index:2">
+              <span class="live-text">LIVE</span>
+              <span class="live-count">내 주변 8곳 할인 중</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COUPONS TAB -->
+      <div id="tab-coupons" style="display:none">
+        <div class="page-header">
+          <div class="page-title">쿠폰함</div>
+          <div class="page-sub" id="coupon-sub"></div>
+        </div>
+        <div id="coupon-list-wrap"></div>
+      </div>
+
+      <!-- FAVORITES TAB -->
+      <div id="tab-favorites" style="display:none">
+        <div class="page-header">
+          <div class="page-title">즐겨찾기</div>
+          <div class="page-sub" id="fav-sub"></div>
+        </div>
+        <div class="fav-list" id="fav-list"></div>
+      </div>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="tab-bar">
+      <div class="tab" onclick="switchTab('home')" id="ctab-home">
+        <div class="tab-icon active-icon">⌂</div>
+        <div class="tab-label active-label">홈</div>
+      </div>
+      <div class="tab" onclick="switchTab('map')" id="ctab-map">
+        <div class="tab-icon">📍</div>
+        <div class="tab-label">지도</div>
+      </div>
+      <div class="tab" onclick="switchTab('coupons')" id="ctab-coupons">
+        <div class="tab-icon">🎫</div>
+        <div class="tab-label">쿠폰함</div>
+        <div class="coupon-badge" id="coupon-badge" style="display:none"><span id="coupon-badge-n"></span></div>
+      </div>
+      <div class="tab" onclick="switchTab('favorites')" id="ctab-favorites">
+        <div class="tab-icon">♡</div>
+        <div class="tab-label">즐겨찾기</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ OWNER SCREEN ══ -->
+  <div class="screen" id="screen-owner">
+    <div class="owner-scroll" id="owner-content">
+      <div class="owner-store-hdr">
+        <div class="owner-name">성수베이크하우스</div>
+        <div class="owner-status-row">
+          <div class="open-badge"><div class="open-dot"></div><span class="open-text">영업중</span></div>
+          <span class="weather-txt">☂ 18° · 비</span>
+        </div>
+      </div>
+
+      <div class="register-cta" onclick="flash('30초 행사 등록 기능은 앱에서 사용하세요')">
+        <div>
+          <div class="cta-title">30초 행사 등록</div>
+          <div class="cta-sub">사진만 찍으면 AI가 등록을 도와드려요</div>
+        </div>
+        <div class="cta-icon">+</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-lbl">오늘 매출</div>
+          <div class="stat-val">₩428K</div>
+          <div class="stat-up">▲ 23%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">방문</div>
+          <div class="stat-val">37명</div>
+          <div class="stat-up">▲ 12%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">쿠폰 사용</div>
+          <div class="stat-val">21건</div>
+          <div class="stat-up yellow">진행중</div>
+        </div>
+      </div>
+
+      <div class="event-hdr">
+        <div class="event-hdr-left">
+          <div class="blink-dot" style="background:var(--yellow)"></div>
+          <span class="sec-title">진행 중인 행사</span>
+        </div>
+        <span class="event-count" id="event-count"></span>
+      </div>
+      <div class="event-list" id="event-list"></div>
+
+      <div class="coach-card" onclick="flash('AI 코치 추천 행사로 이동할게요')">
+        <div class="coach-hdr">
+          <div class="coach-icon">✦</div>
+          <span class="coach-title">AI 점주코치</span>
+        </div>
+        <div class="coach-body">
+          지금 비가 와요. <span class="coach-hl">14~17시 베이커리</span>는 30% 할인 시 평균 방문이 <span class="coach-hl">1.8배</span> 늘었어요.
+        </div>
+        <div class="coach-sub">소금빵 마감 할인을 추천해요.</div>
+        <div class="coach-btn">추천 행사 바로 등록</div>
+      </div>
+    </div>
+
+    <!-- Owner tab bar -->
+    <div class="owner-tab-bar">
+      <div class="o-tab" onclick="flash('홈')">
+        <div style="font-size:22px">⌂</div>
+        <div style="font-size:10px;font-weight:600;color:var(--yellow)">홈</div>
+      </div>
+      <div class="o-tab" onclick="flash('통계')">
+        <div style="font-size:22px;filter:grayscale(1);opacity:.4">📊</div>
+        <div style="font-size:10px;font-weight:600;color:var(--text-dim2)">통계</div>
+      </div>
+      <div class="fab-wrap">
+        <div class="fab" onclick="flash('행사 등록 화면을 열게요')">+</div>
+      </div>
+      <div class="o-tab" onclick="flash('AI코치')">
+        <div style="font-size:22px;filter:grayscale(1);opacity:.4">✦</div>
+        <div style="font-size:10px;font-weight:600;color:var(--text-dim2)">AI코치</div>
+      </div>
+      <div class="o-tab" onclick="flash('내매장')">
+        <div style="font-size:22px;filter:grayscale(1);opacity:.4">🏪</div>
+        <div style="font-size:10px;font-weight:600;color:var(--text-dim2)">내매장</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ STORE DETAIL (slide-over) ══ -->
+  <div class="detail-screen" id="detail-screen">
+    <div class="detail-hero">
+      <div class="detail-hero-stripes"></div>
+      <button class="detail-back" onclick="closeDetail()">‹</button>
+      <button class="detail-fav" id="detail-fav-btn" onclick="toggleDetailFav()"></button>
+      <div class="detail-hero-lbl">매장 사진</div>
+    </div>
+
+    <div class="detail-scroll">
+      <div class="detail-badges" id="detail-badges"></div>
+      <div class="detail-store-name" id="detail-name"></div>
+      <div class="detail-meta" id="detail-meta"></div>
+
+      <div class="discount-box">
+        <div class="discount-top">
+          <div class="discount-left">
+            <span class="discount-pct" id="d-pct"></span>
+            <span class="discount-lbl">할인</span>
+          </div>
+          <div class="countdown-row" id="d-countdown" style="display:none">
+            <div class="countdown-dot"></div>
+            <span class="countdown-val" id="d-countdown-val"></span>
+          </div>
+        </div>
+        <div class="price-row">
+          <span class="d-price" id="d-price"></span>
+          <span class="d-strike" id="d-strike"></span>
+        </div>
+        <div class="d-progress-row">
+          <div class="d-prog-bg"><div class="d-prog-fill" id="d-prog"></div></div>
+          <span class="d-qty" id="d-qty"></span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-row">
+          <span class="info-icon">⏰</span>
+          <span class="info-text" id="d-hours"></span>
+        </div>
+        <div class="info-sep"></div>
+        <div class="info-row">
+          <span class="info-icon">📍</span>
+          <span class="info-text" id="d-addr"></span>
+        </div>
+      </div>
+
+      <div class="mini-map-wrap">
+        <svg width="100%" height="100%" id="detail-map-svg" style="position:absolute;inset:0"></svg>
+        <button class="route-btn" onclick="flash('길안내를 시작할게요')">✈ 길찾기</button>
+      </div>
+    </div>
+
+    <div class="detail-bottom">
+      <button class="fav-btn" id="detail-fav-bottom" onclick="toggleDetailFav()"></button>
+      <button class="get-coupon-btn" id="detail-coupon-btn" onclick="handleCoupon()"></button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────
+const STORES = [
+  { id:'s1', name:'성수베이크하우스', cat:'베이커리', event:'마감 떨이', closeText:'오늘 21:00까지', dist:350, pct:50, type:'pct', before:12000, after:6000, qty:8, total:40, urgent:true, secLeft:3120, rating:4.7, addr:'성동구 성수이로 12', hours:'매일 08:00 - 21:00' },
+  { id:'s2', name:'규카츠 도쿄 성수점', cat:'일식', event:'런치 한가 할인', closeText:'오늘 15:00까지', dist:420, pct:30, type:'pct', before:13000, after:9100, qty:12, total:30, urgent:false, secLeft:0, rating:4.5, addr:'성동구 아차산로 5', hours:'매일 11:00 - 21:30' },
+  { id:'s3', name:'카페 노트', cat:'카페·디저트', event:'1+1 이벤트', closeText:'오늘 22:00까지', dist:620, pct:0, type:'1+1', before:5500, after:5500, qty:5, total:20, urgent:false, secLeft:0, rating:4.8, addr:'성동구 연무장길 33', hours:'매일 10:00 - 22:00' },
+  { id:'s4', name:'정성정육점', cat:'정육·청과', event:'마감 세일', closeText:'오늘 20:00까지', dist:780, pct:40, type:'pct', before:25000, after:15000, qty:6, total:15, urgent:true, secLeft:1860, rating:4.6, addr:'성동구 성수일로 88', hours:'매일 09:00 - 20:00' },
+  { id:'s5', name:'샐러디 왕십리점', cat:'샐러드', event:'오후 할인', closeText:'오늘 18:00까지', dist:1100, pct:25, type:'pct', before:9800, after:7350, qty:20, total:40, urgent:false, secLeft:0, rating:4.4, addr:'성동구 왕십리로 410', hours:'매일 10:30 - 21:00' },
+  { id:'s6', name:'더진국 국밥', cat:'한식', event:'저녁 전 할인', closeText:'오늘 17:00까지', dist:890, pct:20, type:'pct', before:9000, after:7200, qty:14, total:30, urgent:false, secLeft:0, rating:4.6, addr:'성동구 고산자로 21', hours:'매일 08:00 - 21:00' },
+  { id:'s7', name:'올리브청과', cat:'정육·청과', event:'마감 세일', closeText:'오늘 21:30까지', dist:510, pct:35, type:'pct', before:8000, after:5200, qty:9, total:25, urgent:true, secLeft:2640, rating:4.3, addr:'성동구 성수이로 7', hours:'매일 09:00 - 21:30' },
+  { id:'s8', name:'블레이즈 버거', cat:'버거', event:'사이드 증정', closeText:'오늘 21:00까지', dist:1300, pct:30, type:'pct', before:11000, after:7700, qty:7, total:20, urgent:false, secLeft:0, rating:4.7, addr:'성동구 광나루로 4', hours:'매일 11:00 - 22:00' },
+];
+
+const MAP_PINS = [
+  { id:'s1', lx:30, ty:34 }, { id:'s7', lx:48, ty:22 }, { id:'s2', lx:72, ty:31 },
+  { id:'s3', lx:22, ty:60 }, { id:'s4', lx:63, ty:54 }, { id:'s6', lx:54, ty:70 },
+];
+
+const CATS = ['전체','베이커리','카페·디저트','한식','일식','정육·청과','샐러드','버거'];
+
+const EVENTS = [
+  { id:'e1', name:'소금빵', pct:50, sale:1750, reg:3500, gift:'', type:'discount', qty:8, total:40, secLeft:3120 },
+  { id:'e2', name:'에그타르트', pct:0, sale:3000, reg:3000, gift:'아메리카노 1잔', type:'gift', qty:11, total:25, secLeft:1500 },
+];
+
+// ── State ─────────────────────────────────────────────────
+let state = {
+  role: 'customer',
+  cTab: 'home',
+  category: '전체',
+  coupons: new Set(['s5']),
+  favorites: new Set(['s2','s3']),
+  selectedId: null,
+  tick: 0,
+  events: [...EVENTS],
+  roleMenuOpen: false,
+};
+
+// ── Helpers ───────────────────────────────────────────────
+const won = n => n.toLocaleString('ko-KR');
+const distText = m => m >= 1000 ? `${(m/1000).toFixed(1)}km` : `${m}m`;
+const badge = s => s.type === '1+1' ? '1+1' : `${s.pct}%`;
+const afterText = s => s.type === '1+1' ? `${won(s.before)}원 · 1+1` : `${won(s.after)}원`;
+const fmtSec = t => {
+  if(t<0) t=0;
+  const h=Math.floor(t/3600), m=Math.floor((t%3600)/60), s=t%60;
+  const p=x=>String(x).padStart(2,'0');
+  return h>0?`${h}:${p(m)}:${p(s)}`:`${p(m)}:${p(s)}`;
+};
+
+// ── Toast ─────────────────────────────────────────────────
+let toastTimer;
+function flash(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// ── Tick ──────────────────────────────────────────────────
+setInterval(() => {
+  state.tick++;
+  updateCountdowns();
+}, 1000);
+
+function updateCountdowns() {
+  document.querySelectorAll('[data-countdown]').forEach(el => {
+    const id = el.dataset.countdown;
+    const store = STORES.find(s => s.id === id);
+    if (!store || !store.urgent) return;
+    const rem = Math.max(0, store.secLeft - state.tick);
+    el.textContent = fmtSec(rem);
+  });
+  // detail countdown
+  if (state.selectedId) {
+    const s = STORES.find(x => x.id === state.selectedId);
+    const el = document.getElementById('d-countdown-val');
+    if (s && s.urgent && el) el.textContent = fmtSec(Math.max(0, s.secLeft - state.tick));
+  }
+  // event countdowns
+  EVENTS.forEach(e => {
+    const el = document.getElementById(`ecd-${e.id}`);
+    if (el) el.textContent = fmtSec(Math.max(0, e.secLeft - state.tick));
+  });
+}
+
+// ── Time display ──────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours(), m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('status-time').textContent = `${h}:${m}`;
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+// ── Role menu ─────────────────────────────────────────────
+function toggleRoleMenu() {
+  state.roleMenuOpen = !state.roleMenuOpen;
+  document.getElementById('dropdown-backdrop').classList.toggle('open', state.roleMenuOpen);
+  document.getElementById('dropdown-menu').classList.toggle('open', state.roleMenuOpen);
+}
+function closeRoleMenu() {
+  state.roleMenuOpen = false;
+  document.getElementById('dropdown-backdrop').classList.remove('open');
+  document.getElementById('dropdown-menu').classList.remove('open');
+}
+function selectRole(role) {
+  state.role = role;
+  closeRoleMenu();
+  document.getElementById('role-label').textContent = role === 'customer' ? '고객모드' : '점주모드';
+  document.getElementById('screen-customer').classList.toggle('active', role === 'customer');
+  document.getElementById('screen-owner').classList.toggle('active', role === 'owner');
+  document.getElementById('row-customer').classList.toggle('active', role === 'customer');
+  document.getElementById('row-customer').classList.toggle('owner-active', false);
+  document.getElementById('row-owner').classList.toggle('owner-active', role === 'owner');
+  document.getElementById('check-customer').style.display = role === 'customer' ? '' : 'none';
+  document.getElementById('check-owner').style.display = role === 'owner' ? '' : 'none';
+}
+
+// ── Customer tabs ─────────────────────────────────────────
+function switchTab(tab) {
+  state.cTab = tab;
+  ['home','map','coupons','favorites'].forEach(t => {
+    document.getElementById(`tab-${t}`).style.display = t === tab ? '' : 'none';
+    const el = document.getElementById(`ctab-${t}`);
+    el.querySelectorAll('.tab-icon').forEach(i => i.classList.toggle('active-icon', t === tab));
+    el.querySelectorAll('.tab-label').forEach(l => l.classList.toggle('active-label', t === tab));
+  });
+  if (tab === 'coupons') renderCoupons();
+  if (tab === 'favorites') renderFavorites();
+  if (tab === 'map') renderFullMap();
+}
+
+// ── Mini map SVG ──────────────────────────────────────────
+function renderMap(svgId, h) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+  const w = svg.parentElement.clientWidth || 380;
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  let html = '';
+  // grid
+  for (let i=1;i<5;i++) html += `<line x1="0" y1="${h*i/5}" x2="${w}" y2="${h*i/5}" stroke="#161D26" stroke-width="1"/>`;
+  for (let i=1;i<7;i++) html += `<line x1="${i*55}" y1="0" x2="${i*55}" y2="${h}" stroke="#161D26" stroke-width="1"/>`;
+  // roads
+  html += `<rect x="${-w*.1}" y="${h*.44}" width="${w*1.3}" height="20" fill="#1C242E" transform="rotate(-8,${w/2},${h/2})"/>`;
+  html += `<rect x="${w*.3}" y="${-h*.1}" width="18" height="${h*1.2}" fill="#1C242E" transform="rotate(5,${w*.34},${h/2})"/>`;
+  // location dot
+  const lx = w/2, ly = h*.52;
+  html += `<circle cx="${lx}" cy="${ly}" r="15" fill="#FFC93C" opacity=".15"><animate attributeName="r" values="8;18;8" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".4;0;.4" dur="2s" repeatCount="indefinite"/></circle>`;
+  html += `<circle cx="${lx}" cy="${ly}" r="7.5" fill="#FFC93C" stroke="#0E1116" stroke-width="3"/>`;
+  // pins
+  MAP_PINS.forEach(pin => {
+    const store = STORES.find(s => s.id === pin.id);
+    if (!store) return;
+    const px = w * pin.lx/100, py = h * pin.ty/100;
+    const b = badge(store);
+    const color = store.urgent ? '#FF6B4A' : '#FFC93C';
+    const fg = store.urgent ? '#fff' : '#0E1116';
+    html += `<g class="map-pin" onclick="openDetail('${store.id}')" style="cursor:pointer">
+      <rect x="${px-22}" y="${py-18}" width="44" height="20" rx="7" fill="${color}"/>
+      <text x="${px}" y="${py-4}" text-anchor="middle" fill="${fg}" font-size="11" font-weight="800" font-family="-apple-system,sans-serif">${b}</text>
+      <polygon points="${px-4},${py+2} ${px+4},${py+2} ${px},${py+8}" fill="${color}"/>
+    </g>`;
+  });
+  svg.innerHTML = html;
+}
+
+function renderFullMap() {
+  const svgEl = document.getElementById('map-full-svg');
+  const h = svgEl.parentElement.clientHeight || 600;
+  renderMap('map-full-svg', h);
+}
+
+// ── Category chips ────────────────────────────────────────
+function renderChips() {
+  const el = document.getElementById('cat-chips');
+  el.innerHTML = CATS.map(c =>
+    `<div class="chip${state.category===c?' active':''}" onclick="selectCat('${c}')">${c}</div>`
+  ).join('');
+}
+function selectCat(cat) {
+  state.category = cat;
+  renderChips();
+  renderFeed();
+}
+
+// ── Feed ──────────────────────────────────────────────────
+function renderFeed() {
+  const filtered = state.category === '전체' ? STORES : STORES.filter(s => s.cat === state.category);
+  document.getElementById('feed-count').textContent = `${filtered.length}곳`;
+  document.getElementById('store-feed').innerHTML = filtered.map(s => storeCardHTML(s)).join('');
+}
+
+function storeCardHTML(s) {
+  const isFav = state.favorites.has(s.id);
+  const rem = s.urgent ? Math.max(0, s.secLeft - state.tick) : 0;
+  const timeText = s.urgent ? `남은 ${fmtSec(rem)}` : s.closeText;
+  const timeColor = s.urgent ? 'var(--orange)' : 'var(--text-sub)';
+  const barW = Math.round(s.qty/s.total*100);
+  return `
+  <div class="store-card" onclick="openDetail('${s.id}')">
+    <div class="card-image">
+      <div class="card-stripes"></div>
+      <div class="card-badges">
+        <span class="badge-pct${s.urgent?' urgent':''}">${badge(s)}</span>
+        ${s.urgent ? '<span class="badge-urgent">마감임박</span>' : ''}
+      </div>
+      <div class="card-heart" onclick="event.stopPropagation();toggleFav('${s.id}',this)" data-id="${s.id}">
+        <span style="color:${isFav?'var(--yellow)':'var(--text)'}">${isFav?'♥':'♡'}</span>
+      </div>
+      <div class="card-photo-lbl">매장 사진</div>
+    </div>
+    <div class="card-body">
+      <div class="card-name-row">
+        <span class="card-name">${s.name}</span>
+        <span class="card-dist">${distText(s.dist)}</span>
+      </div>
+      <div class="card-cat">${s.cat} · ${s.event}</div>
+      <div class="card-price-row">
+        <span class="card-price">${afterText(s)}</span>
+        ${s.type!=='1+1'?`<span class="card-strike">${won(s.before)}원</span>`:''}
+      </div>
+      <div class="card-qty-row">
+        <div class="prog-bg"><div class="prog-fill" style="width:${barW}%"></div></div>
+        <span class="card-qty">${s.qty}개 남음</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-time" style="color:${timeColor}" ${s.urgent?`data-countdown="${s.id}"`:''}>${timeText}</span>
+        <button class="coupon-cta" onclick="event.stopPropagation();getCoupon('${s.id}')">쿠폰 받기</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Urgent rail ───────────────────────────────────────────
+function renderUrgentRail() {
+  const urgent = STORES.filter(s => s.urgent);
+  document.getElementById('urgent-rail').innerHTML = urgent.map(s => `
+    <div class="urgent-card" onclick="openDetail('${s.id}')">
+      <div class="uc-header">
+        <span class="uc-badge">${s.pct}%</span>
+        <div class="uc-countdown">
+          <div class="uc-dot"></div>
+          <span class="uc-time" data-countdown="${s.id}">${fmtSec(Math.max(0,s.secLeft-state.tick))}</span>
+        </div>
+      </div>
+      <div class="uc-name">${s.name}</div>
+      <div class="uc-meta">${s.cat} · ${distText(s.dist)}</div>
+      <div class="uc-price-row">
+        <span class="uc-price">${won(s.after)}원</span>
+        <span class="uc-strike">${won(s.before)}원</span>
+      </div>
+      <div class="uc-qty">${s.qty}개 남음</div>
+    </div>
+  `).join('');
+}
+
+// ── Favorites & Hearts ────────────────────────────────────
+function toggleFav(id, btn) {
+  if (state.favorites.has(id)) {
+    state.favorites.delete(id);
+    if(btn) btn.innerHTML = `<span style="color:var(--text)">♡</span>`;
+    flash('즐겨찾기에서 삭제했어요');
+  } else {
+    state.favorites.add(id);
+    if(btn) btn.innerHTML = `<span style="color:var(--yellow)">♥</span>`;
+    flash('즐겨찾기에 추가했어요');
+  }
+}
+function renderFavorites() {
+  const favs = STORES.filter(s => state.favorites.has(s.id));
+  document.getElementById('fav-sub').textContent = `관심 매장 ${favs.length}곳`;
+  const wrap = document.getElementById('fav-list');
+  if (favs.length === 0) {
+    wrap.innerHTML = `<div class="empty-state"><div class="empty-icon">🤍</div><div class="empty-title">즐겨찾기가 비어있어요</div></div>`;
+    return;
+  }
+  wrap.innerHTML = favs.map(s => `
+    <div class="fav-card" onclick="openDetail('${s.id}')">
+      <div class="fav-thumb"><div class="fav-thumb-badge">${badge(s)}</div></div>
+      <div class="fav-info">
+        <div class="fav-name">${s.name}</div>
+        <div class="fav-sub">${s.cat} · ${distText(s.dist)}</div>
+        <div class="fav-price">${afterText(s)}</div>
+      </div>
+      <button class="fav-heart-btn" onclick="event.stopPropagation();toggleFavFromList('${s.id}')">
+        <span style="color:var(--yellow)">♥</span>
+      </button>
+    </div>
+  `).join('');
+}
+function toggleFavFromList(id) {
+  toggleFav(id);
+  renderFavorites();
+}
+
+// ── Coupons ───────────────────────────────────────────────
+function getCoupon(id) {
+  if (state.coupons.has(id)) { flash('이미 받은 쿠폰이에요'); return; }
+  state.coupons.add(id);
+  flash('쿠폰함에 담았어요');
+  updateCouponBadge();
+}
+function updateCouponBadge() {
+  const n = state.coupons.size;
+  const badge = document.getElementById('coupon-badge');
+  document.getElementById('coupon-badge-n').textContent = n;
+  badge.style.display = n > 0 ? 'flex' : 'none';
+}
+function renderCoupons() {
+  const couponStores = STORES.filter(s => state.coupons.has(s.id));
+  document.getElementById('coupon-sub').textContent = `받은 쿠폰 ${couponStores.length}장 · 매장에서 QR로 사용하세요`;
+  const wrap = document.getElementById('coupon-list-wrap');
+  if (couponStores.length === 0) {
+    wrap.innerHTML = `<div class="empty-state"><div class="empty-icon">🎫</div><div class="empty-title">아직 받은 쿠폰이 없어요</div><div class="empty-desc">홈에서 마음에 드는 할인을 찾아<br>쿠폰을 받아보세요</div></div>`;
+    return;
+  }
+  wrap.innerHTML = `<div class="coupon-list">${couponStores.map(s => {
+    const b = badge(s);
+    return `
+    <div class="coupon-card" onclick="flash('${s.name} 쿠폰을 사용할게요')">
+      <div class="coupon-stub">
+        <div class="stub-badge">${b}</div>
+        <div class="stub-label">할인쿠폰</div>
+      </div>
+      <div class="coupon-info">
+        <div class="coupon-store">${s.name}</div>
+        <div class="coupon-sub2">${s.cat} · ${distText(s.dist)}</div>
+        <div class="coupon-time" style="color:${s.urgent?'var(--orange)':'var(--text-sub)'}">${s.closeText}</div>
+        <div class="use-btn">사용하기</div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ── Store detail ──────────────────────────────────────────
+function openDetail(id) {
+  state.selectedId = id;
+  const s = STORES.find(x => x.id === id);
+  if (!s) return;
+
+  // badges
+  const badgesEl = document.getElementById('detail-badges');
+  badgesEl.innerHTML = (s.urgent ? `<div class="urgent-badge-sm">마감임박</div>` : '') + `<span class="cat-badge">${s.cat}</span>`;
+
+  document.getElementById('detail-name').textContent = s.name;
+  document.getElementById('detail-meta').innerHTML =
+    `<span class="detail-rating">★ ${s.rating.toFixed(1)}</span>
+     <span class="detail-divider">|</span>
+     <span class="detail-dist">${distText(s.dist)}</span>
+     <span class="detail-divider">|</span>
+     <span class="detail-sub">${s.event}</span>`;
+
+  document.getElementById('d-pct').textContent = badge(s);
+  const cdRow = document.getElementById('d-countdown');
+  if (s.urgent) {
+    cdRow.style.display = 'flex';
+    document.getElementById('d-countdown-val').textContent = fmtSec(Math.max(0, s.secLeft - state.tick));
+  } else {
+    cdRow.style.display = 'none';
+  }
+  document.getElementById('d-price').textContent = afterText(s);
+  const strikeEl = document.getElementById('d-strike');
+  strikeEl.textContent = s.type !== '1+1' ? `${won(s.before)}원` : '';
+  document.getElementById('d-prog').style.width = `${Math.round(s.qty/s.total*100)}%`;
+  document.getElementById('d-qty').textContent = `${s.qty}개 남음`;
+  document.getElementById('d-hours').textContent = s.hours;
+  document.getElementById('d-addr').textContent = s.addr;
+
+  updateDetailFavUI();
+  updateDetailCouponUI();
+
+  // mini map
+  renderMap('detail-map-svg', 150);
+
+  document.getElementById('detail-screen').classList.add('open');
+}
+function closeDetail() {
+  document.getElementById('detail-screen').classList.remove('open');
+  state.selectedId = null;
+}
+function updateDetailFavUI() {
+  const isFav = state.favorites.has(state.selectedId);
+  document.getElementById('detail-fav-btn').textContent = isFav ? '♥' : '♡';
+  document.getElementById('detail-fav-btn').style.color = isFav ? 'var(--yellow)' : 'var(--text)';
+  document.getElementById('detail-fav-bottom').textContent = isFav ? '♥' : '♡';
+  document.getElementById('detail-fav-bottom').style.color = isFav ? 'var(--yellow)' : 'var(--text-sub)';
+}
+function toggleDetailFav() {
+  if (!state.selectedId) return;
+  if (state.favorites.has(state.selectedId)) {
+    state.favorites.delete(state.selectedId);
+    flash('즐겨찾기에서 삭제했어요');
+  } else {
+    state.favorites.add(state.selectedId);
+    flash('즐겨찾기에 추가했어요');
+  }
+  updateDetailFavUI();
+}
+function updateDetailCouponUI() {
+  const hasCoupon = state.coupons.has(state.selectedId);
+  const btn = document.getElementById('detail-coupon-btn');
+  btn.textContent = hasCoupon ? '쿠폰 사용하기' : '쿠폰 받기';
+}
+function handleCoupon() {
+  if (!state.selectedId) return;
+  if (state.coupons.has(state.selectedId)) {
+    flash('쿠폰 QR을 표시할게요');
+  } else {
+    state.coupons.add(state.selectedId);
+    flash('쿠폰함에 담았어요');
+    updateCouponBadge();
+    updateDetailCouponUI();
+  }
+}
+
+// ── Owner events ──────────────────────────────────────────
+function renderOwner() {
+  document.getElementById('event-count').textContent = `${state.events.length}건`;
+  document.getElementById('event-list').innerHTML = state.events.map(e => {
+    const isGift = e.type !== 'discount';
+    const pct = isGift ? '' : `${e.pct}%`;
+    const barW = Math.round(e.qty/e.total*100);
+    return `
+    <div class="event-card">
+      <div class="event-top">
+        <div class="event-thumb"></div>
+        <div style="flex:1">
+          <div class="event-name-row">
+            <span class="event-name">${e.name}</span>
+            <span class="event-badge${isGift?' gift':''}">${isGift?'증정':pct}</span>
+          </div>
+          ${!isGift ? `<div style="display:flex;align-items:baseline;gap:6px;margin-top:4px">
+            <span class="event-after">${won(e.sale)}원</span>
+            <span class="event-before">${won(e.reg)}원</span>
+          </div>` : `<div class="event-gift-text">${e.gift} 증정</div>`}
+        </div>
+        <div class="event-cd">
+          <div class="event-cd-val" id="ecd-${e.id}">${fmtSec(Math.max(0, e.secLeft - state.tick))}</div>
+          <div class="event-cd-lbl">종료까지</div>
+        </div>
+      </div>
+      <div class="e-prog-row">
+        <div class="e-prog-bg"><div class="e-prog-fill" style="width:${barW}%"></div></div>
+        <span class="e-qty">${e.qty}/${e.total} 남음</span>
+      </div>
+      <div class="event-btns">
+        <button class="qr-btn" onclick="flash('QR 인증 화면을 열게요')">⬛ QR 인증</button>
+        <button class="end-btn" onclick="endEvent('${e.id}')">마감</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function endEvent(id) {
+  state.events = state.events.filter(e => e.id !== id);
+  flash('행사를 마감했어요');
+  renderOwner();
+}
+
+// ── Init ──────────────────────────────────────────────────
+function init() {
+  renderChips();
+  renderFeed();
+  renderUrgentRail();
+  renderMap('mini-map-svg', 172);
+  renderOwner();
+  updateCouponBadge();
+}
+init();
+</script>
+</body>
+</html>
