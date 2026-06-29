@@ -4,1652 +4,832 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>동네할인</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0E1116;
-  --bg-dark: #0B0E13;
-  --card: #161B22;
-  --card-input: #1E242E;
-  --border: #262D38;
-  --border2: #2E3744;
-  --yellow: #FFC93C;
-  --orange: #FF6B4A;
-  --orange-text: #FF8A6E;
-  --orange-bg: #19120F;
-  --orange-border: #3A2018;
-  --green: #46D17A;
-  --green-text: #7FE6A3;
-  --green-bg: #162016;
-  --green-border: #2A4A2A;
-  --gift-bg: #0F1A12;
-  --gift-border: #224A2A;
-  --gift-text: #A8E6BE;
-  --purple: #C9A0FF;
-  --purple-text: #D9C2FF;
-  --purple-bg: #1A1622;
-  --purple-border: #4A3A5E;
-  --text: #F5F6F8;
-  --text-sub: #9AA3AF;
-  --text-dim: #6B7280;
-  --text-dim2: #5B636E;
-  --blue: #74B8FF;
-  --mono: 'Space Mono', monospace;
-  --radius-app: 44px;
+  --bg:#0E1116; --bg-dark:#0B0E13; --card:#161B22; --card-input:#1E242E;
+  --border:#262D38; --border2:#2E3744;
+  --yellow:#FFC93C; --orange:#FF6B4A; --orange-text:#FF8A6E;
+  --orange-bg:#19120F; --orange-border:#3A2018;
+  --green:#46D17A; --green-text:#7FE6A3; --green-bg:#162016; --green-border:#2A4A2A;
+  --gift-bg:#0F1A12; --gift-border:#224A2A; --gift-text:#A8E6BE;
+  --purple:#C9A0FF; --purple-text:#D9C2FF; --purple-border:#4A3A5E;
+  --text:#F5F6F8; --text-sub:#9AA3AF; --text-dim:#6B7280; --text-dim2:#5B636E;
+  --blue:#74B8FF; --mono:'Space Mono',monospace; --r:44px;
 }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#fff;min-height:100dvh;display:flex;align-items:center;justify-content:center;font-family:-apple-system,'Apple SD Gothic Neo',sans-serif;overflow:hidden}
+.shell{width:100%;max-width:430px;height:100dvh;max-height:932px;background:var(--bg);border-radius:var(--r);box-shadow:0 0 0 8px #1a1d24,0 40px 80px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.07);position:relative;overflow:hidden;display:flex;flex-direction:column}
+@media(max-width:480px){body{background:var(--bg);align-items:flex-start}.shell{max-width:100%;max-height:100dvh;border-radius:0;box-shadow:none}}
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+/* status */
+.sbar{height:44px;padding:14px 24px 0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;z-index:10;position:relative}
+.stime{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.sicons{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text)}
 
-body {
-  background: #ffffff;
-  min-height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: -apple-system, 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
-  overflow: hidden;
-}
+/* screens */
+.screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+.screen.active{display:flex}
 
-/* ── Phone shell ── */
-.phone-shell {
-  width: 100%;
-  max-width: 430px;
-  height: 100dvh;
-  max-height: 932px;
-  background: var(--bg);
-  border-radius: var(--radius-app);
-  box-shadow: 0 0 0 8px #1a1d24, 0 40px 80px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.07);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
+/* role pill */
+.role-ov{position:absolute;top:54px;left:18px;z-index:50}
+.role-pill{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid #2A323D;border-radius:22px;padding:7px 12px;cursor:pointer;transition:opacity .15s}
+.role-pill:active{opacity:.75}
+.rpswap{color:var(--yellow);font-size:14px}
+.rplabel{font-size:13px;font-weight:800;color:var(--text)}
+.rpchev{color:#7A828D;font-size:14px}
 
-@media (max-width: 480px) {
-  body { background: var(--bg); align-items: flex-start; }
-  .phone-shell { max-width: 100%; max-height: 100dvh; border-radius: 0; box-shadow: none; }
-}
+/* login button top-right */
+.login-ov{position:absolute;top:54px;right:18px;z-index:50}
+.login-btn{display:flex;align-items:center;gap:6px;background:var(--yellow);border-radius:20px;padding:7px 13px;cursor:pointer;border:none;font-size:12.5px;font-weight:800;color:var(--bg);transition:opacity .15s}
+.login-btn:active{opacity:.8}
+.user-avatar{width:30px;height:30px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer}
 
-/* ── Status bar ── */
-.status-bar {
-  height: 44px;
-  padding: 14px 24px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 10;
-}
-.status-time { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
-.status-icons { display: flex; align-items: center; gap: 6px; }
-.status-icons span { font-size: 13px; color: var(--text); }
+/* dropdown */
+.dd-back{position:absolute;inset:0;z-index:70;display:none}
+.dd-back.open{display:block}
+.dd-menu{position:absolute;left:18px;top:106px;z-index:71;width:222px;background:#1A1F27;border:1px solid var(--border2);border-radius:18px;padding:7px;box-shadow:0 24px 60px rgba(0,0,0,.7);display:none}
+.dd-menu.open{display:block}
+.dd-title{font-size:10px;font-weight:800;color:var(--text-dim);letter-spacing:.8px;text-transform:uppercase;padding:8px 10px}
+.dd-row{display:flex;align-items:center;gap:11px;padding:11px;border-radius:12px;cursor:pointer}
+.dd-row:hover,.dd-row.on{background:#202A36}
+.dd-row.yon:hover,.dd-row.yon{background:#2A2516}
+.dico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.dname{font-size:14px;font-weight:700;color:var(--text)}
+.dsub{font-size:11px;color:#8A929D;margin-top:1px}
+.dchk{color:var(--yellow);font-size:16px}
 
-/* ── Screens ── */
-.screen { display: none; flex: 1; flex-direction: column; overflow: hidden; }
-.screen.active { display: flex; }
+/* scroll */
+.scrl{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-top:52px}
+.scrl::-webkit-scrollbar{display:none}
 
-/* ── Role pill overlay ── */
-.role-overlay {
-  position: absolute;
-  top: 54px;
-  left: 18px;
-  z-index: 50;
-}
-.role-pill {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: var(--card);
-  border: 1px solid #2A323D;
-  border-radius: 22px;
-  padding: 7px 12px;
-  cursor: pointer;
-  transition: opacity .15s;
-}
-.role-pill:active { opacity: .75; }
-.role-swap { color: var(--yellow); font-size: 14px; }
-.role-label { font-size: 13px; font-weight: 800; color: var(--text); }
-.role-chevron { color: #7A828D; font-size: 14px; }
+/* tabbar */
+.tbar{height:82px;background:var(--bg-dark);border-top:1px solid #1A1F27;display:flex;align-items:flex-end;padding-bottom:16px;flex-shrink:0}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;padding-bottom:2px;position:relative}
+.ti{font-size:22px;line-height:1;transition:transform .15s}
+.tl{font-size:10px;font-weight:600;color:var(--text-dim2);transition:color .2s}
+.ti.act{transform:scale(1.08)}
+.tl.act{color:var(--yellow)}
+.cbadge{position:absolute;top:-2px;right:18px;min-width:16px;height:16px;background:var(--orange);border-radius:8px;padding:0 4px;display:none;align-items:center;justify-content:center}
+.cbadge span{font-size:9px;font-weight:800;color:#fff;font-family:var(--mono)}
 
-/* ── Dropdown ── */
-.dropdown-backdrop {
-  position: absolute; inset: 0; z-index: 70;
-  display: none;
-}
-.dropdown-backdrop.open { display: block; }
-.dropdown-menu {
-  position: absolute;
-  left: 18px;
-  top: 106px;
-  z-index: 71;
-  width: 222px;
-  background: #1A1F27;
-  border: 1px solid var(--border2);
-  border-radius: 18px;
-  padding: 7px;
-  box-shadow: 0 24px 60px rgba(0,0,0,.7);
-  display: none;
-}
-.dropdown-menu.open { display: block; }
-.dropdown-title {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--text-dim);
-  letter-spacing: .8px;
-  text-transform: uppercase;
-  padding: 8px 10px;
-}
-.dropdown-row {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 11px;
-  border-radius: 12px;
-  cursor: pointer;
-}
-.dropdown-row:hover, .dropdown-row.active { background: #202A36; }
-.dropdown-row.owner-active:hover, .dropdown-row.owner-active { background: #2A2516; }
-.d-icon {
-  width: 34px; height: 34px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
-  flex-shrink: 0;
-}
-.d-info { flex: 1; }
-.d-name { font-size: 14px; font-weight: 700; color: var(--text); }
-.d-sub { font-size: 11px; color: #8A929D; margin-top: 1px; }
-.d-check { color: var(--yellow); font-size: 16px; }
-
-/* ── Scrollable content ── */
-.scroll-area {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  padding-top: 52px;
-}
-.scroll-area::-webkit-scrollbar { display: none; }
-
-/* ── Tab bar ── */
-.tab-bar {
-  height: 82px;
-  background: var(--bg-dark);
-  border-top: 1px solid #1A1F27;
-  display: flex;
-  align-items: flex-end;
-  padding-bottom: 16px;
-  flex-shrink: 0;
-}
-.tab {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  cursor: pointer;
-  padding-bottom: 2px;
-  position: relative;
-}
-.tab-icon { font-size: 22px; line-height: 1; transition: transform .15s; }
-.tab-icon.active-icon { transform: scale(1.08); }
-.tab-label { font-size: 10px; font-weight: 600; color: var(--text-dim2); transition: color .2s; }
-.tab-label.active-label { color: var(--yellow); }
-.coupon-badge {
-  position: absolute;
-  top: -2px; right: 18px;
-  min-width: 16px; height: 16px;
-  background: var(--orange);
-  border-radius: 8px;
-  padding: 0 4px;
-  display: flex; align-items: center; justify-content: center;
-}
-.coupon-badge span { font-size: 9px; font-weight: 800; color: #fff; font-family: var(--mono); }
-
-/* ════ CUSTOMER HOME ════ */
-.home-header { padding: 14px 18px 10px; }
-.loc-label { font-size: 11px; color: var(--text-dim); font-weight: 600; }
-.loc-row { display: flex; align-items: flex-end; gap: 5px; margin-top: 2px; }
-.loc-city { font-size: 19px; font-weight: 800; color: var(--text); letter-spacing: -.3px; }
-.loc-now { font-size: 12px; color: var(--yellow); font-weight: 700; padding-bottom: 2px; }
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 13px;
-  padding: 11px 14px;
-  margin: 0 18px 12px;
-}
-.search-icon { font-size: 16px; }
-.search-ph { font-size: 13.5px; color: var(--text-dim2); }
-
-/* section header */
-.sec-hdr {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 18px;
-  margin-bottom: 8px;
-}
-.sec-left { display: flex; align-items: center; gap: 7px; }
-.sec-title { font-size: 15px; font-weight: 800; color: var(--text); letter-spacing: -.3px; }
-.sec-right { font-size: 11.5px; color: var(--orange-text); font-family: var(--mono); }
-
-/* blink dot */
-.blink-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  animation: blink 1s infinite;
-}
-@keyframes blink {
-  0%,100% { opacity: 1; }
-  50% { opacity: .3; }
-}
+/* home */
+.hhdr{padding:14px 18px 10px}
+.lloc{font-size:11px;color:var(--text-dim);font-weight:600}
+.lrow{display:flex;align-items:flex-end;gap:5px;margin-top:2px}
+.lcity{font-size:19px;font-weight:800;color:var(--text);letter-spacing:-.3px}
+.lnow{font-size:12px;color:var(--yellow);font-weight:700;padding-bottom:2px}
+.sbar2{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px 14px;margin:0 18px 12px}
+.sich{font-size:13.5px;color:var(--text-dim2)}
+.sechdr{display:flex;align-items:center;justify-content:space-between;padding:0 18px;margin-bottom:8px}
+.secleft{display:flex;align-items:center;gap:7px}
+.sectit{font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.3px}
+.secrt{font-size:11.5px;color:var(--orange-text);font-family:var(--mono)}
+.bdot{width:7px;height:7px;border-radius:50%;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* urgent rail */
-.urgent-rail {
-  display: flex;
-  gap: 12px;
-  padding: 6px 18px 14px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-}
-.urgent-rail::-webkit-scrollbar { display: none; }
+.ural{display:flex;gap:12px;padding:6px 18px 14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ural::-webkit-scrollbar{display:none}
+.ucard{min-width:206px;background:var(--orange-bg);border:1px solid var(--orange-border);border-radius:20px;padding:16px;cursor:pointer;transition:transform .15s;flex-shrink:0}
+.ucard:active{transform:scale(.97)}
+.uchdr{display:flex;align-items:center;justify-content:space-between}
+.ubadge{background:var(--orange);color:#fff;font-size:16px;font-weight:800;padding:5px 11px;border-radius:10px}
+.ucd{display:flex;align-items:center;gap:4px}
+.uddot{width:6px;height:6px;border-radius:50%;background:var(--orange);animation:blink 1s infinite}
+.uctime{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--orange-text)}
+.uname{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.3px;margin-top:14px}
+.umeta{font-size:12px;color:#8A6A5E;margin-top:3px}
+.uprow{display:flex;align-items:baseline;gap:7px;margin-top:12px}
+.uprice{font-size:19px;font-weight:800;color:var(--yellow)}
+.ustrike{font-size:12px;color:#6B5048;text-decoration:line-through}
+.uqty{font-family:var(--mono);font-size:11px;color:var(--text-sub);margin-top:13px}
 
-.urgent-card {
-  min-width: 206px;
-  background: var(--orange-bg);
-  border: 1px solid var(--orange-border);
-  border-radius: 20px;
-  padding: 16px;
-  scroll-snap-align: start;
-  cursor: pointer;
-  transition: transform .15s;
-  flex-shrink: 0;
-}
-.urgent-card:active { transform: scale(.97); }
-.uc-header { display: flex; align-items: center; justify-content: space-between; }
-.uc-badge {
-  background: var(--orange);
-  color: #fff;
-  font-size: 16px;
-  font-weight: 800;
-  padding: 5px 11px;
-  border-radius: 10px;
-  letter-spacing: -.3px;
-}
-.uc-countdown { display: flex; align-items: center; gap: 4px; }
-.uc-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); animation: blink 1s infinite; }
-.uc-time { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--orange-text); }
-.uc-name { font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -.3px; margin-top: 14px; }
-.uc-meta { font-size: 12px; color: #8A6A5E; margin-top: 3px; }
-.uc-price-row { display: flex; align-items: baseline; gap: 7px; margin-top: 12px; }
-.uc-price { font-size: 19px; font-weight: 800; color: var(--yellow); }
-.uc-strike { font-size: 12px; color: #6B5048; text-decoration: line-through; }
-.uc-qty { font-family: var(--mono); font-size: 11px; color: var(--text-sub); margin-top: 13px; }
+/* map */
+.maphdr{display:flex;align-items:center;justify-content:space-between;padding:0 18px;margin-bottom:6px}
+.maplink{font-size:12.5px;font-weight:700;color:var(--yellow);cursor:pointer}
+.mapwrap{margin:0 18px 20px;border-radius:18px;overflow:hidden;cursor:pointer}
+.minimap{width:100%;height:172px;background:#0F141B;border:1px solid var(--border);border-radius:18px;position:relative;overflow:hidden}
+.livebadge{position:absolute;bottom:12px;left:14px;display:flex;align-items:center;gap:7px;background:rgba(14,17,22,.85);border:1px solid var(--border);border-radius:10px;padding:7px 12px}
+.livet{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--yellow)}
+.livec{font-size:12px;color:#C4CAD2;font-weight:600}
 
-/* map preview */
-.map-hdr { display: flex; align-items: center; justify-content: space-between; padding: 0 18px; margin-bottom: 6px; }
-.map-link { font-size: 12.5px; font-weight: 700; color: var(--yellow); cursor: pointer; }
-.map-wrap { margin: 0 18px 20px; border-radius: 18px; overflow: hidden; cursor: pointer; }
-
-/* mini map svg */
-.mini-map {
-  width: 100%;
-  height: 172px;
-  background: #0F141B;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  position: relative;
-  overflow: hidden;
-}
-.map-grid line { stroke: #161D26; }
-.map-pin { cursor: pointer; transition: transform .15s; }
-.map-pin:hover { transform: scale(1.1); }
-.live-badge {
-  position: absolute;
-  bottom: 12px; left: 14px;
-  display: flex; align-items: center; gap: 7px;
-  background: rgba(14,17,22,.85);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 7px 12px;
-}
-.live-text { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--yellow); }
-.live-count { font-size: 12px; color: #C4CAD2; font-weight: 600; }
-
-/* cat chips */
-.chips-rail {
-  display: flex;
-  gap: 8px;
-  padding: 0 18px 14px;
-  overflow-x: auto;
-}
-.chips-rail::-webkit-scrollbar { display: none; }
-.chip {
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 8px 14px;
-  border-radius: 20px;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--text-sub);
-  white-space: nowrap;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background .15s, color .15s, border-color .15s;
-}
-.chip.active { background: var(--yellow); border-color: var(--yellow); color: var(--bg); }
+/* chips */
+.chips{display:flex;gap:8px;padding:0 18px 14px;overflow-x:auto}
+.chips::-webkit-scrollbar{display:none}
+.chip{border:1px solid var(--border);background:var(--card);padding:8px 14px;border-radius:20px;font-size:12.5px;font-weight:700;color:var(--text-sub);white-space:nowrap;cursor:pointer;flex-shrink:0;transition:background .15s,color .15s,border-color .15s}
+.chip.on{background:var(--yellow);border-color:var(--yellow);color:var(--bg)}
 
 /* feed */
-.feed-hdr { display: flex; align-items: center; justify-content: space-between; padding: 0 18px; margin-bottom: 12px; }
-.feed-count { font-family: var(--mono); font-size: 11.5px; color: var(--text-sub); }
-.feed-list { display: flex; flex-direction: column; gap: 14px; padding: 0 18px 96px; }
+.feedhdr{display:flex;align-items:center;justify-content:space-between;padding:0 18px;margin-bottom:12px}
+.feedct{font-family:var(--mono);font-size:11.5px;color:var(--text-sub)}
+.feedlist{display:flex;flex-direction:column;gap:14px;padding:0 18px 96px}
 
 /* store card */
-.store-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform .15s;
-}
-.store-card:active { transform: scale(.985); }
-.card-image {
-  height: 152px;
-  background: var(--card-input);
-  position: relative;
-  overflow: hidden;
-}
-.card-stripes {
-  position: absolute; inset: 0;
-  background: repeating-linear-gradient(
-    135deg,
-    transparent, transparent 10px,
-    #222A33 10px, #222A33 21px
-  );
-}
-.card-badges { position: absolute; left: 12px; top: 12px; display: flex; gap: 6px; }
-.badge-pct {
-  background: var(--yellow);
-  color: var(--bg);
-  font-size: 15px; font-weight: 800;
-  padding: 5px 10px; border-radius: 9px;
-  letter-spacing: -.3px;
-}
-.badge-pct.urgent { background: var(--orange); color: #fff; }
-.badge-urgent {
-  background: var(--orange);
-  color: #fff;
-  font-size: 11px; font-weight: 700;
-  padding: 5px 8px; border-radius: 9px;
-}
-.card-heart {
-  position: absolute; right: 12px; top: 12px;
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: rgba(4,6,10,.5);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  font-size: 18px;
-  transition: transform .15s;
-}
-.card-heart:active { transform: scale(1.2); }
-.card-photo-lbl {
-  position: absolute; left: 14px; bottom: 9px;
-  font-family: var(--mono); font-size: 10.5px; color: #7A828D;
-}
-.card-body { padding: 15px; }
-.card-name-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-.card-name { font-size: 16.5px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
-.card-dist { font-family: var(--mono); font-size: 12px; color: var(--text-sub); flex-shrink: 0; }
-.card-cat { font-size: 12px; color: var(--text-dim); margin-top: 3px; }
-.card-price-row { display: flex; align-items: baseline; gap: 8px; margin-top: 11px; }
-.card-price { font-size: 20px; font-weight: 800; color: var(--yellow); letter-spacing: -.4px; }
-.card-strike { font-size: 13px; color: var(--text-dim2); text-decoration: line-through; }
-.card-qty-row { display: flex; align-items: center; gap: 9px; margin-top: 13px; }
-.prog-bg { flex: 1; height: 6px; background: #262D38; border-radius: 3px; overflow: hidden; }
-.prog-fill { height: 100%; background: var(--yellow); border-radius: 3px; }
-.card-qty { font-family: var(--mono); font-size: 11px; color: var(--text-sub); }
-.card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
-.card-time { font-family: var(--mono); font-size: 12px; font-weight: 700; }
-.coupon-cta {
-  background: var(--yellow);
-  color: var(--bg);
-  font-size: 13px; font-weight: 800;
-  padding: 10px 17px; border-radius: 12px;
-  cursor: pointer;
-  border: none;
-  transition: opacity .15s;
-}
-.coupon-cta:active { opacity: .8; }
+.scard{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;cursor:pointer;transition:transform .15s}
+.scard:active{transform:scale(.985)}
+.scimg{height:152px;background:var(--card-input);position:relative;overflow:hidden}
+.scstripes{position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent,transparent 10px,#222A33 10px,#222A33 21px)}
+.scbadges{position:absolute;left:12px;top:12px;display:flex;gap:6px}
+.bpct{background:var(--yellow);color:var(--bg);font-size:15px;font-weight:800;padding:5px 10px;border-radius:9px;letter-spacing:-.3px}
+.bpct.urg{background:var(--orange);color:#fff}
+.burg{background:var(--orange);color:#fff;font-size:11px;font-weight:700;padding:5px 8px;border-radius:9px}
+.scheart{position:absolute;right:12px;top:12px;width:36px;height:36px;border-radius:50%;background:rgba(4,6,10,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:transform .15s}
+.scheart:active{transform:scale(1.2)}
+.scphoto{position:absolute;left:14px;bottom:9px;font-family:var(--mono);font-size:10.5px;color:#7A828D}
+.scbody{padding:15px}
+.scnrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.scname{font-size:16.5px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.scdist{font-family:var(--mono);font-size:12px;color:var(--text-sub);flex-shrink:0}
+.sccat{font-size:12px;color:var(--text-dim);margin-top:3px}
+.scprow{display:flex;align-items:baseline;gap:8px;margin-top:11px}
+.scprice{font-size:20px;font-weight:800;color:var(--yellow);letter-spacing:-.4px}
+.scstrike{font-size:13px;color:var(--text-dim2);text-decoration:line-through}
+.scqrow{display:flex;align-items:center;gap:9px;margin-top:13px}
+.pbg{flex:1;height:6px;background:#262D38;border-radius:3px;overflow:hidden}
+.pfill{height:100%;background:var(--yellow);border-radius:3px}
+.scqty{font-family:var(--mono);font-size:11px;color:var(--text-sub)}
+.scfoot{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
+.sctime{font-family:var(--mono);font-size:12px;font-weight:700}
+.ccta{background:var(--yellow);color:var(--bg);font-size:13px;font-weight:800;padding:10px 17px;border-radius:12px;cursor:pointer;border:none;transition:opacity .15s}
+.ccta:active{opacity:.8}
 
-/* ════ STORE DETAIL (slide-over) ════ */
-.detail-screen {
-  position: absolute; inset: 0;
-  background: var(--bg);
-  z-index: 40;
-  display: flex;
-  flex-direction: column;
-  transform: translateX(100%);
-  transition: transform .3s cubic-bezier(.32,.7,.4,1);
-  overflow: hidden;
-}
-.detail-screen.open { transform: translateX(0); }
+/* detail slide */
+.detail{position:absolute;inset:0;background:var(--bg);z-index:40;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.32,.7,.4,1);overflow:hidden}
+.detail.open{transform:translateX(0)}
+.dhero{height:280px;background:var(--card-input);position:relative;overflow:hidden;flex-shrink:0}
+.dstripes{position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent,transparent 13px,#222A33 13px,#222A33 26px)}
+.dback{position:absolute;left:18px;top:56px;width:40px;height:40px;border-radius:50%;background:rgba(4,6,10,.55);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;color:var(--text);border:none}
+.dfav{position:absolute;right:18px;top:56px;width:40px;height:40px;border-radius:50%;background:rgba(4,6,10,.55);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;border:none}
+.dhlbl{position:absolute;left:18px;bottom:10px;font-family:var(--mono);font-size:10.5px;color:#7A828D}
+.dscrl{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 20px 110px;margin-top:-30px;position:relative}
+.dscrl::-webkit-scrollbar{display:none}
+.dbadges{display:flex;align-items:center;gap:7px}
+.dname{font-size:24px;font-weight:800;color:var(--text);letter-spacing:-.6px;margin-top:9px}
+.dmeta{display:flex;align-items:center;gap:10px;margin-top:7px;flex-wrap:wrap}
+.drat{font-size:12.5px;color:var(--yellow);font-weight:700}
+.ddiv{color:#3A434F;font-size:12px}
+.dsub{font-size:12.5px;color:var(--text-sub)}
+.ddist{font-family:var(--mono);font-size:12.5px;color:var(--text-sub)}
+.dbox{margin-top:18px;background:var(--orange-bg);border:1px solid var(--orange-border);border-radius:18px;padding:18px}
+.dboxtop{display:flex;align-items:center;justify-content:space-between}
+.dboxl{display:flex;align-items:baseline;gap:9px}
+.dpct{font-size:30px;font-weight:800;color:var(--yellow);letter-spacing:-1px}
+.dlbl{font-size:14px;color:#8A929D;font-weight:600}
+.cdrow{display:flex;align-items:center;gap:5px}
+.cddot{width:7px;height:7px;border-radius:50%;background:var(--orange);animation:blink 1s infinite}
+.cdval{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--orange-text)}
+.dprow{display:flex;align-items:baseline;gap:9px;margin-top:13px}
+.dprice{font-size:22px;font-weight:800;color:var(--text)}
+.dstrike{font-size:14px;color:#6B5048;text-decoration:line-through}
+.dprog{display:flex;align-items:center;gap:9px;margin-top:15px}
+.dpbg{flex:1;height:7px;background:#2A1C16;border-radius:4px;overflow:hidden}
+.dpfill{height:100%;background:var(--yellow);border-radius:4px}
+.dpqty{font-family:var(--mono);font-size:11.5px;color:var(--yellow);font-weight:700}
+.icard{margin-top:18px;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.irow{display:flex;align-items:center;gap:12px;padding:15px}
+.iico{font-size:18px}
+.itxt{font-size:13.5px;color:#C4CAD2}
+.isep{height:1px;background:var(--card-input)}
+.minimap2{margin-top:14px;height:150px;background:#0F141B;border:1px solid var(--border);border-radius:16px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.rbtn{position:absolute;right:12px;bottom:12px;display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid #3A434F;padding:9px 15px;border-radius:11px;cursor:pointer;font-size:12.5px;font-weight:700;color:var(--text);transition:opacity .15s}
+.rbtn:active{opacity:.7}
+.dbot{position:absolute;bottom:0;left:0;right:0;display:flex;gap:11px;padding:13px 13px 28px;background:var(--bg-dark);border-top:1px solid #1A1F27}
+.favbtn{width:52px;height:52px;border-radius:14px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;transition:transform .15s;flex-shrink:0}
+.favbtn:active{transform:scale(.92)}
+.gcbtn{flex:1;height:52px;background:var(--yellow);border-radius:14px;border:none;font-size:15.5px;font-weight:800;color:var(--bg);cursor:pointer;transition:opacity .15s}
+.gcbtn:active{opacity:.8}
 
-.detail-hero {
-  height: 280px;
-  background: var(--card-input);
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.detail-hero-stripes {
-  position: absolute; inset: 0;
-  background: repeating-linear-gradient(
-    135deg,
-    transparent, transparent 13px,
-    #222A33 13px, #222A33 26px
-  );
-}
-.detail-back {
-  position: absolute; left: 18px; top: 56px;
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  background: rgba(4,6,10,.55);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  font-size: 22px;
-  color: var(--text);
-  border: none;
-  line-height: 1;
-}
-.detail-fav {
-  position: absolute; right: 18px; top: 56px;
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  background: rgba(4,6,10,.55);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  font-size: 20px;
-  border: none;
-}
-.detail-hero-lbl { position: absolute; left: 18px; bottom: 10px; font-family: var(--mono); font-size: 10.5px; color: #7A828D; }
+/* map screen */
+.mapfull{width:100%;height:100%;background:#0F141B;position:relative}
+.maptitle{position:absolute;top:16px;left:18px;font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.4px;z-index:2}
 
-.detail-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 20px 110px; margin-top: -30px; position: relative; }
-.detail-scroll::-webkit-scrollbar { display: none; }
+/* coupons */
+.phdr{padding:8px 18px 14px}
+.ptitle{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.5px}
+.psub{font-size:12.5px;color:var(--text-dim);margin-top:3px}
+.clist{display:flex;flex-direction:column;gap:14px;padding:0 18px 96px}
+.cpcrd{display:flex;background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;cursor:pointer}
+.cstub{width:96px;background:var(--yellow);display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:2px dashed rgba(0,0,0,.15);padding:12px 8px;flex-shrink:0}
+.csbadge{font-size:24px;font-weight:800;color:var(--bg);letter-spacing:-1px;line-height:1}
+.cslbl{font-size:10px;font-weight:700;color:var(--bg);margin-top:2px}
+.cinfo{flex:1;padding:14px}
+.csname{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.cssub{font-size:11.5px;color:var(--text-dim);margin-top:3px}
+.cstime{font-family:var(--mono);font-size:11px;margin-top:8px}
+.usebtn{margin-top:11px;background:var(--bg);border:1px solid #3A3520;border-radius:11px;padding:10px;text-align:center;font-size:13px;font-weight:800;color:var(--yellow);cursor:pointer;width:100%;transition:opacity .15s}
+.usebtn:active{opacity:.75}
+.empty{display:flex;flex-direction:column;align-items:center;padding-top:90px;gap:12px}
+.eico{width:64px;height:64px;border-radius:18px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px}
+.etitle{font-size:15px;font-weight:700;color:var(--text-sub)}
+.edesc{font-size:12.5px;color:var(--text-dim2);text-align:center;line-height:1.6}
 
-.detail-badges { display: flex; align-items: center; gap: 7px; }
-.detail-store-name { font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -.6px; margin-top: 9px; }
-.detail-meta { display: flex; align-items: center; gap: 10px; margin-top: 7px; flex-wrap: wrap; }
-.detail-rating { font-size: 12.5px; color: var(--yellow); font-weight: 700; }
-.detail-divider { color: #3A434F; font-size: 12px; }
-.detail-sub { font-size: 12.5px; color: var(--text-sub); }
-.detail-dist { font-family: var(--mono); font-size: 12.5px; color: var(--text-sub); }
+/* favorites */
+.flist{display:flex;flex-direction:column;gap:12px;padding:0 18px 96px}
+.fcard{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px;cursor:pointer;transition:transform .15s}
+.fcard:active{transform:scale(.985)}
+.fthumb{width:62px;height:62px;border-radius:14px;background:var(--card-input);position:relative;overflow:hidden;flex-shrink:0}
+.ftbadge{position:absolute;left:5px;top:5px;background:var(--yellow);padding:2px 6px;border-radius:7px;font-size:11px;font-weight:800;color:var(--bg)}
+.finfo{flex:1}
+.fname{font-size:15.5px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.fsub{font-size:11.5px;color:var(--text-dim);margin-top:2px}
+.fprice{font-size:14.5px;font-weight:800;color:var(--yellow);margin-top:6px}
+.fhbtn{width:38px;height:38px;border-radius:50%;background:var(--bg);border:none;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;flex-shrink:0;transition:transform .15s}
+.fhbtn:active{transform:scale(1.2)}
 
-.discount-box {
-  margin-top: 18px;
-  background: var(--orange-bg);
-  border: 1px solid var(--orange-border);
-  border-radius: 18px;
-  padding: 18px;
-}
-.discount-top { display: flex; align-items: center; justify-content: space-between; }
-.discount-left { display: flex; align-items: baseline; gap: 9px; }
-.discount-pct { font-size: 30px; font-weight: 800; color: var(--yellow); letter-spacing: -1px; }
-.discount-lbl { font-size: 14px; color: #8A929D; font-weight: 600; }
-.countdown-row { display: flex; align-items: center; gap: 5px; }
-.countdown-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); animation: blink 1s infinite; }
-.countdown-val { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--orange-text); }
-.price-row { display: flex; align-items: baseline; gap: 9px; margin-top: 13px; }
-.d-price { font-size: 22px; font-weight: 800; color: var(--text); }
-.d-strike { font-size: 14px; color: #6B5048; text-decoration: line-through; }
-.d-progress-row { display: flex; align-items: center; gap: 9px; margin-top: 15px; }
-.d-prog-bg { flex: 1; height: 7px; background: #2A1C16; border-radius: 4px; overflow: hidden; }
-.d-prog-fill { height: 100%; background: var(--yellow); border-radius: 4px; }
-.d-qty { font-family: var(--mono); font-size: 11.5px; color: var(--yellow); font-weight: 700; }
+/* owner */
+.oscrl{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:52px}
+.oscrl::-webkit-scrollbar{display:none}
+.oshdr{padding:14px 18px 6px}
+.osname{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.4px}
+.ostrow{display:flex;align-items:center;gap:8px;margin-top:6px}
+.openbdg{display:flex;align-items:center;gap:6px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:20px;padding:4px 10px}
+.odot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+.otxt{font-size:11.5px;font-weight:700;color:var(--green-text)}
+.weath{font-family:var(--mono);font-size:11.5px;color:var(--text-sub)}
+.regcta{display:flex;align-items:center;justify-content:space-between;margin:18px 18px 4px;padding:18px;border-radius:20px;background:var(--yellow);cursor:pointer;transition:opacity .15s}
+.regcta:active{opacity:.88}
+.ctati{font-size:18px;font-weight:800;color:var(--bg);letter-spacing:-.4px}
+.ctasu{font-size:12.5px;font-weight:600;color:#5A4708;margin-top:3px}
+.ctaic{width:46px;height:46px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:var(--yellow);flex-shrink:0}
+.statsrow{display:flex;gap:10px;padding:14px 18px}
+.statcrd{flex:1;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:13px}
+.stlbl{font-size:11px;color:var(--text-dim);font-weight:600}
+.stval{font-size:17px;font-weight:800;color:var(--text);margin-top:5px;letter-spacing:-.4px}
+.stup{font-size:10.5px;font-weight:700;color:var(--green);margin-top:3px}
+.evhdr{display:flex;align-items:center;justify-content:space-between;padding:10px 18px 0}
+.evhdrl{display:flex;align-items:center;gap:7px}
+.evct{font-family:var(--mono);font-size:11.5px;color:var(--text-sub)}
+.evlist{display:flex;flex-direction:column;gap:12px;padding:12px 18px}
+.evcrd{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:15px}
+.evtop{display:flex;align-items:center;gap:12px}
+.evthumb{width:52px;height:52px;border-radius:13px;background:var(--card-input);flex-shrink:0}
+.evnrow{display:flex;align-items:center;gap:7px}
+.evname{font-size:15.5px;font-weight:700;color:var(--text)}
+.evbdg{background:var(--yellow);padding:2px 7px;border-radius:7px;font-size:11px;font-weight:800;color:var(--bg)}
+.evbdg.gift{background:var(--green);color:var(--bg)}
+.evaft{font-size:14px;font-weight:800;color:var(--yellow);margin-top:4px}
+.evbef{font-size:11px;color:var(--text-dim2);text-decoration:line-through}
+.evgift{font-size:13px;font-weight:700;color:var(--green-text);margin-top:4px}
+.evcd{text-align:right}
+.evcdv{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--orange-text)}
+.evcdl{font-size:10.5px;color:var(--text-dim);margin-top:2px}
+.eprow{display:flex;align-items:center;gap:9px;margin-top:13px}
+.epbg{flex:1;height:7px;background:#262D38;border-radius:4px;overflow:hidden}
+.epfill{height:100%;background:var(--yellow);border-radius:4px}
+.epqty{font-family:var(--mono);font-size:11px;color:var(--text-sub)}
+.evbtns{display:flex;gap:8px;margin-top:13px}
+.qrbtn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--yellow);border-radius:12px;padding:11px;cursor:pointer;border:none;font-size:13px;font-weight:800;color:var(--bg);transition:opacity .15s}
+.qrbtn:active{opacity:.8}
+.endbtn{background:var(--card-input);border:1px solid var(--border2);padding:11px 16px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;color:var(--text-sub);transition:opacity .15s}
+.endbtn:active{opacity:.7}
+.coachcrd{margin:14px 18px 18px;background:#161B22;border:1px solid #3A2A4A;border-radius:18px;padding:16px;cursor:pointer}
+.coachhdr{display:flex;align-items:center;gap:8px}
+.coachico{width:26px;height:26px;border-radius:8px;background:var(--purple);display:flex;align-items:center;justify-content:center;font-size:14px}
+.coachtit{font-size:13.5px;font-weight:800;color:var(--purple-text);letter-spacing:-.2px}
+.coachbody{font-size:14.5px;color:#E8E6F0;line-height:1.6;margin-top:11px;font-weight:600}
+.coachl{color:var(--yellow)}
+.coachsub{font-size:12.5px;color:#9A8FB0;margin-top:8px}
+.coachbtn{margin-top:13px;background:#2A1F3A;border:1px solid var(--purple-border);border-radius:12px;padding:11px;text-align:center;font-size:13.5px;font-weight:800;color:var(--purple-text)}
+.otbar{height:82px;background:var(--bg-dark);border-top:1px solid #1A1F27;display:flex;align-items:flex-end;padding-bottom:16px;flex-shrink:0}
+.otab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer}
+.fabwrap{flex:1;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px}
+.fab{width:58px;height:58px;border-radius:50%;background:var(--yellow);border:4px solid var(--bg-dark);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:var(--bg);cursor:pointer;margin-bottom:-8px;transition:transform .15s;line-height:1}
+.fab:active{transform:scale(.92)}
 
-.info-card {
-  margin-top: 18px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-}
-.info-row { display: flex; align-items: center; gap: 12px; padding: 15px; }
-.info-icon { font-size: 18px; }
-.info-text { font-size: 13.5px; color: #C4CAD2; }
-.info-sep { height: 1px; background: var(--card-input); }
+/* ── QR Modal ── */
+.qrmodal{position:absolute;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;background:#15110A;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.7,.4,1)}
+.qrmodal.open{transform:translateY(0)}
+.qrclose{position:absolute;left:18px;top:56px;width:40px;height:40px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text)}
+.qrinstr{font-size:12px;font-weight:700;color:var(--yellow);letter-spacing:1px;margin-top:72px}
+.qrsname{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.4px;margin-top:8px}
+.qrdeal{font-size:14px;color:var(--text-sub);margin-top:5px}
+.qrwrap{margin-top:26px;background:#fff;padding:18px;border-radius:22px}
+.qrgrid{display:flex;flex-wrap:wrap;width:184px;height:184px}
+.qrcell{width:8.76px;height:8.76px}
+.cpnsec{margin-top:20px;text-align:center}
+.cpnlbl{font-size:11px;color:var(--text-dim);font-weight:600}
+.cpnno{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--text);letter-spacing:2px;margin-top:4px}
+.timerbdg{margin-top:24px;display:flex;align-items:center;gap:8px;background:var(--orange-bg);border:1px solid var(--orange-border);border-radius:13px;padding:11px 18px}
+.timdot{width:7px;height:7px;border-radius:50%;background:var(--orange);animation:blink 1s infinite}
+.timlbl{font-size:13px;color:var(--orange-text);font-weight:600}
+.timval{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--yellow)}
+.qrnotice{position:absolute;bottom:38px;font-size:11.5px;color:var(--text-dim2);text-align:center;line-height:1.8;padding:0 40px}
 
-.mini-map-wrap {
-  margin-top: 14px;
-  height: 150px;
-  background: #0F141B;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.route-btn {
-  position: absolute; right: 12px; bottom: 12px;
-  display: flex; align-items: center; gap: 6px;
-  background: var(--bg);
-  border: 1px solid #3A434F;
-  padding: 9px 15px; border-radius: 11px;
-  cursor: pointer;
-  font-size: 12.5px; font-weight: 700; color: var(--text);
-  transition: opacity .15s;
-}
-.route-btn:active { opacity: .7; }
-
-.detail-bottom {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  display: flex;
-  gap: 11px;
-  padding: 13px 13px 28px;
-  background: var(--bg-dark);
-  border-top: 1px solid #1A1F27;
-}
-.fav-btn {
-  width: 52px; height: 52px;
-  border-radius: 14px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 22px;
-  transition: transform .15s;
-  flex-shrink: 0;
-}
-.fav-btn:active { transform: scale(.92); }
-.get-coupon-btn {
-  flex: 1; height: 52px;
-  background: var(--yellow);
-  border-radius: 14px;
-  border: none;
-  font-size: 15.5px; font-weight: 800; color: var(--bg);
-  cursor: pointer;
-  transition: opacity .15s;
-}
-.get-coupon-btn:active { opacity: .8; }
-
-/* ════ CUSTOMER MAP ════ */
-.map-screen-inner {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-}
-.map-full {
-  width: 100%; height: 100%;
-  background: #0F141B;
-  position: relative;
-}
-.map-full-title {
-  position: absolute; top: 16px; left: 18px;
-  font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -.4px;
-  z-index: 2;
-}
-
-/* ════ COUPONS ════ */
-.page-header { padding: 8px 18px 14px; }
-.page-title { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -.5px; }
-.page-sub { font-size: 12.5px; color: var(--text-dim); margin-top: 3px; }
-
-.coupon-list { display: flex; flex-direction: column; gap: 14px; padding: 0 18px 96px; }
-.coupon-card {
-  display: flex;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  overflow: hidden;
-  cursor: pointer;
-}
-.coupon-stub {
-  width: 96px;
-  background: var(--yellow);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  border-right: 2px dashed rgba(0,0,0,.15);
-  padding: 12px 8px;
-  flex-shrink: 0;
-}
-.stub-badge { font-size: 24px; font-weight: 800; color: var(--bg); letter-spacing: -1px; line-height: 1; }
-.stub-label { font-size: 10px; font-weight: 700; color: var(--bg); margin-top: 2px; }
-.coupon-info { flex: 1; padding: 14px; }
-.coupon-store { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
-.coupon-sub2 { font-size: 11.5px; color: var(--text-dim); margin-top: 3px; }
-.coupon-time { font-family: var(--mono); font-size: 11px; margin-top: 8px; }
-.use-btn {
-  margin-top: 11px;
-  background: var(--bg);
-  border: 1px solid #3A3520;
-  border-radius: 11px;
-  padding: 10px;
-  text-align: center;
-  font-size: 13px; font-weight: 800; color: var(--yellow);
-  cursor: pointer;
-  width: 100%;
-  transition: opacity .15s;
-}
-.use-btn:active { opacity: .75; }
-
-.empty-state {
-  display: flex; flex-direction: column;
-  align-items: center; padding-top: 90px; gap: 12px;
-}
-.empty-icon {
-  width: 64px; height: 64px;
-  border-radius: 18px;
-  background: var(--card); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 24px;
-}
-.empty-title { font-size: 15px; font-weight: 700; color: var(--text-sub); }
-.empty-desc { font-size: 12.5px; color: var(--text-dim2); text-align: center; line-height: 1.6; }
-
-/* ════ FAVORITES ════ */
-.fav-list { display: flex; flex-direction: column; gap: 12px; padding: 0 18px 96px; }
-.fav-card {
-  display: flex; align-items: center; gap: 13px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 12px;
-  cursor: pointer;
-  transition: transform .15s;
-}
-.fav-card:active { transform: scale(.985); }
-.fav-thumb {
-  width: 62px; height: 62px;
-  border-radius: 14px;
-  background: var(--card-input);
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.fav-thumb-badge {
-  position: absolute; left: 5px; top: 5px;
-  background: var(--yellow);
-  padding: 2px 6px; border-radius: 7px;
-  font-size: 11px; font-weight: 800; color: var(--bg);
-}
-.fav-info { flex: 1; }
-.fav-name { font-size: 15.5px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
-.fav-sub { font-size: 11.5px; color: var(--text-dim); margin-top: 2px; }
-.fav-price { font-size: 14.5px; font-weight: 800; color: var(--yellow); margin-top: 6px; }
-.fav-heart-btn {
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  background: var(--bg);
-  border: none;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: transform .15s;
-}
-.fav-heart-btn:active { transform: scale(1.2); }
-
-/* ════ OWNER HOME ════ */
-.owner-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-top: 52px; }
-.owner-scroll::-webkit-scrollbar { display: none; }
-.owner-store-hdr { padding: 14px 18px 6px; }
-.owner-name { font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -.4px; }
-.owner-status-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
-.open-badge {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--green-bg);
-  border: 1px solid var(--green-border);
-  border-radius: 20px;
-  padding: 4px 10px;
-}
-.open-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: blink 2s infinite; }
-.open-text { font-size: 11.5px; font-weight: 700; color: var(--green-text); }
-.weather-txt { font-family: var(--mono); font-size: 11.5px; color: var(--text-sub); }
-
-.register-cta {
-  display: flex; align-items: center; justify-content: space-between;
-  margin: 18px 18px 4px;
-  padding: 18px;
-  border-radius: 20px;
-  background: var(--yellow);
-  cursor: pointer;
-  transition: opacity .15s;
-}
-.register-cta:active { opacity: .88; }
-.cta-title { font-size: 18px; font-weight: 800; color: var(--bg); letter-spacing: -.4px; }
-.cta-sub { font-size: 12.5px; font-weight: 600; color: #5A4708; margin-top: 3px; }
-.cta-icon {
-  width: 46px; height: 46px;
-  border-radius: 50%;
-  background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 26px; font-weight: 700; color: var(--yellow);
-  flex-shrink: 0;
-}
-
-.stats-row { display: flex; gap: 10px; padding: 14px 18px; }
-.stat-card {
-  flex: 1;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 13px;
-}
-.stat-lbl { font-size: 11px; color: var(--text-dim); font-weight: 600; }
-.stat-val { font-size: 17px; font-weight: 800; color: var(--text); margin-top: 5px; letter-spacing: -.4px; }
-.stat-up { font-size: 10.5px; font-weight: 700; color: var(--green); margin-top: 3px; }
-.stat-up.yellow { color: var(--yellow); }
-
-.event-hdr { display: flex; align-items: center; justify-content: space-between; padding: 10px 18px 0; }
-.event-hdr-left { display: flex; align-items: center; gap: 7px; }
-.event-count { font-family: var(--mono); font-size: 11.5px; color: var(--text-sub); }
-.event-list { display: flex; flex-direction: column; gap: 12px; padding: 12px 18px; }
-.event-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 15px;
-}
-.event-top { display: flex; align-items: center; gap: 12px; }
-.event-thumb { width: 52px; height: 52px; border-radius: 13px; background: var(--card-input); flex-shrink: 0; }
-.event-name-row { display: flex; align-items: center; gap: 7px; }
-.event-name { font-size: 15.5px; font-weight: 700; color: var(--text); }
-.event-badge { background: var(--yellow); padding: 2px 7px; border-radius: 7px; font-size: 11px; font-weight: 800; color: var(--bg); }
-.event-badge.gift { background: var(--green); color: var(--bg); }
-.event-after { font-size: 14px; font-weight: 800; color: var(--yellow); margin-top: 4px; }
-.event-before { font-size: 11px; color: var(--text-dim2); text-decoration: line-through; }
-.event-gift-text { font-size: 13px; font-weight: 700; color: var(--green-text); margin-top: 4px; }
-.event-cd { text-align: right; }
-.event-cd-val { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--orange-text); }
-.event-cd-lbl { font-size: 10.5px; color: var(--text-dim); margin-top: 2px; }
-.e-prog-row { display: flex; align-items: center; gap: 9px; margin-top: 13px; }
-.e-prog-bg { flex: 1; height: 7px; background: #262D38; border-radius: 4px; overflow: hidden; }
-.e-prog-fill { height: 100%; background: var(--yellow); border-radius: 4px; }
-.e-qty { font-family: var(--mono); font-size: 11px; color: var(--text-sub); }
-.event-btns { display: flex; gap: 8px; margin-top: 13px; }
-.qr-btn {
-  flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
-  background: var(--yellow); border-radius: 12px; padding: 11px;
-  cursor: pointer; border: none;
-  font-size: 13px; font-weight: 800; color: var(--bg);
-  transition: opacity .15s;
-}
-.qr-btn:active { opacity: .8; }
-.end-btn {
-  background: var(--card-input);
-  border: 1px solid var(--border2);
-  padding: 11px 16px; border-radius: 12px;
-  cursor: pointer;
-  font-size: 13px; font-weight: 700; color: var(--text-sub);
-  transition: opacity .15s;
-}
-.end-btn:active { opacity: .7; }
-
-.coach-card {
-  margin: 14px 18px 18px;
-  background: #161B22;
-  border: 1px solid #3A2A4A;
-  border-radius: 18px;
-  padding: 16px;
-  cursor: pointer;
-}
-.coach-hdr { display: flex; align-items: center; gap: 8px; }
-.coach-icon {
-  width: 26px; height: 26px;
-  border-radius: 8px;
-  background: var(--purple);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px;
-}
-.coach-title { font-size: 13.5px; font-weight: 800; color: var(--purple-text); letter-spacing: -.2px; }
-.coach-body { font-size: 14.5px; color: #E8E6F0; line-height: 1.6; margin-top: 11px; font-weight: 600; }
-.coach-hl { color: var(--yellow); }
-.coach-sub { font-size: 12.5px; color: #9A8FB0; margin-top: 8px; }
-.coach-btn {
-  margin-top: 13px;
-  background: #2A1F3A;
-  border: 1px solid var(--purple-border);
-  border-radius: 12px;
-  padding: 11px;
-  text-align: center;
-  font-size: 13.5px; font-weight: 800; color: var(--purple-text);
-}
-
-/* owner tab bar */
-.owner-tab-bar {
-  height: 82px;
-  background: var(--bg-dark);
-  border-top: 1px solid #1A1F27;
-  display: flex;
-  align-items: flex-end;
-  padding-bottom: 16px;
-  flex-shrink: 0;
-  position: relative;
-}
-.o-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
-.fab-wrap { flex: 1; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; }
-.fab {
-  width: 58px; height: 58px;
-  border-radius: 50%;
-  background: var(--yellow);
-  border: 4px solid var(--bg-dark);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px; font-weight: 700; color: var(--bg);
-  cursor: pointer;
-  margin-bottom: -8px;
-  transition: transform .15s;
-  line-height: 1;
-}
-.fab:active { transform: scale(.92); }
+/* ── Login Modal ── */
+.loginmodal{position:absolute;inset:0;z-index:90;display:flex;flex-direction:column;background:var(--bg);transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.7,.4,1)}
+.loginmodal.open{transform:translateY(0)}
+.loginclose{position:absolute;right:18px;top:56px;width:40px;height:40px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text)}
+.logincont{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 28px}
+.loginlogo{font-size:42px;margin-bottom:8px}
+.loginapp{font-size:24px;font-weight:800;color:var(--text);letter-spacing:-.5px}
+.loginsub{font-size:13px;color:var(--text-sub);margin-top:6px;text-align:center;line-height:1.6}
+.loginbtns{width:100%;display:flex;flex-direction:column;gap:12px;margin-top:36px}
+.lbtn{width:100%;height:52px;border-radius:14px;border:none;display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s}
+.lbtn:active{opacity:.85}
+.lbtn-google{background:#fff;color:#222}
+.lbtn-kakao{background:#FEE500;color:#3C1E1E}
+.lbtn-naver{background:#03C75A;color:#fff}
+.lico{font-size:20px}
+.loginskip{margin-top:24px;font-size:13px;color:var(--text-dim);cursor:pointer;text-decoration:underline}
+.loginskip:active{opacity:.6}
+.logindivider{display:flex;align-items:center;gap:12px;margin:20px 0 4px;width:100%}
+.ldline{flex:1;height:1px;background:var(--border)}
+.ldtxt{font-size:11.5px;color:var(--text-dim)}
 
 /* toast */
-.toast {
-  position: absolute;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--text);
-  color: var(--bg);
-  font-size: 13.5px; font-weight: 700;
-  padding: 13px 22px;
-  border-radius: 14px;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity .2s, transform .2s;
-  z-index: 100;
-  pointer-events: none;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast{position:absolute;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);font-size:13.5px;font-weight:700;padding:13px 22px;border-radius:14px;white-space:nowrap;opacity:0;transition:opacity .2s,transform .2s;z-index:100;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* urgent badge */
-.urgent-badge-sm {
-  background: var(--orange);
-  color: #fff;
-  font-size: 11px; font-weight: 700;
-  padding: 5px 9px;
-  border-radius: 9px;
-}
-.cat-badge { font-size: 12px; color: var(--text-sub); }
+/* misc */
+.urgbdg{background:var(--orange);color:#fff;font-size:11px;font-weight:700;padding:5px 9px;border-radius:9px}
+.catbdg{font-size:12px;color:var(--text-sub)}
 </style>
 </head>
 <body>
-
-<div class="phone-shell" id="app">
+<div class="shell" id="app">
 
   <!-- Status bar -->
-  <div class="status-bar">
-    <span class="status-time" id="status-time">9:41</span>
-    <div class="status-icons">
-      <span>●●●</span><span>WiFi</span><span>🔋</span>
+  <div class="sbar">
+    <span class="stime" id="stime">9:41</span>
+    <div class="sicons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+  </div>
+
+  <!-- Role pill -->
+  <div class="role-ov">
+    <div class="role-pill" onclick="toggleDD()">
+      <span class="rpswap">⇅</span>
+      <span class="rplabel" id="rplabel">고객모드</span>
+      <span class="rpchev">›</span>
     </div>
   </div>
 
-  <!-- Role overlay -->
-  <div class="role-overlay">
-    <div class="role-pill" onclick="toggleRoleMenu()">
-      <span class="role-swap">⇅</span>
-      <span class="role-label" id="role-label">고객모드</span>
-      <span class="role-chevron">›</span>
-    </div>
+  <!-- Login / User button -->
+  <div class="login-ov" id="login-ov">
+    <button class="login-btn" id="login-btn" onclick="openLogin()">로그인</button>
   </div>
 
   <!-- Dropdown -->
-  <div class="dropdown-backdrop" id="dropdown-backdrop" onclick="closeRoleMenu()"></div>
-  <div class="dropdown-menu" id="dropdown-menu">
-    <div class="dropdown-title">모드 전환</div>
-    <div class="dropdown-row active" id="row-customer" onclick="selectRole('customer')">
-      <div class="d-icon" style="background:#22303F">👤</div>
-      <div class="d-info">
-        <div class="d-name">고객 모드</div>
-        <div class="d-sub">할인 찾기 · 쿠폰</div>
-      </div>
-      <span class="d-check" id="check-customer">✓</span>
+  <div class="dd-back" id="ddback" onclick="closeDD()"></div>
+  <div class="dd-menu" id="ddmenu">
+    <div class="dd-title">모드 전환</div>
+    <div class="dd-row on" id="rowC" onclick="setRole('customer')">
+      <div class="dico" style="background:#22303F">👤</div>
+      <div><div class="dname">고객 모드</div><div class="dsub">할인 찾기 · 쿠폰</div></div>
+      <span class="dchk" id="chkC">✓</span>
     </div>
-    <div class="dropdown-row" id="row-owner" onclick="selectRole('owner')">
-      <div class="d-icon" style="background:#3A3320">🏪</div>
-      <div class="d-info">
-        <div class="d-name">점주 모드</div>
-        <div class="d-sub">행사 등록 · 매장 관리</div>
-      </div>
-      <span class="d-check" style="display:none" id="check-owner">✓</span>
+    <div class="dd-row" id="rowO" onclick="setRole('owner')">
+      <div class="dico" style="background:#3A3320">🏪</div>
+      <div><div class="dname">점주 모드</div><div class="dsub">행사 등록 · 매장 관리</div></div>
+      <span class="dchk" style="display:none" id="chkO">✓</span>
     </div>
   </div>
 
-  <!-- ══ CUSTOMER SCREENS ══ -->
-  <div class="screen active" id="screen-customer">
+  <!-- ── CUSTOMER ── -->
+  <div class="screen active" id="sc-customer">
+    <div class="scrl" id="c-content">
 
-    <!-- Tab content -->
-    <div class="scroll-area" id="c-content">
-
-      <!-- HOME TAB -->
+      <!-- HOME -->
       <div id="tab-home">
-        <div class="home-header">
-          <div class="loc-label">현재 위치</div>
-          <div class="loc-row">
-            <span class="loc-city">성수동</span>
-            <span class="loc-now">· 지금</span>
+        <div class="hhdr">
+          <div class="lloc">현재 위치</div>
+          <div class="lrow"><span class="lcity">성수동</span><span class="lnow">· 지금</span></div>
+        </div>
+        <div class="sbar2"><span>🔍</span><span class="sich">메뉴, 가게 이름으로 검색</span></div>
+        <div class="sechdr">
+          <div class="secleft"><div class="bdot" style="background:var(--orange)"></div><span class="sectit">마감 임박</span></div>
+          <span class="secrt">지금 안 가면 끝</span>
+        </div>
+        <div class="ural" id="ural"></div>
+        <div class="maphdr"><span class="sectit">지도에서 보기</span><span class="maplink" onclick="switchTab('map')">전체 지도 →</span></div>
+        <div class="mapwrap" onclick="switchTab('map')">
+          <div class="minimap"><svg width="100%" height="100%" id="mmsvg"></svg>
+            <div class="livebadge"><span class="livet">LIVE</span><span class="livec">내 주변 8곳 할인 중</span></div>
           </div>
         </div>
-
-        <div class="search-bar">
-          <span class="search-icon">🔍</span>
-          <span class="search-ph">메뉴, 가게 이름으로 검색</span>
-        </div>
-
-        <div class="sec-hdr">
-          <div class="sec-left">
-            <div class="blink-dot" style="background:var(--orange)"></div>
-            <span class="sec-title">마감 임박</span>
-          </div>
-          <span class="sec-right">지금 안 가면 끝</span>
-        </div>
-
-        <div class="urgent-rail" id="urgent-rail"></div>
-
-        <div class="map-hdr">
-          <span class="sec-title">지도에서 보기</span>
-          <span class="map-link" onclick="switchTab('map')">전체 지도 →</span>
-        </div>
-        <div class="map-wrap" onclick="switchTab('map')">
-          <div class="mini-map">
-            <svg width="100%" height="100%" id="mini-map-svg"></svg>
-            <div class="live-badge">
-              <span class="live-text">LIVE</span>
-              <span class="live-count">내 주변 8곳 할인 중</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="chips-rail" id="cat-chips"></div>
-
-        <div class="feed-hdr">
-          <span class="sec-title">내 주변 실시간 할인</span>
-          <span class="feed-count" id="feed-count">8곳</span>
-        </div>
-        <div class="feed-list" id="store-feed"></div>
+        <div class="chips" id="cchips"></div>
+        <div class="feedhdr"><span class="sectit">내 주변 실시간 할인</span><span class="feedct" id="feedct">8곳</span></div>
+        <div class="feedlist" id="feedlist"></div>
       </div>
 
-      <!-- MAP TAB -->
+      <!-- MAP -->
       <div id="tab-map" style="display:none">
-        <div class="map-screen-inner" style="height:calc(100dvh - 170px); max-height:762px;">
-          <div class="map-full">
-            <svg width="100%" height="100%" id="map-full-svg"></svg>
-            <div class="map-full-title">지도</div>
-            <div class="live-badge" style="z-index:2">
-              <span class="live-text">LIVE</span>
-              <span class="live-count">내 주변 8곳 할인 중</span>
-            </div>
+        <div style="height:calc(100dvh - 170px);max-height:762px;position:relative">
+          <div class="mapfull"><svg width="100%" height="100%" id="fmsvg"></svg>
+            <div class="maptitle">지도</div>
+            <div class="livebadge" style="z-index:2"><span class="livet">LIVE</span><span class="livec">내 주변 8곳 할인 중</span></div>
           </div>
         </div>
       </div>
 
-      <!-- COUPONS TAB -->
+      <!-- COUPONS -->
       <div id="tab-coupons" style="display:none">
-        <div class="page-header">
-          <div class="page-title">쿠폰함</div>
-          <div class="page-sub" id="coupon-sub"></div>
-        </div>
-        <div id="coupon-list-wrap"></div>
+        <div class="phdr"><div class="ptitle">쿠폰함</div><div class="psub" id="cpnsub"></div></div>
+        <div id="cpnwrap"></div>
       </div>
 
-      <!-- FAVORITES TAB -->
+      <!-- FAVORITES -->
       <div id="tab-favorites" style="display:none">
-        <div class="page-header">
-          <div class="page-title">즐겨찾기</div>
-          <div class="page-sub" id="fav-sub"></div>
-        </div>
-        <div class="fav-list" id="fav-list"></div>
+        <div class="phdr"><div class="ptitle">즐겨찾기</div><div class="psub" id="favsub"></div></div>
+        <div class="flist" id="favlist"></div>
       </div>
     </div>
 
-    <!-- Tab bar -->
-    <div class="tab-bar">
-      <div class="tab" onclick="switchTab('home')" id="ctab-home">
-        <div class="tab-icon active-icon">⌂</div>
-        <div class="tab-label active-label">홈</div>
-      </div>
-      <div class="tab" onclick="switchTab('map')" id="ctab-map">
-        <div class="tab-icon">📍</div>
-        <div class="tab-label">지도</div>
-      </div>
+    <div class="tbar">
+      <div class="tab" onclick="switchTab('home')" id="ctab-home"><div class="ti act">⌂</div><div class="tl act">홈</div></div>
+      <div class="tab" onclick="switchTab('map')" id="ctab-map"><div class="ti">📍</div><div class="tl">지도</div></div>
       <div class="tab" onclick="switchTab('coupons')" id="ctab-coupons">
-        <div class="tab-icon">🎫</div>
-        <div class="tab-label">쿠폰함</div>
-        <div class="coupon-badge" id="coupon-badge" style="display:none"><span id="coupon-badge-n"></span></div>
+        <div class="ti">🎫</div><div class="tl">쿠폰함</div>
+        <div class="cbadge" id="cbadge"><span id="cbadgen"></span></div>
       </div>
-      <div class="tab" onclick="switchTab('favorites')" id="ctab-favorites">
-        <div class="tab-icon">♡</div>
-        <div class="tab-label">즐겨찾기</div>
-      </div>
+      <div class="tab" onclick="switchTab('favorites')" id="ctab-favorites"><div class="ti">♡</div><div class="tl">즐겨찾기</div></div>
     </div>
   </div>
 
-  <!-- ══ OWNER SCREEN ══ -->
-  <div class="screen" id="screen-owner">
-    <div class="owner-scroll" id="owner-content">
-      <div class="owner-store-hdr">
-        <div class="owner-name">성수베이크하우스</div>
-        <div class="owner-status-row">
-          <div class="open-badge"><div class="open-dot"></div><span class="open-text">영업중</span></div>
-          <span class="weather-txt">☂ 18° · 비</span>
-        </div>
+  <!-- ── OWNER ── -->
+  <div class="screen" id="sc-owner">
+    <div class="oscrl">
+      <div class="oshdr"><div class="osname">성수베이크하우스</div>
+        <div class="ostrow"><div class="openbdg"><div class="odot"></div><span class="otxt">영업중</span></div><span class="weath">☂ 18° · 비</span></div>
       </div>
-
-      <div class="register-cta" onclick="flash('30초 행사 등록 기능은 앱에서 사용하세요')">
-        <div>
-          <div class="cta-title">30초 행사 등록</div>
-          <div class="cta-sub">사진만 찍으면 AI가 등록을 도와드려요</div>
-        </div>
-        <div class="cta-icon">+</div>
+      <div class="regcta" onclick="flash('행사 등록 화면을 열게요')">
+        <div><div class="ctati">30초 행사 등록</div><div class="ctasu">사진만 찍으면 AI가 등록을 도와드려요</div></div>
+        <div class="ctaic">+</div>
       </div>
-
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-lbl">오늘 매출</div>
-          <div class="stat-val">₩428K</div>
-          <div class="stat-up">▲ 23%</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-lbl">방문</div>
-          <div class="stat-val">37명</div>
-          <div class="stat-up">▲ 12%</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-lbl">쿠폰 사용</div>
-          <div class="stat-val">21건</div>
-          <div class="stat-up yellow">진행중</div>
-        </div>
+      <div class="statsrow">
+        <div class="statcrd"><div class="stlbl">오늘 매출</div><div class="stval">₩428K</div><div class="stup">▲ 23%</div></div>
+        <div class="statcrd"><div class="stlbl">방문</div><div class="stval">37명</div><div class="stup">▲ 12%</div></div>
+        <div class="statcrd"><div class="stlbl">쿠폰 사용</div><div class="stval">21건</div><div class="stup" style="color:var(--yellow)">진행중</div></div>
       </div>
-
-      <div class="event-hdr">
-        <div class="event-hdr-left">
-          <div class="blink-dot" style="background:var(--yellow)"></div>
-          <span class="sec-title">진행 중인 행사</span>
-        </div>
-        <span class="event-count" id="event-count"></span>
+      <div class="evhdr">
+        <div class="evhdrl"><div class="bdot" style="background:var(--yellow)"></div><span class="sectit">진행 중인 행사</span></div>
+        <span class="evct" id="evct"></span>
       </div>
-      <div class="event-list" id="event-list"></div>
-
-      <div class="coach-card" onclick="flash('AI 코치 추천 행사로 이동할게요')">
-        <div class="coach-hdr">
-          <div class="coach-icon">✦</div>
-          <span class="coach-title">AI 점주코치</span>
-        </div>
-        <div class="coach-body">
-          지금 비가 와요. <span class="coach-hl">14~17시 베이커리</span>는 30% 할인 시 평균 방문이 <span class="coach-hl">1.8배</span> 늘었어요.
-        </div>
-        <div class="coach-sub">소금빵 마감 할인을 추천해요.</div>
-        <div class="coach-btn">추천 행사 바로 등록</div>
+      <div class="evlist" id="evlist"></div>
+      <div class="coachcrd" onclick="flash('AI 코치 추천으로 이동할게요')">
+        <div class="coachhdr"><div class="coachico">✦</div><span class="coachtit">AI 점주코치</span></div>
+        <div class="coachbody">지금 비가 와요. <span class="coachl">14~17시 베이커리</span>는 30% 할인 시 평균 방문이 <span class="coachl">1.8배</span> 늘었어요.</div>
+        <div class="coachsub">소금빵 마감 할인을 추천해요.</div>
+        <div class="coachbtn">추천 행사 바로 등록</div>
       </div>
     </div>
-
-    <!-- Owner tab bar -->
-    <div class="owner-tab-bar">
-      <div class="o-tab" onclick="flash('홈')">
-        <div style="font-size:22px">⌂</div>
-        <div style="font-size:10px;font-weight:600;color:var(--yellow)">홈</div>
-      </div>
-      <div class="o-tab" onclick="flash('통계')">
-        <div style="font-size:22px;filter:grayscale(1);opacity:.4">📊</div>
-        <div style="font-size:10px;font-weight:600;color:var(--text-dim2)">통계</div>
-      </div>
-      <div class="fab-wrap">
-        <div class="fab" onclick="flash('행사 등록 화면을 열게요')">+</div>
-      </div>
-      <div class="o-tab" onclick="flash('AI코치')">
-        <div style="font-size:22px;filter:grayscale(1);opacity:.4">✦</div>
-        <div style="font-size:10px;font-weight:600;color:var(--text-dim2)">AI코치</div>
-      </div>
-      <div class="o-tab" onclick="flash('내매장')">
-        <div style="font-size:22px;filter:grayscale(1);opacity:.4">🏪</div>
-        <div style="font-size:10px;font-weight:600;color:var(--text-dim2)">내매장</div>
-      </div>
+    <div class="otbar">
+      <div class="otab" onclick="flash('홈')"><div style="font-size:22px">⌂</div><div style="font-size:10px;font-weight:600;color:var(--yellow)">홈</div></div>
+      <div class="otab" onclick="flash('통계')"><div style="font-size:22px;opacity:.35">📊</div><div style="font-size:10px;font-weight:600;color:var(--text-dim2)">통계</div></div>
+      <div class="fabwrap"><div class="fab" onclick="flash('행사 등록')">+</div></div>
+      <div class="otab" onclick="flash('AI코치')"><div style="font-size:22px;opacity:.35">✦</div><div style="font-size:10px;font-weight:600;color:var(--text-dim2)">AI코치</div></div>
+      <div class="otab" onclick="flash('내매장')"><div style="font-size:22px;opacity:.35">🏪</div><div style="font-size:10px;font-weight:600;color:var(--text-dim2)">내매장</div></div>
     </div>
   </div>
 
-  <!-- ══ STORE DETAIL (slide-over) ══ -->
-  <div class="detail-screen" id="detail-screen">
-    <div class="detail-hero">
-      <div class="detail-hero-stripes"></div>
-      <button class="detail-back" onclick="closeDetail()">‹</button>
-      <button class="detail-fav" id="detail-fav-btn" onclick="toggleDetailFav()"></button>
-      <div class="detail-hero-lbl">매장 사진</div>
+  <!-- ── STORE DETAIL ── -->
+  <div class="detail" id="detail">
+    <div class="dhero"><div class="dstripes"></div>
+      <button class="dback" onclick="closeDetail()">‹</button>
+      <button class="dfav" id="dfav" onclick="toggleDFav()"></button>
+      <div class="dhlbl">매장 사진</div>
     </div>
-
-    <div class="detail-scroll">
-      <div class="detail-badges" id="detail-badges"></div>
-      <div class="detail-store-name" id="detail-name"></div>
-      <div class="detail-meta" id="detail-meta"></div>
-
-      <div class="discount-box">
-        <div class="discount-top">
-          <div class="discount-left">
-            <span class="discount-pct" id="d-pct"></span>
-            <span class="discount-lbl">할인</span>
-          </div>
-          <div class="countdown-row" id="d-countdown" style="display:none">
-            <div class="countdown-dot"></div>
-            <span class="countdown-val" id="d-countdown-val"></span>
-          </div>
+    <div class="dscrl">
+      <div class="dbadges" id="dbadges"></div>
+      <div class="dname" id="dname"></div>
+      <div class="dmeta" id="dmeta"></div>
+      <div class="dbox">
+        <div class="dboxtop">
+          <div class="dboxl"><span class="dpct" id="dpct"></span><span class="dlbl">할인</span></div>
+          <div class="cdrow" id="dcd" style="display:none"><div class="cddot"></div><span class="cdval" id="dcdval"></span></div>
         </div>
-        <div class="price-row">
-          <span class="d-price" id="d-price"></span>
-          <span class="d-strike" id="d-strike"></span>
-        </div>
-        <div class="d-progress-row">
-          <div class="d-prog-bg"><div class="d-prog-fill" id="d-prog"></div></div>
-          <span class="d-qty" id="d-qty"></span>
-        </div>
+        <div class="dprow"><span class="dprice" id="dprice"></span><span class="dstrike" id="dstrike"></span></div>
+        <div class="dprog"><div class="dpbg"><div class="dpfill" id="dpfill"></div></div><span class="dpqty" id="dpqty"></span></div>
       </div>
-
-      <div class="info-card">
-        <div class="info-row">
-          <span class="info-icon">⏰</span>
-          <span class="info-text" id="d-hours"></span>
-        </div>
-        <div class="info-sep"></div>
-        <div class="info-row">
-          <span class="info-icon">📍</span>
-          <span class="info-text" id="d-addr"></span>
-        </div>
+      <div class="icard">
+        <div class="irow"><span class="iico">⏰</span><span class="itxt" id="dhours"></span></div>
+        <div class="isep"></div>
+        <div class="irow"><span class="iico">📍</span><span class="itxt" id="daddr"></span></div>
       </div>
-
-      <div class="mini-map-wrap">
-        <svg width="100%" height="100%" id="detail-map-svg" style="position:absolute;inset:0"></svg>
-        <button class="route-btn" onclick="flash('길안내를 시작할게요')">✈ 길찾기</button>
+      <div class="minimap2"><svg width="100%" height="100%" id="dmsvg" style="position:absolute;inset:0"></svg>
+        <button class="rbtn" onclick="flash('길안내를 시작할게요')">✈ 길찾기</button>
       </div>
     </div>
-
-    <div class="detail-bottom">
-      <button class="fav-btn" id="detail-fav-bottom" onclick="toggleDetailFav()"></button>
-      <button class="get-coupon-btn" id="detail-coupon-btn" onclick="handleCoupon()"></button>
+    <div class="dbot">
+      <button class="favbtn" id="dfavbot" onclick="toggleDFav()"></button>
+      <button class="gcbtn" id="gcbtn" onclick="handleCoupon()"></button>
     </div>
   </div>
 
-  <!-- Toast -->
+  <!-- ── QR Modal ── -->
+  <div class="qrmodal" id="qrmodal">
+    <button class="qrclose" onclick="closeQR()">✕</button>
+    <div class="qrinstr">매장 직원에게 보여주세요</div>
+    <div class="qrsname" id="qrsname"></div>
+    <div class="qrdeal" id="qrdeal"></div>
+    <div class="qrwrap"><div class="qrgrid" id="qrgrid"></div></div>
+    <div class="cpnsec"><div class="cpnlbl">쿠폰 번호</div><div class="cpnno" id="cpnno"></div></div>
+    <div class="timerbdg"><div class="timdot"></div><span class="timlbl">유효시간</span><span class="timval" id="timval"></span></div>
+    <div class="qrnotice">직원이 QR 또는 번호를 확인하면<br>자동으로 수량이 차감됩니다</div>
+  </div>
+
+  <!-- ── Login Modal ── -->
+  <div class="loginmodal" id="loginmodal">
+    <button class="loginclose" onclick="closeLogin()">✕</button>
+    <div class="logincont">
+      <div class="loginlogo">🏘</div>
+      <div class="loginapp">동네할인</div>
+      <div class="loginsub">로그인하면 쿠폰 저장, 즐겨찾기,<br>맞춤 알림을 받을 수 있어요</div>
+      <div class="loginbtns">
+        <button class="lbtn lbtn-google" onclick="socialLogin('google')">
+          <span class="lico">🔵</span> Google로 계속하기
+        </button>
+        <button class="lbtn lbtn-kakao" onclick="socialLogin('kakao')">
+          <span class="lico">💬</span> 카카오로 계속하기
+        </button>
+        <button class="lbtn lbtn-naver" onclick="socialLogin('naver')">
+          <span class="lico">🟢</span> 네이버로 계속하기
+        </button>
+      </div>
+      <div class="logindivider"><div class="ldline"></div><span class="ldtxt">또는</span><div class="ldline"></div></div>
+      <div class="loginskip" onclick="closeLogin()">로그인 없이 둘러보기</div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 </div>
 
 <script>
-// ── Data ──────────────────────────────────────────────────
-const STORES = [
-  { id:'s1', name:'성수베이크하우스', cat:'베이커리', event:'마감 떨이', closeText:'오늘 21:00까지', dist:350, pct:50, type:'pct', before:12000, after:6000, qty:8, total:40, urgent:true, secLeft:3120, rating:4.7, addr:'성동구 성수이로 12', hours:'매일 08:00 - 21:00' },
-  { id:'s2', name:'규카츠 도쿄 성수점', cat:'일식', event:'런치 한가 할인', closeText:'오늘 15:00까지', dist:420, pct:30, type:'pct', before:13000, after:9100, qty:12, total:30, urgent:false, secLeft:0, rating:4.5, addr:'성동구 아차산로 5', hours:'매일 11:00 - 21:30' },
-  { id:'s3', name:'카페 노트', cat:'카페·디저트', event:'1+1 이벤트', closeText:'오늘 22:00까지', dist:620, pct:0, type:'1+1', before:5500, after:5500, qty:5, total:20, urgent:false, secLeft:0, rating:4.8, addr:'성동구 연무장길 33', hours:'매일 10:00 - 22:00' },
-  { id:'s4', name:'정성정육점', cat:'정육·청과', event:'마감 세일', closeText:'오늘 20:00까지', dist:780, pct:40, type:'pct', before:25000, after:15000, qty:6, total:15, urgent:true, secLeft:1860, rating:4.6, addr:'성동구 성수일로 88', hours:'매일 09:00 - 20:00' },
-  { id:'s5', name:'샐러디 왕십리점', cat:'샐러드', event:'오후 할인', closeText:'오늘 18:00까지', dist:1100, pct:25, type:'pct', before:9800, after:7350, qty:20, total:40, urgent:false, secLeft:0, rating:4.4, addr:'성동구 왕십리로 410', hours:'매일 10:30 - 21:00' },
-  { id:'s6', name:'더진국 국밥', cat:'한식', event:'저녁 전 할인', closeText:'오늘 17:00까지', dist:890, pct:20, type:'pct', before:9000, after:7200, qty:14, total:30, urgent:false, secLeft:0, rating:4.6, addr:'성동구 고산자로 21', hours:'매일 08:00 - 21:00' },
-  { id:'s7', name:'올리브청과', cat:'정육·청과', event:'마감 세일', closeText:'오늘 21:30까지', dist:510, pct:35, type:'pct', before:8000, after:5200, qty:9, total:25, urgent:true, secLeft:2640, rating:4.3, addr:'성동구 성수이로 7', hours:'매일 09:00 - 21:30' },
-  { id:'s8', name:'블레이즈 버거', cat:'버거', event:'사이드 증정', closeText:'오늘 21:00까지', dist:1300, pct:30, type:'pct', before:11000, after:7700, qty:7, total:20, urgent:false, secLeft:0, rating:4.7, addr:'성동구 광나루로 4', hours:'매일 11:00 - 22:00' },
+/* ── Data ── */
+const STORES=[
+  {id:'s1',name:'성수베이크하우스',cat:'베이커리',event:'마감 떨이',closeText:'오늘 21:00까지',dist:350,pct:50,type:'pct',before:12000,after:6000,qty:8,total:40,urgent:true,secLeft:3120,rating:4.7,addr:'성동구 성수이로 12',hours:'매일 08:00 - 21:00'},
+  {id:'s2',name:'규카츠 도쿄 성수점',cat:'일식',event:'런치 한가 할인',closeText:'오늘 15:00까지',dist:420,pct:30,type:'pct',before:13000,after:9100,qty:12,total:30,urgent:false,secLeft:0,rating:4.5,addr:'성동구 아차산로 5',hours:'매일 11:00 - 21:30'},
+  {id:'s3',name:'카페 노트',cat:'카페·디저트',event:'1+1 이벤트',closeText:'오늘 22:00까지',dist:620,pct:0,type:'1+1',before:5500,after:5500,qty:5,total:20,urgent:false,secLeft:0,rating:4.8,addr:'성동구 연무장길 33',hours:'매일 10:00 - 22:00'},
+  {id:'s4',name:'정성정육점',cat:'정육·청과',event:'마감 세일',closeText:'오늘 20:00까지',dist:780,pct:40,type:'pct',before:25000,after:15000,qty:6,total:15,urgent:true,secLeft:1860,rating:4.6,addr:'성동구 성수일로 88',hours:'매일 09:00 - 20:00'},
+  {id:'s5',name:'샐러디 왕십리점',cat:'샐러드',event:'오후 할인',closeText:'오늘 18:00까지',dist:1100,pct:25,type:'pct',before:9800,after:7350,qty:20,total:40,urgent:false,secLeft:0,rating:4.4,addr:'성동구 왕십리로 410',hours:'매일 10:30 - 21:00'},
+  {id:'s6',name:'더진국 국밥',cat:'한식',event:'저녁 전 할인',closeText:'오늘 17:00까지',dist:890,pct:20,type:'pct',before:9000,after:7200,qty:14,total:30,urgent:false,secLeft:0,rating:4.6,addr:'성동구 고산자로 21',hours:'매일 08:00 - 21:00'},
+  {id:'s7',name:'올리브청과',cat:'정육·청과',event:'마감 세일',closeText:'오늘 21:30까지',dist:510,pct:35,type:'pct',before:8000,after:5200,qty:9,total:25,urgent:true,secLeft:2640,rating:4.3,addr:'성동구 성수이로 7',hours:'매일 09:00 - 21:30'},
+  {id:'s8',name:'블레이즈 버거',cat:'버거',event:'사이드 증정',closeText:'오늘 21:00까지',dist:1300,pct:30,type:'pct',before:11000,after:7700,qty:7,total:20,urgent:false,secLeft:0,rating:4.7,addr:'성동구 광나루로 4',hours:'매일 11:00 - 22:00'},
+];
+const PINS=[{id:'s1',lx:30,ty:34},{id:'s7',lx:48,ty:22},{id:'s2',lx:72,ty:31},{id:'s3',lx:22,ty:60},{id:'s4',lx:63,ty:54},{id:'s6',lx:54,ty:70}];
+const CATS=['전체','베이커리','카페·디저트','한식','일식','정육·청과','샐러드','버거'];
+const EVENTS=[
+  {id:'e1',name:'소금빵',pct:50,sale:1750,reg:3500,gift:'',type:'discount',qty:8,total:40,secLeft:3120},
+  {id:'e2',name:'에그타르트',pct:0,sale:3000,reg:3000,gift:'아메리카노 1잔',type:'gift',qty:11,total:25,secLeft:1500},
 ];
 
-const MAP_PINS = [
-  { id:'s1', lx:30, ty:34 }, { id:'s7', lx:48, ty:22 }, { id:'s2', lx:72, ty:31 },
-  { id:'s3', lx:22, ty:60 }, { id:'s4', lx:63, ty:54 }, { id:'s6', lx:54, ty:70 },
-];
+/* ── State ── */
+const S={role:'customer',cTab:'home',cat:'전체',coupons:new Set(['s5']),favs:new Set(['s2','s3']),selId:null,tick:0,events:[...EVENTS],ddOpen:false,user:null,qrTick:0};
 
-const CATS = ['전체','베이커리','카페·디저트','한식','일식','정육·청과','샐러드','버거'];
+/* ── Helpers ── */
+const won=n=>n.toLocaleString('ko-KR');
+const dist=m=>m>=1000?`${(m/1e3).toFixed(1)}km`:`${m}m`;
+const badge=s=>s.type==='1+1'?'1+1':`${s.pct}%`;
+const after=s=>s.type==='1+1'?`${won(s.before)}원 · 1+1`:`${won(s.after)}원`;
+const fmt=t=>{if(t<0)t=0;const h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60,p=x=>String(x).padStart(2,'0');return h>0?`${h}:${p(m)}:${p(s)}`:`${p(m)}:${p(s)}`};
+const couponNo=id=>{let h=0;for(const c of id+'NEIGHBOR')h=(h*31+c.charCodeAt(0))%900000;const n=100000+h;return`ND-${String(n).slice(0,3)}-${String(n).slice(3)}`};
 
-const EVENTS = [
-  { id:'e1', name:'소금빵', pct:50, sale:1750, reg:3500, gift:'', type:'discount', qty:8, total:40, secLeft:3120 },
-  { id:'e2', name:'에그타르트', pct:0, sale:3000, reg:3000, gift:'아메리카노 1잔', type:'gift', qty:11, total:25, secLeft:1500 },
-];
+/* ── Toast ── */
+let tt;
+function flash(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1800)}
 
-// ── State ─────────────────────────────────────────────────
-let state = {
-  role: 'customer',
-  cTab: 'home',
-  category: '전체',
-  coupons: new Set(['s5']),
-  favorites: new Set(['s2','s3']),
-  selectedId: null,
-  tick: 0,
-  events: [...EVENTS],
-  roleMenuOpen: false,
-};
+/* ── Clock ── */
+function tick(){S.tick++;updateCDs()}
+setInterval(tick,1000);
+function updateClock(){const n=new Date(),h=n.getHours(),m=String(n.getMinutes()).padStart(2,'0');document.getElementById('stime').textContent=`${h}:${m}`}
+updateClock();setInterval(updateClock,10000);
 
-// ── Helpers ───────────────────────────────────────────────
-const won = n => n.toLocaleString('ko-KR');
-const distText = m => m >= 1000 ? `${(m/1000).toFixed(1)}km` : `${m}m`;
-const badge = s => s.type === '1+1' ? '1+1' : `${s.pct}%`;
-const afterText = s => s.type === '1+1' ? `${won(s.before)}원 · 1+1` : `${won(s.after)}원`;
-const fmtSec = t => {
-  if(t<0) t=0;
-  const h=Math.floor(t/3600), m=Math.floor((t%3600)/60), s=t%60;
-  const p=x=>String(x).padStart(2,'0');
-  return h>0?`${h}:${p(m)}:${p(s)}`:`${p(m)}:${p(s)}`;
-};
-
-// ── Toast ─────────────────────────────────────────────────
-let toastTimer;
-function flash(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
-}
-
-// ── Tick ──────────────────────────────────────────────────
-setInterval(() => {
-  state.tick++;
-  updateCountdowns();
-}, 1000);
-
-function updateCountdowns() {
-  document.querySelectorAll('[data-countdown]').forEach(el => {
-    const id = el.dataset.countdown;
-    const store = STORES.find(s => s.id === id);
-    if (!store || !store.urgent) return;
-    const rem = Math.max(0, store.secLeft - state.tick);
-    el.textContent = fmtSec(rem);
+function updateCDs(){
+  document.querySelectorAll('[data-cd]').forEach(el=>{
+    const s=STORES.find(x=>x.id===el.dataset.cd);
+    if(s&&s.urgent)el.textContent=fmt(Math.max(0,s.secLeft-S.tick));
   });
-  // detail countdown
-  if (state.selectedId) {
-    const s = STORES.find(x => x.id === state.selectedId);
-    const el = document.getElementById('d-countdown-val');
-    if (s && s.urgent && el) el.textContent = fmtSec(Math.max(0, s.secLeft - state.tick));
-  }
-  // event countdowns
-  EVENTS.forEach(e => {
-    const el = document.getElementById(`ecd-${e.id}`);
-    if (el) el.textContent = fmtSec(Math.max(0, e.secLeft - state.tick));
+  if(S.selId){const s=STORES.find(x=>x.id===S.selId);const el=document.getElementById('dcdval');if(s&&s.urgent&&el)el.textContent=fmt(Math.max(0,s.secLeft-S.tick))}
+  EVENTS.forEach(e=>{const el=document.getElementById('ecd-'+e.id);if(el)el.textContent=fmt(Math.max(0,e.secLeft-S.tick))});
+  const qv=document.getElementById('timval');if(qv&&document.getElementById('qrmodal').classList.contains('open')){const rem=Math.max(0,300-(S.tick-S.qrTick));qv.textContent=fmt(rem)}
+}
+
+/* ── Role ── */
+function toggleDD(){S.ddOpen=!S.ddOpen;document.getElementById('ddback').classList.toggle('open',S.ddOpen);document.getElementById('ddmenu').classList.toggle('open',S.ddOpen)}
+function closeDD(){S.ddOpen=false;document.getElementById('ddback').classList.remove('open');document.getElementById('ddmenu').classList.remove('open')}
+function setRole(r){S.role=r;closeDD();document.getElementById('rplabel').textContent=r==='customer'?'고객모드':'점주모드';['customer','owner'].forEach(x=>{document.getElementById('sc-'+x).classList.toggle('active',x===r)});document.getElementById('rowC').classList.toggle('on',r==='customer');document.getElementById('rowO').classList.toggle('yon',r==='owner');document.getElementById('chkC').style.display=r==='customer'?'':'none';document.getElementById('chkO').style.display=r==='owner'?'':'none'}
+
+/* ── Login ── */
+function openLogin(){document.getElementById('loginmodal').classList.add('open')}
+function closeLogin(){document.getElementById('loginmodal').classList.remove('open')}
+function socialLogin(provider){
+  const names={google:'Google',kakao:'카카오',naver:'네이버'};
+  S.user={name:`${names[provider]} 사용자`,provider};
+  closeLogin();
+  document.getElementById('login-btn').style.display='none';
+  const ov=document.getElementById('login-ov');
+  ov.innerHTML=`<div class="user-avatar" onclick="flash('${S.user.name}님 로그인 중')">😊</div>`;
+  flash(`${S.user.name}님, 환영해요! 🎉`);
+}
+function updateLoginUI(){
+  if(S.user){document.getElementById('login-btn').style.display='none'}
+}
+
+/* ── Tabs ── */
+function switchTab(tab){
+  S.cTab=tab;
+  ['home','map','coupons','favorites'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display=t===tab?'':'none';
+    const el=document.getElementById('ctab-'+t);
+    el.querySelectorAll('.ti').forEach(i=>i.classList.toggle('act',t===tab));
+    el.querySelectorAll('.tl').forEach(l=>l.classList.toggle('act',t===tab));
   });
+  if(tab==='coupons')renderCoupons();
+  if(tab==='favorites')renderFavs();
+  if(tab==='map')renderMap('fmsvg',document.getElementById('fmsvg').parentElement.clientHeight||600);
 }
 
-// ── Time display ──────────────────────────────────────────
-function updateClock() {
-  const now = new Date();
-  const h = now.getHours(), m = String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('status-time').textContent = `${h}:${m}`;
-}
-updateClock();
-setInterval(updateClock, 10000);
-
-// ── Role menu ─────────────────────────────────────────────
-function toggleRoleMenu() {
-  state.roleMenuOpen = !state.roleMenuOpen;
-  document.getElementById('dropdown-backdrop').classList.toggle('open', state.roleMenuOpen);
-  document.getElementById('dropdown-menu').classList.toggle('open', state.roleMenuOpen);
-}
-function closeRoleMenu() {
-  state.roleMenuOpen = false;
-  document.getElementById('dropdown-backdrop').classList.remove('open');
-  document.getElementById('dropdown-menu').classList.remove('open');
-}
-function selectRole(role) {
-  state.role = role;
-  closeRoleMenu();
-  document.getElementById('role-label').textContent = role === 'customer' ? '고객모드' : '점주모드';
-  document.getElementById('screen-customer').classList.toggle('active', role === 'customer');
-  document.getElementById('screen-owner').classList.toggle('active', role === 'owner');
-  document.getElementById('row-customer').classList.toggle('active', role === 'customer');
-  document.getElementById('row-customer').classList.toggle('owner-active', false);
-  document.getElementById('row-owner').classList.toggle('owner-active', role === 'owner');
-  document.getElementById('check-customer').style.display = role === 'customer' ? '' : 'none';
-  document.getElementById('check-owner').style.display = role === 'owner' ? '' : 'none';
-}
-
-// ── Customer tabs ─────────────────────────────────────────
-function switchTab(tab) {
-  state.cTab = tab;
-  ['home','map','coupons','favorites'].forEach(t => {
-    document.getElementById(`tab-${t}`).style.display = t === tab ? '' : 'none';
-    const el = document.getElementById(`ctab-${t}`);
-    el.querySelectorAll('.tab-icon').forEach(i => i.classList.toggle('active-icon', t === tab));
-    el.querySelectorAll('.tab-label').forEach(l => l.classList.toggle('active-label', t === tab));
+/* ── Map SVG ── */
+function renderMap(id,h){
+  const svg=document.getElementById(id);if(!svg)return;
+  const w=svg.parentElement.clientWidth||380;
+  svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  let html='';
+  for(let i=1;i<5;i++)html+=`<line x1="0" y1="${h*i/5}" x2="${w}" y2="${h*i/5}" stroke="#161D26" stroke-width="1"/>`;
+  for(let i=1;i<7;i++)html+=`<line x1="${i*55}" y1="0" x2="${i*55}" y2="${h}" stroke="#161D26" stroke-width="1"/>`;
+  html+=`<rect x="${-w*.1}" y="${h*.44}" width="${w*1.3}" height="20" fill="#1C242E" transform="rotate(-8,${w/2},${h/2})"/>`;
+  html+=`<rect x="${w*.3}" y="${-h*.1}" width="18" height="${h*1.2}" fill="#1C242E" transform="rotate(5,${w*.34},${h/2})"/>`;
+  const lx=w/2,ly=h*.52;
+  html+=`<circle cx="${lx}" cy="${ly}" r="15" fill="#FFC93C" opacity=".15"><animate attributeName="r" values="8;18;8" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".4;0;.4" dur="2s" repeatCount="indefinite"/></circle>`;
+  html+=`<circle cx="${lx}" cy="${ly}" r="7.5" fill="#FFC93C" stroke="#0E1116" stroke-width="3"/>`;
+  PINS.forEach(pin=>{
+    const s=STORES.find(x=>x.id===pin.id);if(!s)return;
+    const px=w*pin.lx/100,py=h*pin.ty/100;
+    const b=badge(s),color=s.urgent?'#FF6B4A':'#FFC93C',fg=s.urgent?'#fff':'#0E1116';
+    html+=`<g style="cursor:pointer" onclick="openDetail('${s.id}')"><rect x="${px-22}" y="${py-18}" width="44" height="20" rx="7" fill="${color}"/><text x="${px}" y="${py-4}" text-anchor="middle" fill="${fg}" font-size="11" font-weight="800" font-family="-apple-system,sans-serif">${b}</text><polygon points="${px-4},${py+2} ${px+4},${py+2} ${px},${py+8}" fill="${color}"/></g>`;
   });
-  if (tab === 'coupons') renderCoupons();
-  if (tab === 'favorites') renderFavorites();
-  if (tab === 'map') renderFullMap();
+  svg.innerHTML=html;
 }
 
-// ── Mini map SVG ──────────────────────────────────────────
-function renderMap(svgId, h) {
-  const svg = document.getElementById(svgId);
-  if (!svg) return;
-  const w = svg.parentElement.clientWidth || 380;
-  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-  let html = '';
-  // grid
-  for (let i=1;i<5;i++) html += `<line x1="0" y1="${h*i/5}" x2="${w}" y2="${h*i/5}" stroke="#161D26" stroke-width="1"/>`;
-  for (let i=1;i<7;i++) html += `<line x1="${i*55}" y1="0" x2="${i*55}" y2="${h}" stroke="#161D26" stroke-width="1"/>`;
-  // roads
-  html += `<rect x="${-w*.1}" y="${h*.44}" width="${w*1.3}" height="20" fill="#1C242E" transform="rotate(-8,${w/2},${h/2})"/>`;
-  html += `<rect x="${w*.3}" y="${-h*.1}" width="18" height="${h*1.2}" fill="#1C242E" transform="rotate(5,${w*.34},${h/2})"/>`;
-  // location dot
-  const lx = w/2, ly = h*.52;
-  html += `<circle cx="${lx}" cy="${ly}" r="15" fill="#FFC93C" opacity=".15"><animate attributeName="r" values="8;18;8" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".4;0;.4" dur="2s" repeatCount="indefinite"/></circle>`;
-  html += `<circle cx="${lx}" cy="${ly}" r="7.5" fill="#FFC93C" stroke="#0E1116" stroke-width="3"/>`;
-  // pins
-  MAP_PINS.forEach(pin => {
-    const store = STORES.find(s => s.id === pin.id);
-    if (!store) return;
-    const px = w * pin.lx/100, py = h * pin.ty/100;
-    const b = badge(store);
-    const color = store.urgent ? '#FF6B4A' : '#FFC93C';
-    const fg = store.urgent ? '#fff' : '#0E1116';
-    html += `<g class="map-pin" onclick="openDetail('${store.id}')" style="cursor:pointer">
-      <rect x="${px-22}" y="${py-18}" width="44" height="20" rx="7" fill="${color}"/>
-      <text x="${px}" y="${py-4}" text-anchor="middle" fill="${fg}" font-size="11" font-weight="800" font-family="-apple-system,sans-serif">${b}</text>
-      <polygon points="${px-4},${py+2} ${px+4},${py+2} ${px},${py+8}" fill="${color}"/>
-    </g>`;
-  });
-  svg.innerHTML = html;
+/* ── QR grid ── */
+function buildQR(seed){
+  const n=21;let x=0;for(const c of seed+'NEIGHBOR')x=(x*131+c.charCodeAt(0))%99991;x=x||7;
+  const rnd=()=>{x=(x*9301+49297)%233280;return x/233280};
+  const finder=(r,c)=>(r<7&&c<7)||(r<7&&c>=n-7)||(r>=n-7&&c<7);
+  const fon=(r,c)=>{let R=r,C=c;if(r>=n-7)R=r-(n-7);if(c>=n-7)C=c-(n-7);return(R===0||R===6||C===0||C===6)||(R>=2&&R<=4&&C>=2&&C<=4)};
+  const cells=[];
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++)cells.push(finder(r,c)?fon(r,c):rnd()>0.52);
+  document.getElementById('qrgrid').innerHTML=cells.map(on=>`<div class="qrcell" style="background:${on?'#0E1116':'#fff'}"></div>`).join('');
 }
 
-function renderFullMap() {
-  const svgEl = document.getElementById('map-full-svg');
-  const h = svgEl.parentElement.clientHeight || 600;
-  renderMap('map-full-svg', h);
+/* ── QR Modal ── */
+function openQR(id){
+  const s=STORES.find(x=>x.id===id);if(!s)return;
+  S.qrTick=S.tick;
+  document.getElementById('qrsname').textContent=s.name;
+  document.getElementById('qrdeal').textContent=`${badge(s)} 할인 · ${after(s)}`;
+  document.getElementById('cpnno').textContent=couponNo(id);
+  document.getElementById('timval').textContent=fmt(300);
+  buildQR(id);
+  document.getElementById('qrmodal').classList.add('open');
+}
+function closeQR(){document.getElementById('qrmodal').classList.remove('open')}
+
+/* ── Store detail ── */
+function openDetail(id){
+  S.selId=id;const s=STORES.find(x=>x.id===id);if(!s)return;
+  document.getElementById('dbadges').innerHTML=(s.urgent?'<div class="urgbdg">마감임박</div>':'')+`<span class="catbdg">${s.cat}</span>`;
+  document.getElementById('dname').textContent=s.name;
+  document.getElementById('dmeta').innerHTML=`<span class="drat">★ ${s.rating.toFixed(1)}</span><span class="ddiv">|</span><span class="ddist">${dist(s.dist)}</span><span class="ddiv">|</span><span class="dsub">${s.event}</span>`;
+  document.getElementById('dpct').textContent=badge(s);
+  const cd=document.getElementById('dcd');
+  if(s.urgent){cd.style.display='flex';document.getElementById('dcdval').textContent=fmt(Math.max(0,s.secLeft-S.tick))}else{cd.style.display='none'}
+  document.getElementById('dprice').textContent=after(s);
+  document.getElementById('dstrike').textContent=s.type!=='1+1'?`${won(s.before)}원`:'';
+  document.getElementById('dpfill').style.width=`${Math.round(s.qty/s.total*100)}%`;
+  document.getElementById('dpqty').textContent=`${s.qty}개 남음`;
+  document.getElementById('dhours').textContent=s.hours;
+  document.getElementById('daddr').textContent=s.addr;
+  updDFav();updGCBtn();
+  renderMap('dmsvg',150);
+  document.getElementById('detail').classList.add('open');
+}
+function closeDetail(){document.getElementById('detail').classList.remove('open');S.selId=null}
+function updDFav(){
+  const f=S.favs.has(S.selId);
+  document.getElementById('dfav').textContent=f?'♥':'♡';
+  document.getElementById('dfav').style.color=f?'var(--yellow)':'var(--text)';
+  document.getElementById('dfavbot').textContent=f?'♥':'♡';
+  document.getElementById('dfavbot').style.color=f?'var(--yellow)':'var(--text-sub)';
+}
+function toggleDFav(){
+  if(!S.selId)return;
+  if(S.favs.has(S.selId)){S.favs.delete(S.selId);flash('즐겨찾기에서 삭제했어요')}
+  else{S.favs.add(S.selId);flash('즐겨찾기에 추가했어요')}
+  updDFav();
+}
+function updGCBtn(){
+  const has=S.coupons.has(S.selId);
+  document.getElementById('gcbtn').textContent=has?'쿠폰 사용하기 (QR)':'쿠폰 받기';
+}
+function handleCoupon(){
+  if(!S.selId)return;
+  if(S.coupons.has(S.selId)){openQR(S.selId)}
+  else{S.coupons.add(S.selId);flash('쿠폰함에 담았어요');updCBadge();updGCBtn()}
 }
 
-// ── Category chips ────────────────────────────────────────
-function renderChips() {
-  const el = document.getElementById('cat-chips');
-  el.innerHTML = CATS.map(c =>
-    `<div class="chip${state.category===c?' active':''}" onclick="selectCat('${c}')">${c}</div>`
-  ).join('');
+/* ── Feed ── */
+function renderChips(){
+  document.getElementById('cchips').innerHTML=CATS.map(c=>`<div class="chip${S.cat===c?' on':''}" onclick="selCat('${c}')">${c}</div>`).join('');
 }
-function selectCat(cat) {
-  state.category = cat;
-  renderChips();
-  renderFeed();
-}
-
-// ── Feed ──────────────────────────────────────────────────
-function renderFeed() {
-  const filtered = state.category === '전체' ? STORES : STORES.filter(s => s.cat === state.category);
-  document.getElementById('feed-count').textContent = `${filtered.length}곳`;
-  document.getElementById('store-feed').innerHTML = filtered.map(s => storeCardHTML(s)).join('');
-}
-
-function storeCardHTML(s) {
-  const isFav = state.favorites.has(s.id);
-  const rem = s.urgent ? Math.max(0, s.secLeft - state.tick) : 0;
-  const timeText = s.urgent ? `남은 ${fmtSec(rem)}` : s.closeText;
-  const timeColor = s.urgent ? 'var(--orange)' : 'var(--text-sub)';
-  const barW = Math.round(s.qty/s.total*100);
-  return `
-  <div class="store-card" onclick="openDetail('${s.id}')">
-    <div class="card-image">
-      <div class="card-stripes"></div>
-      <div class="card-badges">
-        <span class="badge-pct${s.urgent?' urgent':''}">${badge(s)}</span>
-        ${s.urgent ? '<span class="badge-urgent">마감임박</span>' : ''}
+function selCat(c){S.cat=c;renderChips();renderFeed()}
+function renderFeed(){
+  const list=S.cat==='전체'?STORES:STORES.filter(s=>s.cat===S.cat);
+  document.getElementById('feedct').textContent=`${list.length}곳`;
+  document.getElementById('feedlist').innerHTML=list.map(s=>{
+    const f=S.favs.has(s.id),rem=s.urgent?Math.max(0,s.secLeft-S.tick):0;
+    const tt2=s.urgent?`남은 ${fmt(rem)}`:s.closeText,tc=s.urgent?'var(--orange)':'var(--text-sub)';
+    return`<div class="scard" onclick="openDetail('${s.id}')">
+      <div class="scimg"><div class="scstripes"></div>
+        <div class="scbadges"><span class="bpct${s.urgent?' urg':''}">${badge(s)}</span>${s.urgent?'<span class="burg">마감임박</span>':''}</div>
+        <div class="scheart" onclick="event.stopPropagation();toggleFav('${s.id}',this)"><span style="color:${f?'var(--yellow)':'var(--text)'}">${f?'♥':'♡'}</span></div>
+        <div class="scphoto">매장 사진</div>
       </div>
-      <div class="card-heart" onclick="event.stopPropagation();toggleFav('${s.id}',this)" data-id="${s.id}">
-        <span style="color:${isFav?'var(--yellow)':'var(--text)'}">${isFav?'♥':'♡'}</span>
-      </div>
-      <div class="card-photo-lbl">매장 사진</div>
-    </div>
-    <div class="card-body">
-      <div class="card-name-row">
-        <span class="card-name">${s.name}</span>
-        <span class="card-dist">${distText(s.dist)}</span>
-      </div>
-      <div class="card-cat">${s.cat} · ${s.event}</div>
-      <div class="card-price-row">
-        <span class="card-price">${afterText(s)}</span>
-        ${s.type!=='1+1'?`<span class="card-strike">${won(s.before)}원</span>`:''}
-      </div>
-      <div class="card-qty-row">
-        <div class="prog-bg"><div class="prog-fill" style="width:${barW}%"></div></div>
-        <span class="card-qty">${s.qty}개 남음</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-time" style="color:${timeColor}" ${s.urgent?`data-countdown="${s.id}"`:''}>${timeText}</span>
-        <button class="coupon-cta" onclick="event.stopPropagation();getCoupon('${s.id}')">쿠폰 받기</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-// ── Urgent rail ───────────────────────────────────────────
-function renderUrgentRail() {
-  const urgent = STORES.filter(s => s.urgent);
-  document.getElementById('urgent-rail').innerHTML = urgent.map(s => `
-    <div class="urgent-card" onclick="openDetail('${s.id}')">
-      <div class="uc-header">
-        <span class="uc-badge">${s.pct}%</span>
-        <div class="uc-countdown">
-          <div class="uc-dot"></div>
-          <span class="uc-time" data-countdown="${s.id}">${fmtSec(Math.max(0,s.secLeft-state.tick))}</span>
+      <div class="scbody">
+        <div class="scnrow"><span class="scname">${s.name}</span><span class="scdist">${dist(s.dist)}</span></div>
+        <div class="sccat">${s.cat} · ${s.event}</div>
+        <div class="scprow"><span class="scprice">${after(s)}</span>${s.type!=='1+1'?`<span class="scstrike">${won(s.before)}원</span>`:''}</div>
+        <div class="scqrow"><div class="pbg"><div class="pfill" style="width:${Math.round(s.qty/s.total*100)}%"></div></div><span class="scqty">${s.qty}개 남음</span></div>
+        <div class="scfoot"><span class="sctime" style="color:${tc}" ${s.urgent?`data-cd="${s.id}"`:''}>
+          ${tt2}</span>
+          <button class="ccta" onclick="event.stopPropagation();getCoupon('${s.id}')">쿠폰 받기</button>
         </div>
-      </div>
-      <div class="uc-name">${s.name}</div>
-      <div class="uc-meta">${s.cat} · ${distText(s.dist)}</div>
-      <div class="uc-price-row">
-        <span class="uc-price">${won(s.after)}원</span>
-        <span class="uc-strike">${won(s.before)}원</span>
-      </div>
-      <div class="uc-qty">${s.qty}개 남음</div>
-    </div>
-  `).join('');
-}
-
-// ── Favorites & Hearts ────────────────────────────────────
-function toggleFav(id, btn) {
-  if (state.favorites.has(id)) {
-    state.favorites.delete(id);
-    if(btn) btn.innerHTML = `<span style="color:var(--text)">♡</span>`;
-    flash('즐겨찾기에서 삭제했어요');
-  } else {
-    state.favorites.add(id);
-    if(btn) btn.innerHTML = `<span style="color:var(--yellow)">♥</span>`;
-    flash('즐겨찾기에 추가했어요');
-  }
-}
-function renderFavorites() {
-  const favs = STORES.filter(s => state.favorites.has(s.id));
-  document.getElementById('fav-sub').textContent = `관심 매장 ${favs.length}곳`;
-  const wrap = document.getElementById('fav-list');
-  if (favs.length === 0) {
-    wrap.innerHTML = `<div class="empty-state"><div class="empty-icon">🤍</div><div class="empty-title">즐겨찾기가 비어있어요</div></div>`;
-    return;
-  }
-  wrap.innerHTML = favs.map(s => `
-    <div class="fav-card" onclick="openDetail('${s.id}')">
-      <div class="fav-thumb"><div class="fav-thumb-badge">${badge(s)}</div></div>
-      <div class="fav-info">
-        <div class="fav-name">${s.name}</div>
-        <div class="fav-sub">${s.cat} · ${distText(s.dist)}</div>
-        <div class="fav-price">${afterText(s)}</div>
-      </div>
-      <button class="fav-heart-btn" onclick="event.stopPropagation();toggleFavFromList('${s.id}')">
-        <span style="color:var(--yellow)">♥</span>
-      </button>
-    </div>
-  `).join('');
-}
-function toggleFavFromList(id) {
-  toggleFav(id);
-  renderFavorites();
-}
-
-// ── Coupons ───────────────────────────────────────────────
-function getCoupon(id) {
-  if (state.coupons.has(id)) { flash('이미 받은 쿠폰이에요'); return; }
-  state.coupons.add(id);
-  flash('쿠폰함에 담았어요');
-  updateCouponBadge();
-}
-function updateCouponBadge() {
-  const n = state.coupons.size;
-  const badge = document.getElementById('coupon-badge');
-  document.getElementById('coupon-badge-n').textContent = n;
-  badge.style.display = n > 0 ? 'flex' : 'none';
-}
-function renderCoupons() {
-  const couponStores = STORES.filter(s => state.coupons.has(s.id));
-  document.getElementById('coupon-sub').textContent = `받은 쿠폰 ${couponStores.length}장 · 매장에서 QR로 사용하세요`;
-  const wrap = document.getElementById('coupon-list-wrap');
-  if (couponStores.length === 0) {
-    wrap.innerHTML = `<div class="empty-state"><div class="empty-icon">🎫</div><div class="empty-title">아직 받은 쿠폰이 없어요</div><div class="empty-desc">홈에서 마음에 드는 할인을 찾아<br>쿠폰을 받아보세요</div></div>`;
-    return;
-  }
-  wrap.innerHTML = `<div class="coupon-list">${couponStores.map(s => {
-    const b = badge(s);
-    return `
-    <div class="coupon-card" onclick="flash('${s.name} 쿠폰을 사용할게요')">
-      <div class="coupon-stub">
-        <div class="stub-badge">${b}</div>
-        <div class="stub-label">할인쿠폰</div>
-      </div>
-      <div class="coupon-info">
-        <div class="coupon-store">${s.name}</div>
-        <div class="coupon-sub2">${s.cat} · ${distText(s.dist)}</div>
-        <div class="coupon-time" style="color:${s.urgent?'var(--orange)':'var(--text-sub)'}">${s.closeText}</div>
-        <div class="use-btn">사용하기</div>
-      </div>
-    </div>`;
-  }).join('')}</div>`;
-}
-
-// ── Store detail ──────────────────────────────────────────
-function openDetail(id) {
-  state.selectedId = id;
-  const s = STORES.find(x => x.id === id);
-  if (!s) return;
-
-  // badges
-  const badgesEl = document.getElementById('detail-badges');
-  badgesEl.innerHTML = (s.urgent ? `<div class="urgent-badge-sm">마감임박</div>` : '') + `<span class="cat-badge">${s.cat}</span>`;
-
-  document.getElementById('detail-name').textContent = s.name;
-  document.getElementById('detail-meta').innerHTML =
-    `<span class="detail-rating">★ ${s.rating.toFixed(1)}</span>
-     <span class="detail-divider">|</span>
-     <span class="detail-dist">${distText(s.dist)}</span>
-     <span class="detail-divider">|</span>
-     <span class="detail-sub">${s.event}</span>`;
-
-  document.getElementById('d-pct').textContent = badge(s);
-  const cdRow = document.getElementById('d-countdown');
-  if (s.urgent) {
-    cdRow.style.display = 'flex';
-    document.getElementById('d-countdown-val').textContent = fmtSec(Math.max(0, s.secLeft - state.tick));
-  } else {
-    cdRow.style.display = 'none';
-  }
-  document.getElementById('d-price').textContent = afterText(s);
-  const strikeEl = document.getElementById('d-strike');
-  strikeEl.textContent = s.type !== '1+1' ? `${won(s.before)}원` : '';
-  document.getElementById('d-prog').style.width = `${Math.round(s.qty/s.total*100)}%`;
-  document.getElementById('d-qty').textContent = `${s.qty}개 남음`;
-  document.getElementById('d-hours').textContent = s.hours;
-  document.getElementById('d-addr').textContent = s.addr;
-
-  updateDetailFavUI();
-  updateDetailCouponUI();
-
-  // mini map
-  renderMap('detail-map-svg', 150);
-
-  document.getElementById('detail-screen').classList.add('open');
-}
-function closeDetail() {
-  document.getElementById('detail-screen').classList.remove('open');
-  state.selectedId = null;
-}
-function updateDetailFavUI() {
-  const isFav = state.favorites.has(state.selectedId);
-  document.getElementById('detail-fav-btn').textContent = isFav ? '♥' : '♡';
-  document.getElementById('detail-fav-btn').style.color = isFav ? 'var(--yellow)' : 'var(--text)';
-  document.getElementById('detail-fav-bottom').textContent = isFav ? '♥' : '♡';
-  document.getElementById('detail-fav-bottom').style.color = isFav ? 'var(--yellow)' : 'var(--text-sub)';
-}
-function toggleDetailFav() {
-  if (!state.selectedId) return;
-  if (state.favorites.has(state.selectedId)) {
-    state.favorites.delete(state.selectedId);
-    flash('즐겨찾기에서 삭제했어요');
-  } else {
-    state.favorites.add(state.selectedId);
-    flash('즐겨찾기에 추가했어요');
-  }
-  updateDetailFavUI();
-}
-function updateDetailCouponUI() {
-  const hasCoupon = state.coupons.has(state.selectedId);
-  const btn = document.getElementById('detail-coupon-btn');
-  btn.textContent = hasCoupon ? '쿠폰 사용하기' : '쿠폰 받기';
-}
-function handleCoupon() {
-  if (!state.selectedId) return;
-  if (state.coupons.has(state.selectedId)) {
-    flash('쿠폰 QR을 표시할게요');
-  } else {
-    state.coupons.add(state.selectedId);
-    flash('쿠폰함에 담았어요');
-    updateCouponBadge();
-    updateDetailCouponUI();
-  }
-}
-
-// ── Owner events ──────────────────────────────────────────
-function renderOwner() {
-  document.getElementById('event-count').textContent = `${state.events.length}건`;
-  document.getElementById('event-list').innerHTML = state.events.map(e => {
-    const isGift = e.type !== 'discount';
-    const pct = isGift ? '' : `${e.pct}%`;
-    const barW = Math.round(e.qty/e.total*100);
-    return `
-    <div class="event-card">
-      <div class="event-top">
-        <div class="event-thumb"></div>
-        <div style="flex:1">
-          <div class="event-name-row">
-            <span class="event-name">${e.name}</span>
-            <span class="event-badge${isGift?' gift':''}">${isGift?'증정':pct}</span>
-          </div>
-          ${!isGift ? `<div style="display:flex;align-items:baseline;gap:6px;margin-top:4px">
-            <span class="event-after">${won(e.sale)}원</span>
-            <span class="event-before">${won(e.reg)}원</span>
-          </div>` : `<div class="event-gift-text">${e.gift} 증정</div>`}
-        </div>
-        <div class="event-cd">
-          <div class="event-cd-val" id="ecd-${e.id}">${fmtSec(Math.max(0, e.secLeft - state.tick))}</div>
-          <div class="event-cd-lbl">종료까지</div>
-        </div>
-      </div>
-      <div class="e-prog-row">
-        <div class="e-prog-bg"><div class="e-prog-fill" style="width:${barW}%"></div></div>
-        <span class="e-qty">${e.qty}/${e.total} 남음</span>
-      </div>
-      <div class="event-btns">
-        <button class="qr-btn" onclick="flash('QR 인증 화면을 열게요')">⬛ QR 인증</button>
-        <button class="end-btn" onclick="endEvent('${e.id}')">마감</button>
-      </div>
-    </div>`;
+      </div></div>`;
   }).join('');
 }
-function endEvent(id) {
-  state.events = state.events.filter(e => e.id !== id);
-  flash('행사를 마감했어요');
-  renderOwner();
+
+/* ── Urgent rail ── */
+function renderUral(){
+  document.getElementById('ural').innerHTML=STORES.filter(s=>s.urgent).map(s=>`
+    <div class="ucard" onclick="openDetail('${s.id}')">
+      <div class="uchdr"><span class="ubadge">${s.pct}%</span>
+        <div class="ucd"><div class="uddot"></div><span class="uctime" data-cd="${s.id}">${fmt(Math.max(0,s.secLeft-S.tick))}</span></div>
+      </div>
+      <div class="uname">${s.name}</div><div class="umeta">${s.cat} · ${dist(s.dist)}</div>
+      <div class="uprow"><span class="uprice">${won(s.after)}원</span><span class="ustrike">${won(s.before)}원</span></div>
+      <div class="uqty">${s.qty}개 남음</div>
+    </div>`).join('');
 }
 
-// ── Init ──────────────────────────────────────────────────
-function init() {
-  renderChips();
-  renderFeed();
-  renderUrgentRail();
-  renderMap('mini-map-svg', 172);
-  renderOwner();
-  updateCouponBadge();
+/* ── Coupons ── */
+function getCoupon(id){
+  if(S.coupons.has(id)){flash('이미 받은 쿠폰이에요');return}
+  S.coupons.add(id);flash('쿠폰함에 담았어요');updCBadge();
+}
+function updCBadge(){
+  const n=S.coupons.size,b=document.getElementById('cbadge');
+  document.getElementById('cbadgen').textContent=n;
+  b.style.display=n>0?'flex':'none';
+}
+function renderCoupons(){
+  const cs=STORES.filter(s=>S.coupons.has(s.id));
+  document.getElementById('cpnsub').textContent=`받은 쿠폰 ${cs.length}장 · 매장에서 QR로 사용하세요`;
+  document.getElementById('cpnwrap').innerHTML=cs.length===0
+    ?'<div class="empty"><div class="eico">🎫</div><div class="etitle">아직 받은 쿠폰이 없어요</div><div class="edesc">홈에서 마음에 드는 할인을 찾아<br>쿠폰을 받아보세요</div></div>'
+    :`<div class="clist">${cs.map(s=>`<div class="cpcrd"><div class="cstub"><div class="csbadge">${badge(s)}</div><div class="cslbl">할인쿠폰</div></div>
+      <div class="cinfo"><div class="csname">${s.name}</div><div class="cssub">${s.cat} · ${dist(s.dist)}</div>
+      <div class="cstime" style="color:${s.urgent?'var(--orange)':'var(--text-sub)'}">${s.closeText}</div>
+      <div class="usebtn" onclick="openQR('${s.id}')">QR 사용하기</div></div></div>`).join('')}</div>`;
+}
+
+/* ── Favorites ── */
+function toggleFav(id,btn){
+  if(S.favs.has(id)){S.favs.delete(id);if(btn)btn.innerHTML=`<span style="color:var(--text)">♡</span>`;flash('즐겨찾기에서 삭제했어요')}
+  else{S.favs.add(id);if(btn)btn.innerHTML=`<span style="color:var(--yellow)">♥</span>`;flash('즐겨찾기에 추가했어요')}
+}
+function renderFavs(){
+  const fs=STORES.filter(s=>S.favs.has(s.id));
+  document.getElementById('favsub').textContent=`관심 매장 ${fs.length}곳`;
+  document.getElementById('favlist').innerHTML=fs.length===0
+    ?'<div class="empty"><div class="eico">🤍</div><div class="etitle">즐겨찾기가 비어있어요</div></div>'
+    :fs.map(s=>`<div class="fcard" onclick="openDetail('${s.id}')">
+      <div class="fthumb"><div class="ftbadge">${badge(s)}</div></div>
+      <div class="finfo"><div class="fname">${s.name}</div><div class="fsub">${s.cat} · ${dist(s.dist)}</div><div class="fprice">${after(s)}</div></div>
+      <button class="fhbtn" onclick="event.stopPropagation();toggleFavList('${s.id}')"><span style="color:var(--yellow)">♥</span></button>
+    </div>`).join('');
+}
+function toggleFavList(id){toggleFav(id);renderFavs()}
+
+/* ── Owner events ── */
+function renderOwner(){
+  document.getElementById('evct').textContent=`${S.events.length}건`;
+  document.getElementById('evlist').innerHTML=S.events.map(e=>{
+    const gift=e.type!=='discount';
+    return`<div class="evcrd"><div class="evtop"><div class="evthumb"></div>
+      <div style="flex:1"><div class="evnrow"><span class="evname">${e.name}</span><span class="evbdg${gift?' gift':''}">${gift?'증정':`${e.pct}%`}</span></div>
+      ${!gift?`<div style="display:flex;align-items:baseline;gap:6px;margin-top:4px"><span class="evaft">${won(e.sale)}원</span><span class="evbef">${won(e.reg)}원</span></div>`:`<div class="evgift">${e.gift} 증정</div>`}</div>
+      <div class="evcd"><div class="evcdv" id="ecd-${e.id}">${fmt(Math.max(0,e.secLeft-S.tick))}</div><div class="evcdl">종료까지</div></div></div>
+      <div class="eprow"><div class="epbg"><div class="epfill" style="width:${Math.round(e.qty/e.total*100)}%"></div></div><span class="epqty">${e.qty}/${e.total}</span></div>
+      <div class="evbtns"><button class="qrbtn" onclick="flash('QR 인증 화면을 열게요')">⬛ QR 인증</button>
+      <button class="endbtn" onclick="endEv('${e.id}')">마감</button></div></div>`;
+  }).join('');
+}
+function endEv(id){S.events=S.events.filter(e=>e.id!==id);flash('행사를 마감했어요');renderOwner()}
+
+/* ── Init ── */
+function init(){
+  renderChips();renderFeed();renderUral();
+  renderMap('mmsvg',172);renderOwner();updCBadge();
 }
 init();
 </script>
