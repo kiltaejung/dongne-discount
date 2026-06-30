@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>동네할인 V1 SNS 시스템 보완 문서</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Apple SD Gothic Neo',-apple-system,sans-serif;background:#F8F9FA;color:#1A1D23;line-height:1.7}
+.wrap{max-width:860px;margin:0 auto;padding:48px 24px 80px}
+.cover{background:linear-gradient(135deg,#0E1116 0%,#1E2A3A 100%);border-radius:20px;padding:48px 40px;margin-bottom:48px;color:#fff}
+.cover-tag{font-size:12px;font-weight:700;letter-spacing:2px;color:#FFC93C;margin-bottom:12px}
+.cover-title{font-size:28px;font-weight:800;line-height:1.3;margin-bottom:8px}
+.cover-sub{font-size:14px;color:#9AA3AF;margin-bottom:24px}
+.cover-meta{display:flex;gap:20px;flex-wrap:wrap}
+.cover-badge{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:8px 14px;font-size:12.5px;color:#D1D5DB}
+h2{font-size:20px;font-weight:800;color:#0E1116;margin:40px 0 16px;padding-bottom:10px;border-bottom:2px solid #FFC93C;display:flex;align-items:center;gap:8px}
+h3{font-size:15px;font-weight:700;color:#1E2A3A;margin:24px 0 10px}
+h4{font-size:13.5px;font-weight:700;color:#374151;margin:16px 0 8px}
+p{font-size:14px;color:#374151;margin-bottom:12px}
+.card{background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:24px;margin-bottom:16px}
+.card.warn{border-left:4px solid #F59E0B;background:#FFFBEB}
+.card.danger{border-left:4px solid #EF4444;background:#FEF2F2}
+.card.info{border-left:4px solid #3B82F6;background:#EFF6FF}
+.card.success{border-left:4px solid #10B981;background:#ECFDF5}
+.card-title{font-size:14px;font-weight:800;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+th{background:#F3F4F6;padding:10px 14px;text-align:left;font-weight:700;color:#374151;border-bottom:2px solid #E5E7EB}
+td{padding:10px 14px;border-bottom:1px solid #F3F4F6;color:#4B5563;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFAFA}
+.tag{display:inline-flex;align-items:center;padding:2px 10px;border-radius:20px;font-size:11.5px;font-weight:700}
+.tag.red{background:#FEE2E2;color:#DC2626}
+.tag.yellow{background:#FEF3C7;color:#D97706}
+.tag.green{background:#D1FAE5;color:#059669}
+.tag.blue{background:#DBEAFE;color:#2563EB}
+.tag.gray{background:#F3F4F6;color:#6B7280}
+ul,ol{padding-left:20px;margin-bottom:12px}
+li{font-size:14px;color:#374151;margin-bottom:5px}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin:16px 0;padding:16px;background:#F9FAFB;border-radius:10px}
+.flow-step{background:#0E1116;color:#FFC93C;border-radius:8px;padding:7px 14px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.flow-arrow{color:#9CA3AF;font-size:16px;font-weight:700}
+.flow-step.green{background:#059669;color:#fff}
+.flow-step.red{background:#DC2626;color:#fff}
+.flow-step.blue{background:#2563EB;color:#fff}
+.flow-step.yellow{background:#D97706;color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.time-table td:nth-child(2){font-weight:700;color:#0E1116}
+.db-table td:first-child{font-family:monospace;font-size:12.5px;color:#2563EB}
+.db-table td:nth-child(2){font-family:monospace;font-size:12px;color:#7C3AED}
+code{background:#F3F4F6;padding:2px 7px;border-radius:5px;font-family:monospace;font-size:12.5px;color:#374151}
+.section-num{background:#FFC93C;color:#0E1116;border-radius:6px;padding:1px 8px;font-size:13px;font-weight:800}
+@media(max-width:600px){
+  .cover{padding:28px 20px}
+  .cover-title{font-size:20px}
+  .grid2{grid-template-columns:1fr}
+  .flow{gap:6px}
+  .wrap{padding:24px 14px 60px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="cover">
+  <div class="cover-tag">SUPPLEMENT DOCUMENT · V1.0</div>
+  <div class="cover-title">동네할인 V1<br>SNS 자동화 시스템 보완 문서</div>
+  <div class="cover-sub">원본 기획서에서 누락된 상세 정책 및 기술 명세</div>
+  <div class="cover-meta">
+    <div class="cover-badge">📅 작성일: 2026.06.30</div>
+    <div class="cover-badge">🔖 버전: V1.0</div>
+    <div class="cover-badge">📋 원본: SNS 콘텐츠 생성 및 자동화 시스템 V1</div>
+  </div>
+</div>
+
+<!-- 1. 채널별 API 인증 -->
+<h2><span class="section-num">1</span> 채널별 API 인증 관리</h2>
+
+<div class="card warn">
+  <div class="card-title">⚠️ 원본 문서 누락 항목</div>
+  <p>원본 문서는 "자동 게시 — API"라고만 명시. 각 채널별 인증 방식·토큰 관리·갱신 주기가 없어 개발 착수 불가.</p>
+</div>
+
+<h3>인스타그램 (Meta Graph API)</h3>
+<table>
+  <thead><tr><th>항목</th><th>내용</th></tr></thead>
+  <tbody>
+    <tr><td>인증 방식</td><td>OAuth 2.0 — Meta for Developers 앱 생성 후 Long-lived Access Token 발급</td></tr>
+    <tr><td>토큰 유효기간</td><td>Short-lived 1시간 → Long-lived 60일 → 만료 전 자동 갱신</td></tr>
+    <tr><td>갱신 방법</td><td><code>GET /refresh_access_token</code> — 만료 7일 전 스케줄러 자동 실행</td></tr>
+    <tr><td>필요 권한</td><td><code>instagram_basic</code>, <code>instagram_content_publish</code>, <code>pages_read_engagement</code></td></tr>
+    <tr><td>게시 API</td><td>Container 생성 → <code>POST /{ig-user-id}/media</code> → 게시 <code>POST /{ig-user-id}/media_publish</code></td></tr>
+    <tr><td>일일 제한</td><td>계정당 50회/일 (게시 기준)</td></tr>
+  </tbody>
+</table>
+
+<h3>네이버 블로그</h3>
+<table>
+  <thead><tr><th>항목</th><th>내용</th></tr></thead>
+  <tbody>
+    <tr><td>인증 방식</td><td>네이버 개발자 센터 OAuth 2.0 — Client ID/Secret 발급</td></tr>
+    <tr><td>Access Token</td><td>유효기간 1시간, Refresh Token으로 재발급 (최대 6개월)</td></tr>
+    <tr><td>게시 API</td><td><code>POST https://openapi.naver.com/blog/writePost.json</code></td></tr>
+    <tr><td>필요 권한</td><td>블로그 글쓰기 스코프: <code>blog</code></td></tr>
+    <tr><td>HTML 본문</td><td>SEO 최적화 HTML 생성 — <code>&lt;h1&gt;</code> 태그 키워드 포함 필수</td></tr>
+  </tbody>
+</table>
+
+<h3>네이버 밴드</h3>
+<table>
+  <thead><tr><th>항목</th><th>내용</th></tr></thead>
+  <tbody>
+    <tr><td>인증 방식</td><td>밴드 Open API — Client ID/Secret + 밴드 Access Token</td></tr>
+    <tr><td>게시 API</td><td><code>POST https://openapi.band.us/v2/band/post/create</code></td></tr>
+    <tr><td>이미지 업로드</td><td>먼저 <code>/v2/band/photo/upload</code> → photo_key 획득 후 게시에 포함</td></tr>
+    <tr><td>필요 조건</td><td>동네할인 공식 밴드 사전 개설 필요, 밴드 Key 등록</td></tr>
+  </tbody>
+</table>
+
+<h3>카카오톡 채널</h3>
+<table>
+  <thead><tr><th>항목</th><th>내용</th></tr></thead>
+  <tbody>
+    <tr><td>인증 방식</td><td>카카오 비즈니스 채널 + Admin Key</td></tr>
+    <tr><td>메시지 유형</td><td>카드형 메시지 (카카오 메시지 템플릿 사전 심사 필요 — 약 3~7일)</td></tr>
+    <tr><td>발송 API</td><td><code>POST https://kapi.kakao.com/v1/api/talk/channels/message</code></td></tr>
+    <tr><td>제한</td><td>하루 1,000건 무료, 초과 시 유료 전환</td></tr>
+    <tr><td>주의</td><td>마케팅 메시지 — 수신 동의한 사용자에게만 발송 가능</td></tr>
+  </tbody>
+</table>
+
+<div class="card info">
+  <div class="card-title">🔐 API 키 보안 관리</div>
+  <ul>
+    <li>모든 API 키/Secret은 Supabase Vault 또는 환경변수(.env)로 관리 — 코드에 하드코딩 금지</li>
+    <li>토큰 만료 7일 전 관리자 이메일 알림 발송</li>
+    <li>토큰 갱신 실패 시 해당 채널 자동 비활성화 + 관리자 긴급 알림</li>
+  </ul>
+</div>
+
+<!-- 2. 콘텐츠 승인 플로우 -->
+<h2><span class="section-num">2</span> 콘텐츠 승인 플로우 상세</h2>
+
+<div class="card warn">
+  <div class="card-title">⚠️ 원본 문서 누락 항목</div>
+  <p>원본 문서의 업무 프로세스 2~3단계(관리자 승인 → AI 생성)가 단순 나열로만 기술. 반려 처리 및 재생성 흐름 없음.</p>
+</div>
+
+<h3>전체 승인 흐름</h3>
+<div class="flow">
+  <div class="flow-step">점주 할인 등록</div><div class="flow-arrow">→</div>
+  <div class="flow-step blue">AI 콘텐츠 초안 생성</div><div class="flow-arrow">→</div>
+  <div class="flow-step yellow">관리자 검토 대기</div><div class="flow-arrow">→</div>
+  <div class="flow-step green">승인</div><div class="flow-arrow">→</div>
+  <div class="flow-step blue">예약 큐 등록</div><div class="flow-arrow">→</div>
+  <div class="flow-step green">자동 게시</div>
+</div>
+<div class="flow">
+  <div class="flow-step yellow">관리자 검토 대기</div><div class="flow-arrow">→</div>
+  <div class="flow-step red">반려 (사유 입력)</div><div class="flow-arrow">→</div>
+  <div class="flow-step blue">AI 재생성 (사유 반영)</div><div class="flow-arrow">→</div>
+  <div class="flow-step yellow">재검토 대기</div>
+</div>
+
+<table>
+  <thead><tr><th>단계</th><th>담당</th><th>처리 시간 목표</th><th>비고</th></tr></thead>
+  <tbody>
+    <tr><td>AI 초안 생성</td><td>시스템 자동</td><td>30초 이내</td><td>행사 등록 즉시 실행</td></tr>
+    <tr><td>관리자 1차 검토</td><td>관리자</td><td>30분 이내</td><td>금칙어 자동 필터 통과 후 노출</td></tr>
+    <tr><td>문구 수정</td><td>관리자 (선택)</td><td>-</td><td>직접 편집 가능</td></tr>
+    <tr><td>채널 선택 확정</td><td>관리자</td><td>-</td><td>기본값: 전체 채널 ON</td></tr>
+    <tr><td>승인 → 예약 큐</td><td>시스템 자동</td><td>즉시</td><td>업종별 추천시간에 예약</td></tr>
+    <tr><td>반려 시 재생성</td><td>AI 자동</td><td>30초 이내</td><td>반려 사유 프롬프트에 반영</td></tr>
+    <tr><td>최대 재생성 횟수</td><td>-</td><td>3회</td><td>3회 초과 시 수동 작성 요청</td></tr>
+  </tbody>
+</table>
+
+<h3>반려 사유 분류</h3>
+<div class="grid2">
+  <div class="card">
+    <div class="card-title">자동 반려 (금칙어 필터)</div>
+    <ul>
+      <li>허위·과장 표현 (최고, 1등, 완전 무료 등)</li>
+      <li>의약품·건강기능식품 효능 주장</li>
+      <li>비방·혐오 표현</li>
+      <li>타 브랜드 상표명 직접 언급</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-title">수동 반려 (관리자 판단)</div>
+    <ul>
+      <li>할인율과 실제 가격 불일치 의심</li>
+      <li>이미지 품질 불량</li>
+      <li>부적절한 문구 (법적 리스크)</li>
+      <li>중복 게시 우려</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 3. 이미지 생성 정책 -->
+<h2><span class="section-num">3</span> 이미지 생성 및 처리 정책</h2>
+
+<div class="card warn">
+  <div class="card-title">⚠️ 원본 문서 누락 항목</div>
+  <p>원본 문서는 "이미지 최적화 — 채널 비율 자동 변환"만 언급. 이미지 소스 정의 및 fallback 처리 없음.</p>
+</div>
+
+<table>
+  <thead><tr><th>우선순위</th><th>소스</th><th>조건</th><th>처리</th></tr></thead>
+  <tbody>
+    <tr><td>1순위</td><td>점주 등록 상품 사진</td><td>상품 이미지 등록 시</td><td>채널별 비율 리사이즈</td></tr>
+    <tr><td>2순위</td><td>매장 대표 이미지</td><td>상품 이미지 없을 때</td><td>텍스트 오버레이 추가</td></tr>
+    <tr><td>3순위</td><td>업종별 기본 템플릿</td><td>매장 이미지도 없을 때</td><td>할인율·상품명 자동 삽입</td></tr>
+  </tbody>
+</table>
+
+<h3>채널별 이미지 규격</h3>
+<table>
+  <thead><tr><th>채널</th><th>비율</th><th>권장 해상도</th><th>최대 파일 크기</th><th>형식</th></tr></thead>
+  <tbody>
+    <tr><td>인스타그램 정방형</td><td>1:1</td><td>1080×1080px</td><td>8MB</td><td>JPG/PNG</td></tr>
+    <tr><td>인스타그램 세로</td><td>4:5</td><td>1080×1350px</td><td>8MB</td><td>JPG/PNG</td></tr>
+    <tr><td>네이버 블로그</td><td>원본</td><td>1200px 이상 권장</td><td>10MB</td><td>JPG/PNG/GIF</td></tr>
+    <tr><td>네이버 밴드</td><td>원본 (1장)</td><td>1080px 이상 권장</td><td>10MB</td><td>JPG/PNG</td></tr>
+    <tr><td>카카오 채널</td><td>2:1 (썸네일)</td><td>800×400px</td><td>5MB</td><td>JPG/PNG</td></tr>
+  </tbody>
+</table>
+
+<div class="card info">
+  <div class="card-title">📌 텍스트 오버레이 규칙 (3순위 템플릿 사용 시)</div>
+  <ul>
+    <li>할인율 또는 할인 금액을 중앙 상단에 큰 폰트로 표시</li>
+    <li>매장명과 상품명을 하단에 표시</li>
+    <li>동네할인 로고 워터마크 우하단 고정</li>
+    <li>배경색: 업종별 컬러 팔레트 적용 (카페=갈색계열, 음식=주황계열 등)</li>
+  </ul>
+</div>
+
+<!-- 4. 업종별 추천 게시 시간 -->
+<h2><span class="section-num">4</span> 업종별 추천 게시 시간</h2>
+
+<div class="card warn">
+  <div class="card-title">⚠️ 원본 문서 누락 항목</div>
+  <p>원본 문서에 "업종 기본 추천시간"이 언급되어 있으나 실제 시간표가 없어 개발 구현 불가.</p>
+</div>
+
+<table class="time-table">
+  <thead><tr><th>업종</th><th>1차 추천</th><th>2차 추천</th><th>근거</th></tr></thead>
+  <tbody>
+    <tr><td>☕ 카페·베이커리</td><td>07:00~08:00</td><td>14:00~15:00</td><td>출근 전 + 오후 티타임</td></tr>
+    <tr><td>🍱 음식점·분식</td><td>11:00~11:30</td><td>17:30~18:00</td><td>점심 30분 전 + 퇴근 전</td></tr>
+    <tr><td>🏪 편의점·마트</td><td>08:30~09:00</td><td>19:00~20:00</td><td>출근 + 저녁 장보기</td></tr>
+    <tr><td>💅 뷰티·미용</td><td>10:00~11:00</td><td>19:00~20:00</td><td>오전 예약 검색 + 퇴근 후</td></tr>
+    <tr><td>🏋️ 피트니스·스포츠</td><td>06:30~07:00</td><td>18:00~19:00</td><td>아침 운동 + 저녁 운동</td></tr>
+    <tr><td>📚 교육·학원</td><td>09:00~10:00</td><td>20:00~21:00</td><td>등교 후 + 수업 종료 후</td></tr>
+    <tr><td>🛒 기타 소매</td><td>10:00~11:00</td><td>15:00~16:00</td><td>오전 쇼핑 + 오후 여가</td></tr>
+  </tbody>
+</table>
+
+<div class="card success">
+  <div class="card-title">✅ 추천 시간 우선순위 로직</div>
+  <ol>
+    <li>행사 종료 시간이 추천 시간보다 이전이면 → 종료 2시간 전으로 자동 조정</li>
+    <li>관리자 승인 시점이 추천 시간 이후면 → 다음 추천 시간대로 자동 예약</li>
+    <li>관리자가 즉시 게시 선택 시 → 추천 시간 무시하고 즉시 실행</li>
+    <li>동일 매장 당일 중복 게시 방지 → 채널당 1회/일 제한 (아래 §5 참조)</li>
+  </ol>
+</div>
+
+<!-- 5. 게시 빈도 제한 -->
+<h2><span class="section-num">5</span> 게시 빈도 제한 정책</h2>
+
+<div class="card warn">
+  <div class="card-title">⚠️ 원본 문서 누락 항목</div>
+  <p>스팸 방지 및 채널 계정 보호를 위한 게시 빈도 제한 정책 전무.</p>
+</div>
+
+<table>
+  <thead><tr><th>단위</th><th>채널</th><th>제한</th><th>초과 시 처리</th></tr></thead>
+  <tbody>
+    <tr><td>매장 단위</td><td>전체</td><td>채널당 1회/일</td><td>당일 추가 게시 큐 다음날로 이월</td></tr>
+    <tr><td>플랫폼 단위</td><td>인스타그램</td><td>50회/일 (API 제한)</td><td>제한 도달 시 다음날 0시 초기화</td></tr>
+    <tr><td>플랫폼 단위</td><td>네이버 블로그</td><td>100회/일</td><td>동일</td></tr>
+    <tr><td>플랫폼 단위</td><td>네이버 밴드</td><td>100회/일</td><td>동일</td></tr>
+    <tr><td>플랫폼 단위</td><td>카카오 채널</td><td>1,000건/일 무료</td><td>초과 시 관리자 승인 후 유료 전환</td></tr>
+    <tr><td>동일 콘텐츠</td><td>전체</td><td>72시간 내 동일 문구 재게시 금지</td><td>AI 자동 리라이팅 후 게시</td></tr>
+  </tbody>
+</table>
+
+<!-- 6. 실패 알림 정책 -->
+<h2><span class="section-num">6</span> 실패 알림 및 예외 처리 정책</h2>
+
+<div class="card warn">
+  <div class="card-title">⚠️ 원본 문서 누락 항목</div>
+  <p>원본 문서에 "API 실패 3회 재시도, 실패 로그 저장, 수동 재게시" 언급. 관리자에게 어떤 채널로 어떤 형태로 알릴지 없음.</p>
+</div>
+
+<h3>재시도 정책</h3>
+<table>
+  <thead><tr><th>시도 횟수</th><th>대기 시간</th><th>처리</th></tr></thead>
+  <tbody>
+    <tr><td>1회 실패</td><td>2분 후 재시도</td><td>자동</td></tr>
+    <tr><td>2회 실패</td><td>10분 후 재시도</td><td>자동</td></tr>
+    <tr><td>3회 실패</td><td>-</td><td>실패 처리 + 알림 발송</td></tr>
+  </tbody>
+</table>
+
+<h3>알림 채널 및 내용</h3>
+<table>
+  <thead><tr><th>심각도</th><th>알림 채널</th><th>발송 대상</th><th>알림 내용</th></tr></thead>
+  <tbody>
+    <tr><td><span class="tag red">긴급</span></td><td>카카오톡 알림 + 이메일</td><td>슈퍼 관리자</td><td>API 토큰 만료 / 계정 정지</td></tr>
+    <tr><td><span class="tag yellow">경고</span></td><td>이메일</td><td>담당 관리자</td><td>게시 3회 실패 / 일일 제한 90% 도달</td></tr>
+    <tr><td><span class="tag blue">정보</span></td><td>관리자 사이트 알림</td><td>로그인 관리자</td><td>게시 성공/실패 건별 로그</td></tr>
+  </tbody>
+</table>
+
+<div class="card info">
+  <div class="card-title">📧 이메일 알림 템플릿 (예시)</div>
+  <p style="background:#F9FAFB;padding:12px;border-radius:8px;font-family:monospace;font-size:12.5px;line-height:1.8">
+    제목: [동네할인] 인스타그램 게시 실패 알림<br>
+    본문: 매장명: 스타벅스 강남점<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;행사: 아메리카노 30% 할인<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;실패 시간: 2026-06-30 09:00<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;실패 사유: API rate limit exceeded<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;조치: 관리자 페이지에서 수동 재게시 필요<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;링크: https://admin.dongne.com/sns/logs
+  </p>
+</div>
+
+<!-- 7. 콘텐츠 수정·삭제 정책 -->
+<h2><span class="section-num">7</span> 게시 후 콘텐츠 수정·삭제 정책</h2>
+
+<div class="card warn">
+  <div class="card-title">⚠️ 원본 문서 누락 항목</div>
+  <p>게시 후 행사 정보가 변경되거나 행사가 종료될 때 SNS 게시물 처리 방법이 없음.</p>
+</div>
+
+<table>
+  <thead><tr><th>상황</th><th>처리 방법</th><th>자동화 여부</th></tr></thead>
+  <tbody>
+    <tr><td>행사 정보 수정 (할인율, 수량 변경)</td><td>게시물 캡션/본문 자동 업데이트</td><td>자동</td></tr>
+    <tr><td>행사 조기 종료 (품절, 수동 마감)</td><td>게시물에 "행사 종료" 텍스트 추가 or 삭제</td><td>자동 (채널별 상이)</td></tr>
+    <tr><td>행사 자연 종료 (시간 만료)</td><td>게시물 유지 (홍보 이력 보존)</td><td>-</td></tr>
+    <tr><td>신고 접수된 허위 행사</td><td>즉시 삭제 (모든 채널)</td><td>관리자 수동</td></tr>
+    <tr><td>점주 계정 정지</td><td>해당 점주 게시물 전체 비공개</td><td>자동</td></tr>
+  </tbody>
+</table>
+
+<div class="card danger">
+  <div class="card-title">❗ 채널별 수정/삭제 제약</div>
+  <ul>
+    <li><strong>인스타그램</strong>: 캡션 수정 가능, 이미지 수정 불가 (삭제 후 재게시 필요)</li>
+    <li><strong>네이버 블로그</strong>: 제목·본문 모두 수정 가능</li>
+    <li><strong>네이버 밴드</strong>: 본문 수정 가능, 단 수정 이력 표시됨</li>
+    <li><strong>카카오 채널</strong>: 발송된 메시지 수정/삭제 불가 → 정정 메시지 별도 발송</li>
+  </ul>
+</div>
+
+<!-- 8. 금칙어 목록 -->
+<h2><span class="section-num">8</span> 금칙어 및 AI 프롬프트 가이드</h2>
+
+<div class="card warn">
+  <div class="card-title">⚠️ 원본 문서 누락 항목</div>
+  <p>원본 문서 "금칙어 필터" 언급만 있고 실제 목록 없음. 법적 리스크 방지를 위해 필수.</p>
+</div>
+
+<h3>절대 금칙어 (자동 차단)</h3>
+<div class="grid2">
+  <div class="card">
+    <div class="card-title">과장·허위 광고</div>
+    <ul>
+      <li>국내 최고, 세계 최초, 업계 1위</li>
+      <li>100% 보장, 완전 무료, 공짜</li>
+      <li>혁명적, 기적의, 특효</li>
+      <li>의사 추천, 병원 인증</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-title">법적 리스크</div>
+    <ul>
+      <li>다이어트 효과, 체중 감량 보장</li>
+      <li>피부 개선 보장, 탈모 치료</li>
+      <li>경쟁사 브랜드명 (스타벅스, 맥도날드 등)</li>
+      <li>의약품 효능 주장</li>
+    </ul>
+  </div>
+</div>
+
+<h3>AI 콘텐츠 생성 프롬프트 템플릿</h3>
+<table>
+  <thead><tr><th>채널</th><th>프롬프트 구조</th><th>출력 형식</th></tr></thead>
+  <tbody>
+    <tr><td>인스타그램</td><td>업종+지역+상품명+할인율 → 감성적·짧은 문구 + 해시태그 15~25개</td><td>캡션 200자 이내 + 해시태그</td></tr>
+    <tr><td>네이버 블로그</td><td>SEO 키워드 포함 + 지역명 + 상품 상세설명 + 할인 혜택 강조</td><td>HTML 500~800자 + 태그 10개</td></tr>
+    <tr><td>네이버 밴드</td><td>지역 커뮤니티 말투 + 친근한 구어체 + 핵심 정보 간결하게</td><td>본문 300자 이내 + 해시태그 5개</td></tr>
+    <tr><td>카카오 채널</td><td>카드형 — 타이틀 20자 이내 + 설명 40자 이내 + CTA 버튼 텍스트</td><td>구조화된 JSON</td></tr>
+  </tbody>
+</table>
+
+<!-- 9. DB 스키마 상세 -->
+<h2><span class="section-num">9</span> DB 스키마 상세 정의</h2>
+
+<div class="card warn">
+  <div class="card-title">⚠️ 원본 문서 누락 항목</div>
+  <p>원본 문서에 테이블명만 5개 나열. 컬럼 정의·인덱스·관계 없어 개발 착수 불가.</p>
+</div>
+
+<h3>promotion_publish_queue (게시 예약 큐)</h3>
+<table class="db-table">
+  <thead><tr><th>컬럼</th><th>타입</th><th>설명</th></tr></thead>
+  <tbody>
+    <tr><td>id</td><td>uuid PK</td><td>고유 식별자</td></tr>
+    <tr><td>discount_product_id</td><td>uuid FK</td><td>행사 상품 참조</td></tr>
+    <tr><td>channel</td><td>enum</td><td>instagram / naver_blog / naver_band / kakao</td></tr>
+    <tr><td>status</td><td>enum</td><td>pending / approved / publishing / published / failed / cancelled</td></tr>
+    <tr><td>content_title</td><td>text</td><td>AI 생성 제목</td></tr>
+    <tr><td>content_body</td><td>text</td><td>AI 생성 본문</td></tr>
+    <tr><td>content_tags</td><td>text[]</td><td>해시태그 배열</td></tr>
+    <tr><td>image_url</td><td>text</td><td>최적화된 이미지 URL</td></tr>
+    <tr><td>scheduled_at</td><td>timestamptz</td><td>예약 게시 시간</td></tr>
+    <tr><td>approved_by</td><td>uuid FK</td><td>승인한 관리자 ID</td></tr>
+    <tr><td>approved_at</td><td>timestamptz</td><td>승인 일시</td></tr>
+    <tr><td>retry_count</td><td>int default 0</td><td>재시도 횟수</td></tr>
+    <tr><td>created_at</td><td>timestamptz</td><td>생성 일시</td></tr>
+  </tbody>
+</table>
+
+<h3>promotion_publish_logs (게시 결과 로그)</h3>
+<table class="db-table">
+  <thead><tr><th>컬럼</th><th>타입</th><th>설명</th></tr></thead>
+  <tbody>
+    <tr><td>id</td><td>uuid PK</td><td>고유 식별자</td></tr>
+    <tr><td>queue_id</td><td>uuid FK</td><td>예약 큐 참조</td></tr>
+    <tr><td>channel</td><td>enum</td><td>게시 채널</td></tr>
+    <tr><td>result</td><td>enum</td><td>success / failed</td></tr>
+    <tr><td>channel_post_id</td><td>text</td><td>각 채널 게시물 ID (삭제/수정용)</td></tr>
+    <tr><td>channel_post_url</td><td>text</td><td>게시된 URL</td></tr>
+    <tr><td>error_message</td><td>text</td><td>실패 사유</td></tr>
+    <tr><td>published_at</td><td>timestamptz</td><td>실제 게시 일시</td></tr>
+  </tbody>
+</table>
+
+<h3>promotion_statistics (채널별 성과 통계)</h3>
+<table class="db-table">
+  <thead><tr><th>컬럼</th><th>타입</th><th>설명</th></tr></thead>
+  <tbody>
+    <tr><td>id</td><td>uuid PK</td><td>고유 식별자</td></tr>
+    <tr><td>log_id</td><td>uuid FK</td><td>게시 로그 참조</td></tr>
+    <tr><td>channel</td><td>enum</td><td>채널</td></tr>
+    <tr><td>clicks</td><td>int default 0</td><td>클릭(조회)수</td></tr>
+    <tr><td>site_visitors</td><td>int default 0</td><td>앱/사이트 유입자</td></tr>
+    <tr><td>coupon_downloads</td><td>int default 0</td><td>쿠폰 다운로드 수</td></tr>
+    <tr><td>coupon_used</td><td>int default 0</td><td>쿠폰 실사용 수</td></tr>
+    <tr><td>collected_at</td><td>timestamptz</td><td>통계 수집 일시</td></tr>
+  </tbody>
+</table>
+
+<!-- 10. V2 로드맵 -->
+<h2><span class="section-num">10</span> V2 고도화 로드맵 (추가 제안)</h2>
+
+<table>
+  <thead><tr><th>기능</th><th>설명</th><th>우선순위</th></tr></thead>
+  <tbody>
+    <tr><td>AI 성과 학습</td><td>게시 성과(클릭률·전환율) 기반 다음 콘텐츠 자동 최적화</td><td><span class="tag blue">V2 필수</span></td></tr>
+    <tr><td>A/B 테스트</td><td>동일 행사 2가지 문구 생성 → 성과 비교 후 우수 문구 채택</td><td><span class="tag blue">V2 필수</span></td></tr>
+    <tr><td>AI 이미지 생성</td><td>DALL-E/Stable Diffusion으로 업종별 이미지 자동 생성</td><td><span class="tag yellow">V2 추천</span></td></tr>
+    <tr><td>유튜브 쇼츠 자동화</td><td>상품 이미지+TTS로 15초 쇼츠 자동 생성·게시</td><td><span class="tag gray">V3</span></td></tr>
+    <tr><td>틱톡 채널 추가</td><td>2030 타겟 확장</td><td><span class="tag gray">V3</span></td></tr>
+    <tr><td>지역 맘카페 연동</td><td>네이버 카페 지역 채널 자동 게시</td><td><span class="tag yellow">V2 추천</span></td></tr>
+    <tr><td>성과 리포트 자동 발송</td><td>주간 SNS 성과 요약을 점주에게 자동 이메일 발송</td><td><span class="tag blue">V2 필수</span></td></tr>
+  </tbody>
+</table>
+
+<div class="card success" style="margin-top:32px">
+  <div class="card-title">✅ 문서 보완 완료 요약</div>
+  <ol>
+    <li><strong>채널별 API 인증</strong> — 4개 채널 상세 인증 방법 및 토큰 관리 정책</li>
+    <li><strong>콘텐츠 승인 플로우</strong> — 반려·재생성 포함 전체 흐름 및 처리 시간 목표</li>
+    <li><strong>이미지 정책</strong> — 소스 우선순위 3단계 + 채널별 규격</li>
+    <li><strong>업종별 추천 시간</strong> — 7개 업종 1·2차 추천 시간표 + 우선순위 로직</li>
+    <li><strong>게시 빈도 제한</strong> — 채널별 일일 제한 + 중복 방지 정책</li>
+    <li><strong>실패 알림</strong> — 재시도 정책 + 심각도별 알림 채널</li>
+    <li><strong>수정·삭제 정책</strong> — 상황별 처리 + 채널별 제약</li>
+    <li><strong>금칙어 목록</strong> — 절대 금칙어 + AI 프롬프트 템플릿</li>
+    <li><strong>DB 스키마 상세</strong> — 3개 핵심 테이블 컬럼 정의</li>
+    <li><strong>V2 로드맵</strong> — 고도화 기능 우선순위</li>
+  </ol>
+</div>
+
+</div>
+</body>
+</html>
