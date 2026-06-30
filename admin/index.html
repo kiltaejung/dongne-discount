@@ -174,12 +174,114 @@ tr:hover td{background:#FAFBFC}
 .login-submit:hover{opacity:.9}
 .login-err{font-size:12.5px;color:var(--red);margin-top:8px;min-height:18px}
 
+/* mobile card list (replaces table on small screens) */
+.mcard-list{display:none}
+.mcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.mcard-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.mcard-name{font-size:14px;font-weight:700;color:var(--text)}
+.mcard-sub{font-size:12px;color:var(--text-sub);margin-top:2px}
+.mcard-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.mcard-stat{font-size:11.5px;color:var(--text-sub)}
+.mcard-stat strong{color:var(--text)}
+.mcard-btns{display:flex;gap:6px;margin-top:10px}
+
+/* ── Mobile ── */
 @media(max-width:768px){
-  .sidebar{width:60px}
-  .slogo-title,.slogo-sub,.snav-item span,.suser-info,.slogout,.snav-section{display:none}
-  .snav-item{justify-content:center;padding:12px}
-  .kpi-grid{grid-template-columns:1fr 1fr}
-  .grid2,.grid3{grid-template-columns:1fr}
+  body{flex-direction:column;height:100dvh;overflow:hidden}
+
+  /* sidebar → bottom tab bar */
+  .sidebar{
+    width:100%;height:62px;flex-direction:row;flex-shrink:0;
+    order:2;overflow:visible;border-top:1px solid #1E252E;
+  }
+  .slogo{display:none}
+  .snav{
+    display:flex;flex-direction:row;align-items:center;
+    padding:0;flex:1;height:100%;overflow-x:auto;gap:0;
+  }
+  .snav::-webkit-scrollbar{display:none}
+  .snav-section{display:none}
+  .snav-item{
+    flex-direction:column;gap:3px;padding:8px 10px;border-radius:0;
+    font-size:9.5px;font-weight:600;min-width:56px;justify-content:center;
+    margin-bottom:0;height:100%;
+  }
+  .snav-item .ico{font-size:20px;width:auto}
+  .snav-item span:not(.ico):not(.badge){font-size:9px;line-height:1}
+  .snav-item .badge{
+    position:absolute;top:6px;right:8px;
+    margin-left:0;padding:1px 5px;font-size:9px;
+  }
+  .snav-item{position:relative}
+  .snav-item.active{background:#1E2A3A;color:var(--yellow)}
+  .suser{display:none}
+
+  /* main area */
+  .main{flex:1;overflow:hidden;order:1}
+  .topbar{padding:0 16px;height:52px}
+  .page-title{font-size:15px}
+  .page-sub{display:none}
+  .tbtn span,.tbtn-label{display:none}
+  .tbtn{padding:7px 10px;font-size:13px}
+  .notif{width:32px;height:32px;font-size:15px}
+
+  .content{padding:14px 14px 10px}
+
+  /* kpi */
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .kpi{padding:14px}
+  .kpi-val{font-size:20px}
+  .kpi-ico{font-size:20px}
+  .kpi-change{font-size:11px}
+
+  /* grids */
+  .grid2,.grid3{grid-template-columns:1fr;gap:12px}
+
+  /* cards */
+  .card{margin-bottom:12px;border-radius:12px}
+  .card-hdr{padding:14px 14px 0;flex-wrap:wrap;gap:8px}
+  .card-body{padding:12px 14px 14px}
+
+  /* tables → mobile cards */
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{min-width:600px}
+  th{padding:9px 10px;font-size:10.5px}
+  td{padding:10px 10px;font-size:12.5px}
+  .mcard-list{display:block}
+  .hide-mobile{display:none!important}
+
+  /* search row */
+  .search-row{gap:7px}
+  .sinput{font-size:12px;height:34px;padding:0 10px}
+  .sselect{font-size:12px;height:34px;padding:0 8px}
+  .sbtn{height:34px;padding:0 12px;font-size:12px}
+
+  /* form */
+  .form-row{grid-template-columns:1fr}
+  .form-input,.form-textarea{font-size:13px}
+  .form-label{font-size:12px}
+
+  /* chart */
+  .chart-bars{height:100px}
+  .bar-val{font-size:9px}
+  .bar-label{font-size:9px}
+
+  /* policy */
+  .range-wrap input[type=range]{width:100px}
+  .policy-name{font-size:13px}
+  .policy-desc{font-size:11px}
+
+  /* pager */
+  .pager{padding:10px 14px;flex-wrap:wrap;gap:8px}
+  .pager-info{font-size:11.5px}
+
+  /* login */
+  .login-box{width:90%;padding:28px 22px;margin:0 16px}
+  .login-logo{font-size:18px}
+
+  /* act btns */
+  .act-btn{font-size:11px;padding:4px 8px}
+  .tag{font-size:10.5px;padding:2px 8px}
 }
 </style>
 </head>
@@ -355,12 +457,13 @@ tr:hover td{background:#FAFBFC}
             <select class="sselect"><option>전체 업종</option><option>카페</option><option>음식점</option><option>편의점</option><option>뷰티</option></select>
             <button class="sbtn">검색</button>
           </div>
-          <div class="tbl-wrap">
+          <div class="tbl-wrap hide-mobile">
             <table>
               <thead><tr><th>매장명</th><th>점주명</th><th>업종</th><th>지역</th><th>등록일</th><th>행사수</th><th>매출</th><th>상태</th><th>관리</th></tr></thead>
               <tbody id="ownerTbl"></tbody>
             </table>
           </div>
+          <div class="mcard-list" id="ownerCards"></div>
         </div>
         <div class="pager">
           <div class="pager-info">총 1,247명 중 1–20</div>
@@ -395,12 +498,13 @@ tr:hover td{background:#FAFBFC}
             <select class="sselect"><option>기간</option><option>오늘</option><option>이번주</option><option>이번달</option></select>
             <button class="sbtn">검색</button>
           </div>
-          <div class="tbl-wrap">
+          <div class="tbl-wrap hide-mobile">
             <table>
               <thead><tr><th>이름</th><th>이메일</th><th>가입경로</th><th>가입일</th><th>쿠폰발급</th><th>QR사용</th><th>즐겨찾기</th><th>마지막방문</th><th>관리</th></tr></thead>
               <tbody id="custTbl"></tbody>
             </table>
           </div>
+          <div class="mcard-list" id="custCards"></div>
         </div>
         <div class="pager">
           <div class="pager-info">총 24,381명 중 1–20</div>
@@ -433,12 +537,13 @@ tr:hover td{background:#FAFBFC}
             <select class="sselect"><option>전체 상태</option><option>진행중</option><option>마감임박</option><option>품절</option><option>종료</option></select>
             <button class="sbtn">검색</button>
           </div>
-          <div class="tbl-wrap">
+          <div class="tbl-wrap hide-mobile">
             <table>
               <thead><tr><th>행사명</th><th>매장</th><th>업종</th><th>할인</th><th>조회</th><th>발급</th><th>사용</th><th>남은수량</th><th>종료시간</th><th>상태</th><th>관리</th></tr></thead>
               <tbody id="eventTbl"></tbody>
             </table>
           </div>
+          <div class="mcard-list" id="eventCards"></div>
         </div>
         <div class="pager">
           <div class="pager-info">총 387개 행사</div>
@@ -719,12 +824,13 @@ tr:hover td{background:#FAFBFC}
             <input class="sinput" placeholder="매장명, 신고자 검색" style="flex:1">
             <button class="sbtn">검색</button>
           </div>
-          <div class="tbl-wrap">
+          <div class="tbl-wrap hide-mobile">
             <table>
               <thead><tr><th>접수일시</th><th>유형</th><th>심각도</th><th>신고 내용</th><th>대상 매장</th><th>신고자</th><th>상태</th><th>담당</th><th>관리</th></tr></thead>
               <tbody id="reportTbl"></tbody>
             </table>
           </div>
+          <div class="mcard-list" id="reportCards"></div>
         </div>
         <div class="pager">
           <div class="pager-info">총 134건 중 1–15</div>
@@ -901,8 +1007,86 @@ function renderReports(){
     </tr>`).join('');
 }
 
+/* mobile card renders */
+function renderOwnerCards(){
+  document.getElementById('ownerCards').innerHTML=OWNER_DATA.map(r=>`
+    <div class="mcard">
+      <div class="mcard-row">
+        <div><div class="mcard-name">${r[0]}</div><div class="mcard-sub">${r[1]} · ${r[2]} · ${r[3]}</div></div>
+        <span class="tag ${STATUS_TAG[r[7]]}">${r[7]}</span>
+      </div>
+      <div class="mcard-meta">
+        <span class="mcard-stat">등록 <strong>${r[4]}</strong></span>
+        <span class="mcard-stat">행사 <strong>${r[5]}건</strong></span>
+        <span class="mcard-stat">매출 <strong>${r[6]}</strong></span>
+      </div>
+      <div class="mcard-btns">
+        ${r[7]==='대기'?'<button class="act-btn approve" onclick="alert(\'승인 처리됩니다\')">✓ 승인</button>':''}
+        ${r[7]==='승인'?'<button class="act-btn suspend" onclick="alert(\'정지 처리됩니다\')">✗ 정지</button>':''}
+        <button class="act-btn view" onclick="alert(\'통계 상세\')">📊 통계</button>
+      </div>
+    </div>`).join('');
+}
+function renderCustCards(){
+  document.getElementById('custCards').innerHTML=CUST_DATA.map(r=>`
+    <div class="mcard">
+      <div class="mcard-row">
+        <div><div class="mcard-name">${r[0]}</div><div class="mcard-sub">${r[1]}</div></div>
+        <span class="tag ${PROV_TAG[r[2]]}">${r[2]}</span>
+      </div>
+      <div class="mcard-meta">
+        <span class="mcard-stat">가입 <strong>${r[3]}</strong></span>
+        <span class="mcard-stat">쿠폰 <strong>${r[4]}장</strong></span>
+        <span class="mcard-stat">QR <strong>${r[5]}회</strong></span>
+        <span class="mcard-stat">방문 <strong>${r[7]}</strong></span>
+      </div>
+      <div class="mcard-btns"><button class="act-btn view">상세 보기</button></div>
+    </div>`).join('');
+}
+function renderEventCards(){
+  document.getElementById('eventCards').innerHTML=EVENT_DATA.map(r=>`
+    <div class="mcard">
+      <div class="mcard-row">
+        <div><div class="mcard-name">${r[0]}</div><div class="mcard-sub">${r[1]} · ${r[2]}</div></div>
+        <span class="tag ${EV_TAG[r[9]]}">${r[9]}</span>
+      </div>
+      <div class="mcard-meta">
+        <span class="mcard-stat">할인 <strong>${r[3]}</strong></span>
+        <span class="mcard-stat">조회 <strong>${r[4].toLocaleString()}</strong></span>
+        <span class="mcard-stat">발급 <strong>${r[5].toLocaleString()}</strong></span>
+        <span class="mcard-stat">사용 <strong>${r[6].toLocaleString()}</strong></span>
+        <span class="mcard-stat">잔여 <strong>${r[7]}개</strong></span>
+        <span class="mcard-stat">종료 <strong>${r[8]}</strong></span>
+      </div>
+      <div class="mcard-btns">
+        <button class="act-btn view">상세</button>
+        <button class="act-btn suspend" onclick="alert('행사 종료')">종료</button>
+      </div>
+    </div>`).join('');
+}
+function renderReportCards(){
+  document.getElementById('reportCards').innerHTML=REPORT_DATA.map(r=>`
+    <div class="mcard">
+      <div class="mcard-row">
+        <div><div class="mcard-name">${r[4]}</div><div class="mcard-sub">${r[0]} · 신고자: ${r[5]}</div></div>
+        <span class="tag ${RPT_STATUS[r[6]]}">${r[6]}</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--text-sub);margin:8px 0 4px">${r[3]}</div>
+      <div class="mcard-meta">
+        <span class="tag red" style="font-size:11px">${r[1]}</span>
+        <span style="font-size:12px">${r[2]}</span>
+        <span class="mcard-stat">담당: <strong>${r[7]}</strong></span>
+      </div>
+      <div class="mcard-btns">
+        <button class="act-btn view" onclick="alert('신고 상세')">상세</button>
+        ${r[6]==='대기'?'<button class="act-btn approve" onclick="alert(\'처리 완료\')">완료</button>':''}
+      </div>
+    </div>`).join('');
+}
+
 /* init */
 renderOwners();renderCustomers();renderEvents();renderReports();
+renderOwnerCards();renderCustCards();renderEventCards();renderReportCards();
 
 /* enter key login */
 document.getElementById('loginEmail').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginPw').focus()});
