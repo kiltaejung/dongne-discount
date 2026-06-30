@@ -877,24 +877,64 @@ tr:hover td{background:#FAFBFC}
 
     <!-- A-09 SNS 콘텐츠 관리 -->
     <div class="screen" id="sc-sns">
+      <!-- 채널 모드 범례 -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-body" style="padding:14px 20px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <span style="font-size:13px;font-weight:700;color:var(--text)">채널 운영 방식</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px">
+            <div style="display:flex;align-items:center;gap:8px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:8px 14px">
+              <span style="font-size:18px">📸</span>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#15803D">인스타그램</div>
+                <div style="font-size:11px;color:#16A34A">자동 발송</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:8px 14px">
+              <span style="font-size:18px">🎵</span>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#15803D">네이버 밴드</div>
+                <div style="font-size:11px;color:#16A34A">자동 발송</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:8px 14px">
+              <span style="font-size:18px">💬</span>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#15803D">카카오 채널</div>
+                <div style="font-size:11px;color:#16A34A">자동 발송</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:8px 14px">
+              <span style="font-size:18px">📗</span>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#92400E">네이버 블로그</div>
+                <div style="font-size:11px;color:#B45309">반자동 (초안 → 수동 등록)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="kpi-grid">
         <div class="kpi"><div class="kpi-ico">📝</div><div class="kpi-label">오늘 생성</div><div class="kpi-val">24</div><div class="kpi-change up">▲ 6 전일比</div></div>
         <div class="kpi"><div class="kpi-ico">⏳</div><div class="kpi-label">승인 대기</div><div class="kpi-val">5</div><div class="kpi-change dn">즉시 검토 필요</div></div>
-        <div class="kpi"><div class="kpi-ico">✅</div><div class="kpi-label">발송 완료</div><div class="kpi-val">18</div><div class="kpi-change up">75%</div></div>
-        <div class="kpi"><div class="kpi-ico">❌</div><div class="kpi-label">실패/거부</div><div class="kpi-val">1</div><div class="kpi-change dn">재시도 필요</div></div>
+        <div class="kpi"><div class="kpi-ico">✅</div><div class="kpi-label">자동발송 완료</div><div class="kpi-val">18</div><div class="kpi-change up">75%</div></div>
+        <div class="kpi"><div class="kpi-ico">📋</div><div class="kpi-label">블로그 초안</div><div class="kpi-val">3</div><div class="kpi-change" style="color:var(--orange)">수동 등록 필요</div></div>
       </div>
       <div class="card">
         <div class="card-hdr">
-          <div><div class="card-title">SNS 콘텐츠 목록</div><div class="card-sub">AI 생성 콘텐츠 미리보기 · 승인 · 채널 설정</div></div>
+          <div><div class="card-title">SNS 콘텐츠 목록</div><div class="card-sub">자동채널: 승인 후 즉시 발송 · 블로그: 초안 복사 후 수동 등록</div></div>
           <div style="display:flex;gap:8px">
             <button class="tbtn sec">전체</button>
             <button class="tbtn" style="background:#FEF9C3;color:#854D0E">대기 5</button>
+            <button class="tbtn" style="background:#FFFBEB;color:#92400E">블로그 초안 3</button>
           </div>
         </div>
         <div class="card-body" style="padding-bottom:0">
           <div class="search-row">
-            <select class="sselect"><option>전체 채널</option><option>인스타그램</option><option>네이버 블로그</option><option>네이버 밴드</option><option>카카오 채널</option></select>
-            <select class="sselect"><option>전체 상태</option><option>승인 대기</option><option>승인됨</option><option>발송완료</option><option>거부됨</option></select>
+            <select class="sselect"><option>전체 채널</option><option>📸 인스타그램 (자동)</option><option>🎵 네이버 밴드 (자동)</option><option>💬 카카오 채널 (자동)</option><option>📗 네이버 블로그 (반자동)</option></select>
+            <select class="sselect"><option>전체 상태</option><option>승인 대기</option><option>승인됨</option><option>발송완료</option><option>초안완료</option><option>등록완료</option><option>거부됨</option></select>
             <input class="sinput" placeholder="매장명, 콘텐츠 검색" style="flex:1">
             <button class="sbtn">검색</button>
           </div>
@@ -912,14 +952,36 @@ tr:hover td{background:#FAFBFC}
     <!-- A-10 게시 큐/로그 -->
     <div class="screen" id="sc-snsq">
       <div class="kpi-grid">
-        <div class="kpi"><div class="kpi-ico">🕐</div><div class="kpi-label">예약 대기</div><div class="kpi-val">12</div><div class="kpi-change">오늘 발송 예정</div></div>
-        <div class="kpi"><div class="kpi-ico">✅</div><div class="kpi-label">오늘 성공</div><div class="kpi-val">31</div><div class="kpi-change up">▲ 3 전일比</div></div>
+        <div class="kpi"><div class="kpi-ico">🕐</div><div class="kpi-label">자동 예약 대기</div><div class="kpi-val">12</div><div class="kpi-change">인스타·밴드·카카오</div></div>
+        <div class="kpi"><div class="kpi-ico">✅</div><div class="kpi-label">오늘 자동발송</div><div class="kpi-val">31</div><div class="kpi-change up">▲ 3 전일比</div></div>
         <div class="kpi"><div class="kpi-ico">❌</div><div class="kpi-label">오늘 실패</div><div class="kpi-val">2</div><div class="kpi-change dn">재시도 예약됨</div></div>
-        <div class="kpi"><div class="kpi-ico">🔄</div><div class="kpi-label">재시도 중</div><div class="kpi-val">1</div><div class="kpi-change">2회차 시도 중</div></div>
+        <div class="kpi"><div class="kpi-ico">📋</div><div class="kpi-label">블로그 미등록</div><div class="kpi-val">3</div><div class="kpi-change" style="color:var(--orange)">수동 등록 필요</div></div>
       </div>
+
+      <!-- 블로그 반자동 섹션 -->
+      <div class="card" style="margin-bottom:16px;border:2px solid #FDE68A">
+        <div class="card-hdr" style="background:#FFFBEB;border-radius:14px 14px 0 0">
+          <div>
+            <div class="card-title">📗 네이버 블로그 초안 <span style="font-size:11px;font-weight:600;background:#FDE68A;color:#92400E;padding:2px 8px;border-radius:6px;margin-left:6px">반자동</span></div>
+            <div class="card-sub">AI가 생성한 초안을 복사하여 네이버 블로그에 직접 등록하세요</div>
+          </div>
+          <a href="https://blog.naver.com" target="_blank" class="tbtn" style="text-decoration:none;font-size:12px">📝 블로그 열기</a>
+        </div>
+        <div class="card-body" style="padding-bottom:0">
+          <div class="tbl-wrap hide-mobile">
+            <table>
+              <thead><tr><th>생성일시</th><th>매장명</th><th>행사</th><th>제목 (초안)</th><th>본문길이</th><th>상태</th><th>관리</th></tr></thead>
+              <tbody id="blogDraftTbl"></tbody>
+            </table>
+          </div>
+          <div class="mcard-list" id="blogDraftCards"></div>
+        </div>
+      </div>
+
+      <!-- 자동 채널 예약 큐 -->
       <div class="card" style="margin-bottom:16px">
         <div class="card-hdr">
-          <div><div class="card-title">예약 큐</div><div class="card-sub">발송 대기 중인 콘텐츠</div></div>
+          <div><div class="card-title">자동 채널 예약 큐</div><div class="card-sub">인스타그램 · 네이버 밴드 · 카카오 채널 발송 대기</div></div>
         </div>
         <div class="card-body" style="padding-bottom:0">
           <div class="tbl-wrap hide-mobile">
@@ -933,7 +995,7 @@ tr:hover td{background:#FAFBFC}
       </div>
       <div class="card">
         <div class="card-hdr">
-          <div><div class="card-title">발송 이력</div><div class="card-sub">성공 · 실패 전체 로그</div></div>
+          <div><div class="card-title">자동 발송 이력</div><div class="card-sub">인스타·밴드·카카오 성공 · 실패 전체 로그</div></div>
           <div style="display:flex;gap:8px">
             <button class="tbtn sec">전체</button>
             <button class="tbtn" style="background:#FEF2F2;color:#DC2626">실패 2</button>
@@ -1254,56 +1316,104 @@ function renderReportCards(){
 }
 
 /* ── SNS Data ── */
-const SNS_CH_TAG={인스타그램:'purple',네이버블로그:'green',네이버밴드:'teal',카카오채널:'yellow'};
+const SNS_CH_TAG={인스타그램:'purple',네이버블로그:'orange',네이버밴드:'teal',카카오채널:'yellow'};
+const SNS_AUTO_CH=['인스타그램','네이버밴드','카카오채널']; // 자동 채널
 
 const SNS_ST_TAG={승인대기:'yellow',승인됨:'blue',발송완료:'green',거부됨:'red'};
 const SNS_CONTENT=[
   ['14:32','스타벅스 강남점','아메리카노 30% 할인','인스타그램','☕ 오늘 하루 아메리카노 30% 할인! 동네할인 QR 인증으로...','✅','발송완료'],
   ['14:25','BBQ 마포점','치킨 1+1 이벤트','카카오채널','🍗 오늘만! 치킨 1+1 이벤트 진행 중입니다. 서두르세요!','🖼️','승인대기'],
-  ['13:50','국민분식','떡볶이 20% 할인','네이버블로그','🌶️ 매콤한 떡볶이 20% 특가 행사 시작! 오늘 저녁 어때요?','🖼️','승인대기'],
+  ['13:50','국민분식','떡볶이 20% 할인','네이버블로그','🌶️ [오늘의 특가] 국민분식 떡볶이 20% 할인 행사 안내...','🖼️','초안완료'],
   ['13:40','뷰티라운지','왁싱 20% 할인','네이버밴드','✨ 밴드 회원 전용! 왁싱 20% 할인 특가 이벤트입니다.','🖼️','승인대기'],
   ['13:10','핑크네일','네일아트 15%','인스타그램','💅 아름다운 네일아트 15% 할인, 이번 주 한정 이벤트!','✅','승인됨'],
   ['12:44','이경희 베이커리','케이크 40% 할인','카카오채널','🎂 촉촉한 케이크 슬라이스 40% 할인! 오늘만 특가입니다.','🖼️','승인대기'],
-  ['12:00','파스타하우스','런치 15% 할인','네이버블로그','🍝 점심 특선 파스타 15% 할인. 런치타임 방문하세요!','✅','발송완료'],
+  ['12:00','파스타하우스','런치 15% 할인','네이버블로그','🍝 [런치특가] 파스타하우스 점심 15% 할인 이벤트 상세...','✅','등록완료'],
   ['11:50','핑크네일','네일아트 15%','네이버밴드','💅 밴드 멤버만! 네일아트 15% 특가 오늘 종료!','✅','발송완료'],
   ['11:30','CU 이태원점','도시락 25% 할인','인스타그램','🍱 신선한 도시락 25% 할인, 동네할인 QR 스캔 필수!','❌','거부됨'],
+  ['10:55','뷰티라운지','왁싱 20% 할인','네이버블로그','✨ [이번주 특가] 뷰티라운지 왁싱 20% 할인 행사 안내...','🖼️','초안완료'],
 ];
+function isBlog(ch){return ch==='네이버블로그'||ch==='네이버 블로그';}
+function snsRowBtns(r){
+  const ch=r[3].replace(/ /g,'');
+  if(isBlog(ch)){
+    return `${r[6]==='초안완료'?`<button class="act-btn approve" onclick="copyBlogDraft('${r[1]}','${r[2]}')">📋 복사</button>`:''}
+            <button class="act-btn view" onclick="alert('블로그 초안 미리보기')">미리보기</button>`;
+  }
+  return `${r[6]==='승인대기'?'<button class="act-btn approve" onclick="alert(\'자동 발송 승인됩니다\')">✓ 승인</button>':''}
+          ${r[6]==='승인대기'?'<button class="act-btn suspend" onclick="alert(\'거부 처리됩니다\')">✗ 거부</button>':''}
+          ${r[6]==='거부됨'?'<button class="act-btn view" onclick="alert(\'콘텐츠 재생성 요청\')">🔄 재생성</button>':''}
+          <button class="act-btn view" onclick="alert(\'콘텐츠 상세 미리보기\')">미리보기</button>`;
+}
+function copyBlogDraft(store,event){
+  const text=`[동네할인 특가] ${store} - ${event}\n\n안녕하세요, 동네할인입니다!\n오늘 ${store}에서 특별한 할인 행사를 진행합니다.\n지금 바로 동네할인 앱에서 QR 쿠폰을 받아보세요!\n\n📱 동네할인 앱 다운로드: https://dongne-discount.com\n\n#동네할인 #${store} #지역할인 #쿠폰`;
+  navigator.clipboard.writeText(text).then(()=>alert('블로그 초안이 클립보드에 복사됐습니다.\n네이버 블로그에 붙여넣기 하세요!'));
+}
 function renderSns(){
   document.getElementById('snsTbl').innerHTML=SNS_CONTENT.map(r=>`
-    <tr>
+    <tr style="${isBlog(r[3].replace(/ /g,''))?'background:#FFFBEB':''}">
       <td>${r[0]}</td><td><strong>${r[1]}</strong></td><td>${r[2]}</td>
-      <td><span class="tag ${SNS_CH_TAG[r[3].replace(' ','')]||'blue'}">${r[3]}</span></td>
+      <td>
+        <span class="tag ${SNS_CH_TAG[r[3].replace(/ /g,'')]||'blue'}">${r[3]}</span>
+        ${isBlog(r[3].replace(/ /g,''))?'<span style="font-size:10px;color:#92400E;display:block;margin-top:2px">반자동</span>':''}
+      </td>
       <td style="max-width:200px;font-size:12px;color:var(--text-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r[4]}</td>
       <td style="text-align:center;font-size:18px">${r[5]}</td>
-      <td><span class="tag ${SNS_ST_TAG[r[6].replace(' ','')]||'gray'}">${r[6]}</span></td>
-      <td style="display:flex;gap:4px">
-        ${r[6]==='승인대기'?'<button class="act-btn approve" onclick="alert(\'발송 승인됩니다\')">✓ 승인</button>':''}
-        ${r[6]==='승인대기'?'<button class="act-btn suspend" onclick="alert(\'거부 처리됩니다\')">✗ 거부</button>':''}
-        ${r[6]==='거부됨'?'<button class="act-btn view" onclick="alert(\'콘텐츠 재생성 요청\')">🔄 재생성</button>':''}
-        <button class="act-btn view" onclick="alert(\'콘텐츠 상세 미리보기\')">미리보기</button>
-      </td>
+      <td><span class="tag ${SNS_ST_TAG[r[6].replace(/ /g,'')]||'gray'}">${r[6]}</span></td>
+      <td style="display:flex;gap:4px;flex-wrap:wrap">${snsRowBtns(r)}</td>
     </tr>`).join('');
 }
 function renderSnsCards(){
   document.getElementById('snsCards').innerHTML=SNS_CONTENT.map(r=>`
-    <div class="mcard">
+    <div class="mcard" style="${isBlog(r[3].replace(/ /g,''))?'border-color:#FDE68A;background:#FFFBEB':''}">
       <div class="mcard-row">
         <div>
           <div class="mcard-name">${r[1]}</div>
           <div class="mcard-sub">${r[0]} · ${r[2]}</div>
         </div>
-        <span class="tag ${SNS_ST_TAG[r[6].replace(' ','')]||'gray'}">${r[6]}</span>
+        <span class="tag ${SNS_ST_TAG[r[6].replace(/ /g,'')]||'gray'}">${r[6]}</span>
       </div>
       <div style="font-size:12.5px;color:var(--text-sub);margin:8px 0 4px;line-height:1.5">${r[4]}</div>
       <div class="mcard-meta">
-        <span class="tag ${SNS_CH_TAG[r[3].replace(' ','')]||'blue'}" style="font-size:11px">${r[3]}</span>
-        <span style="font-size:16px">${r[5]}</span>
+        <span class="tag ${SNS_CH_TAG[r[3].replace(/ /g,'')]||'blue'}" style="font-size:11px">${r[3]}</span>
+        ${isBlog(r[3].replace(/ /g,''))?'<span style="font-size:11px;color:#92400E;font-weight:600">반자동</span>':'<span style="font-size:11px;color:var(--green);font-weight:600">자동</span>'}
       </div>
+      <div class="mcard-btns">${snsRowBtns(r)}</div>
+    </div>`).join('');
+}
+
+/* 블로그 초안 */
+const BLOG_DRAFTS=[
+  ['13:50','국민분식','떡볶이 20% 할인','[오늘의 특가] 국민분식 떡볶이 20% 할인 행사 안내','850자','미등록'],
+  ['10:55','뷰티라운지','왁싱 20% 할인','[이번주 특가] 뷰티라운지 왁싱 20% 할인 행사 안내','920자','미등록'],
+  ['어제 16:20','파스타하우스','런치 15% 할인','[런치특가] 파스타하우스 점심 15% 할인 이벤트 상세','1,040자','등록완료'],
+  ['어제 11:00','스타벅스 강남점','아메리카노 30% 할인','[특가알림] 강남 스타벅스 아메리카노 30% 할인 행사','780자','등록완료'],
+];
+const BLOG_ST={미등록:'orange',등록완료:'green'};
+function renderBlogDrafts(){
+  document.getElementById('blogDraftTbl').innerHTML=BLOG_DRAFTS.map(r=>`
+    <tr style="${r[5]==='미등록'?'background:#FFFBEB':''}">
+      <td>${r[0]}</td><td><strong>${r[1]}</strong></td><td>${r[2]}</td>
+      <td style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px">${r[3]}</td>
+      <td style="color:var(--text-sub);font-size:12px">${r[4]}</td>
+      <td><span class="tag ${BLOG_ST[r[5]]||'gray'}">${r[5]}</span></td>
+      <td style="display:flex;gap:4px">
+        ${r[5]==='미등록'?`<button class="act-btn approve" onclick="copyBlogDraft('${r[1]}','${r[2]}')">📋 초안 복사</button>`:''}
+        <button class="act-btn view" onclick="alert('블로그 초안 전문 미리보기')">미리보기</button>
+        ${r[5]==='미등록'?`<button class="act-btn" style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0" onclick="this.closest('tr').style.background='';this.parentElement.parentElement.cells[5].innerHTML='<span class=\\'tag green\\'>등록완료</span>';this.remove()">✓ 등록확인</button>`:''}
+      </td>
+    </tr>`).join('');
+  document.getElementById('blogDraftCards').innerHTML=BLOG_DRAFTS.map(r=>`
+    <div class="mcard" style="${r[5]==='미등록'?'border-color:#FDE68A;background:#FFFBEB':''}">
+      <div class="mcard-row">
+        <div><div class="mcard-name">${r[1]}</div><div class="mcard-sub">${r[0]} · ${r[2]}</div></div>
+        <span class="tag ${BLOG_ST[r[5]]||'gray'}">${r[5]}</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--text);margin:6px 0;font-weight:500">${r[3]}</div>
+      <div class="mcard-meta"><span class="mcard-stat">본문 <strong>${r[4]}</strong></span></div>
       <div class="mcard-btns">
-        ${r[6]==='승인대기'?'<button class="act-btn approve" onclick="alert(\'발송 승인됩니다\')">✓ 승인</button>':''}
-        ${r[6]==='승인대기'?'<button class="act-btn suspend" onclick="alert(\'거부 처리됩니다\')">✗ 거부</button>':''}
-        ${r[6]==='거부됨'?'<button class="act-btn view" onclick="alert(\'재생성 요청\')">🔄 재생성</button>':''}
-        <button class="act-btn view" onclick="alert(\'미리보기\')">미리보기</button>
+        ${r[5]==='미등록'?`<button class="act-btn approve" onclick="copyBlogDraft('${r[1]}','${r[2]}')">📋 초안 복사</button>`:''}
+        <button class="act-btn view" onclick="alert('미리보기')">미리보기</button>
+        ${r[5]==='미등록'?`<a href="https://blog.naver.com" target="_blank" class="act-btn" style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0;text-decoration:none">📝 블로그</a>`:''}
       </div>
     </div>`).join('');
 }
@@ -1454,6 +1564,7 @@ function renderSnsStats(){
 renderOwners();renderCustomers();renderEvents();renderReports();
 renderOwnerCards();renderCustCards();renderEventCards();renderReportCards();
 renderSns();renderSnsCards();
+renderBlogDrafts();
 renderSnsQ();renderSnsLog();renderSnsQCards();renderSnsLogCards();
 renderSnsStats();
 
