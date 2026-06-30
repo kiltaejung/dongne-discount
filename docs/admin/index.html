@@ -395,7 +395,7 @@ tr:hover td{background:#FAFBFC}
 
       <div class="card">
         <div class="card-hdr"><div><div class="card-title">실시간 활동</div><div class="card-sub">최근 10분</div></div></div>
-        <div class="card-body">
+        <div class="card-body hide-mobile">
           <table>
             <thead><tr><th>시간</th><th>유형</th><th>내용</th><th>매장/회원</th><th>상태</th></tr></thead>
             <tbody>
@@ -406,6 +406,13 @@ tr:hover td{background:#FAFBFC}
               <tr><td>08:38</td><td><span class="tag blue">쿠폰발급</span></td><td>치킨 20% 할인</td><td>BBQ 마포점</td><td><span class="tag green">정상</span></td></tr>
             </tbody>
           </table>
+        </div>
+        <div class="card-body mcard-list" style="padding-top:8px">
+          <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">아메리카노 30% 할인</div><div class="mcard-sub">스타벅스 강남점 · 08:47</div></div><span class="tag green">정상</span></div><div class="mcard-meta"><span class="tag blue">쿠폰발급</span></div></div>
+          <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">김밥 1+1 쿠폰 사용</div><div class="mcard-sub">김철수 · 08:45</div></div><span class="tag green">완료</span></div><div class="mcard-meta"><span class="tag green">QR사용</span></div></div>
+          <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">신규 매장 승인 대기</div><div class="mcard-sub">이경희 베이커리 · 08:43</div></div><span class="tag yellow">검토중</span></div><div class="mcard-meta"><span class="tag yellow">매장등록</span></div></div>
+          <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">허위 할인율 신고</div><div class="mcard-sub">맛있는 분식집 · 08:41</div></div><span class="tag red">조치필요</span></div><div class="mcard-meta"><span class="tag orange">신고</span></div></div>
+          <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">치킨 20% 할인</div><div class="mcard-sub">BBQ 마포점 · 08:38</div></div><span class="tag green">정상</span></div><div class="mcard-meta"><span class="tag blue">쿠폰발급</span></div></div>
         </div>
       </div>
 
@@ -613,7 +620,7 @@ tr:hover td{background:#FAFBFC}
         <div>
           <div class="card">
             <div class="card-hdr"><div><div class="card-title">발송 이력</div><div class="card-sub">최근 10건</div></div></div>
-            <div class="card-body" style="padding:0">
+            <div class="card-body hide-mobile" style="padding:0">
               <table>
                 <thead><tr><th>발송일시</th><th>제목</th><th>수신자</th><th>열람율</th><th>전환</th></tr></thead>
                 <tbody>
@@ -624,6 +631,12 @@ tr:hover td{background:#FAFBFC}
                   <tr><td>06.27 09:00</td><td>신규 매장 오픈</td><td>12,000</td><td><span class="tag yellow">22.4%</span></td><td>4.8%</td></tr>
                 </tbody>
               </table>
+            </div>
+            <div class="card-body mcard-list" style="padding-top:8px">
+              <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">아침 할인 특가!</div><div class="mcard-sub">06.30 09:00 · 24,381명</div></div><span class="tag green">34.2%</span></div><div class="mcard-meta"><span class="mcard-stat">전환 <strong>8.1%</strong></span></div></div>
+              <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">저녁 마감임박</div><div class="mcard-sub">06.29 18:00 · 18,204명</div></div><span class="tag green">41.7%</span></div><div class="mcard-meta"><span class="mcard-stat">전환 <strong>12.3%</strong></span></div></div>
+              <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">점심 특별 할인</div><div class="mcard-sub">06.29 12:00 · 24,102명</div></div><span class="tag yellow">28.4%</span></div><div class="mcard-meta"><span class="mcard-stat">전환 <strong>6.9%</strong></span></div></div>
+              <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">주말 특가 알림</div><div class="mcard-sub">06.28 10:00 · 23,847명</div></div><span class="tag green">38.1%</span></div><div class="mcard-meta"><span class="mcard-stat">전환 <strong>11.2%</strong></span></div></div>
             </div>
           </div>
           <div class="card" style="margin-top:16px">
@@ -711,7 +724,7 @@ tr:hover td{background:#FAFBFC}
           </div>
           <div class="card" style="margin-top:16px">
             <div class="card-hdr"><div class="card-title">AI 탐지 현황</div></div>
-            <div class="card-body" style="padding:0">
+            <div class="card-body hide-mobile" style="padding:0">
               <table>
                 <thead><tr><th>탐지일시</th><th>매장</th><th>위반유형</th><th>조치</th></tr></thead>
                 <tbody>
@@ -720,6 +733,11 @@ tr:hover td{background:#FAFBFC}
                   <tr><td>어제 22:41</td><td>C분식</td><td><span class="tag red">허위할인율</span></td><td><span class="tag green">완료</span></td></tr>
                 </tbody>
               </table>
+            </div>
+            <div class="card-body mcard-list" style="padding-top:8px">
+              <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">A마트 홍대점</div><div class="mcard-sub">08:32</div></div><span class="tag yellow">검토중</span></div><div class="mcard-meta"><span class="tag red">허위할인율</span></div></div>
+              <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">B카페</div><div class="mcard-sub">07:14</div></div><span class="tag green">자동조치</span></div><div class="mcard-meta"><span class="tag orange">재고초과</span></div></div>
+              <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">C분식</div><div class="mcard-sub">어제 22:41</div></div><span class="tag green">완료</span></div><div class="mcard-meta"><span class="tag red">허위할인율</span></div></div>
             </div>
           </div>
         </div>
@@ -786,7 +804,7 @@ tr:hover td{background:#FAFBFC}
 
       <div class="card">
         <div class="card-hdr"><div class="card-title">상품별 TOP 5 전환율</div></div>
-        <div class="card-body" style="padding:0">
+        <div class="card-body hide-mobile" style="padding:0">
           <table>
             <thead><tr><th>순위</th><th>상품명</th><th>매장</th><th>업종</th><th>발급</th><th>사용</th><th>전환율</th><th>매출</th></tr></thead>
             <tbody>
@@ -797,6 +815,13 @@ tr:hover td{background:#FAFBFC}
               <tr><td>5</td><td>편의점 도시락 25%</td><td>CU 이태원점</td><td>편의</td><td>380</td><td>300</td><td><span class="tag yellow">78.9%</span></td><td>₩390K</td></tr>
             </tbody>
           </table>
+        </div>
+        <div class="card-body mcard-list" style="padding-top:8px">
+          <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">🥇 아메리카노 30% 할인</div><div class="mcard-sub">스타벅스 강남 · 카페</div></div><span class="tag green">89.4%</span></div><div class="mcard-meta"><span class="mcard-stat">발급 <strong>1,240</strong></span><span class="mcard-stat">사용 <strong>1,108</strong></span><span class="mcard-stat">매출 <strong>₩2.2M</strong></span></div></div>
+          <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">🥈 치킨 1+1 이벤트</div><div class="mcard-sub">BBQ 마포점 · 음식</div></div><span class="tag green">84.9%</span></div><div class="mcard-meta"><span class="mcard-stat">발급 <strong>890</strong></span><span class="mcard-stat">사용 <strong>756</strong></span><span class="mcard-stat">매출 <strong>₩3.8M</strong></span></div></div>
+          <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">🥉 떡볶이 세트 20%</div><div class="mcard-sub">국민분식 · 음식</div></div><span class="tag green">82.3%</span></div><div class="mcard-meta"><span class="mcard-stat">발급 <strong>654</strong></span><span class="mcard-stat">사용 <strong>538</strong></span><span class="mcard-stat">매출 <strong>₩540K</strong></span></div></div>
+          <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">4. 네일아트 15% 할인</div><div class="mcard-sub">핑크네일 · 뷰티</div></div><span class="tag yellow">80.0%</span></div><div class="mcard-meta"><span class="mcard-stat">발급 <strong>421</strong></span><span class="mcard-stat">사용 <strong>337</strong></span><span class="mcard-stat">매출 <strong>₩1.6M</strong></span></div></div>
+          <div class="mcard"><div class="mcard-row"><div><div class="mcard-name">5. 편의점 도시락 25%</div><div class="mcard-sub">CU 이태원점 · 편의</div></div><span class="tag yellow">78.9%</span></div><div class="mcard-meta"><span class="mcard-stat">발급 <strong>380</strong></span><span class="mcard-stat">사용 <strong>300</strong></span><span class="mcard-stat">매출 <strong>₩390K</strong></span></div></div>
         </div>
       </div>
     </div>
