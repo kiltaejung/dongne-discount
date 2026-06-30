@@ -98,6 +98,7 @@ tr:hover td{background:#FAFBFC}
 .tag.yellow{background:#FFFBEB;color:#D97706}
 .tag.blue{background:#EFF6FF;color:#2563EB}
 .tag.purple{background:#F5F3FF;color:#7C3AED}
+.tag.teal{background:#F0FDFA;color:#0D9488}
 .tag.gray{background:#F3F4F6;color:#6B7280}
 .tag.orange{background:#FFF7ED;color:#EA580C}
 
@@ -892,7 +893,7 @@ tr:hover td{background:#FAFBFC}
         </div>
         <div class="card-body" style="padding-bottom:0">
           <div class="search-row">
-            <select class="sselect"><option>전체 채널</option><option>인스타그램</option><option>네이버 블로그</option><option>카카오 채널</option></select>
+            <select class="sselect"><option>전체 채널</option><option>인스타그램</option><option>네이버 블로그</option><option>네이버 밴드</option><option>카카오 채널</option></select>
             <select class="sselect"><option>전체 상태</option><option>승인 대기</option><option>승인됨</option><option>발송완료</option><option>거부됨</option></select>
             <input class="sinput" placeholder="매장명, 콘텐츠 검색" style="flex:1">
             <button class="sbtn">검색</button>
@@ -991,16 +992,17 @@ tr:hover td{background:#FAFBFC}
       <div class="card">
         <div class="card-hdr">
           <div><div class="card-title">채널별 일별 발송 현황</div><div class="card-sub">최근 7일</div></div>
-          <div style="display:flex;gap:8px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
             <span style="font-size:12px;color:var(--text-sub);align-self:center">📸 인스타</span>
             <span style="font-size:12px;color:var(--text-sub);align-self:center">📗 블로그</span>
+            <span style="font-size:12px;color:var(--text-sub);align-self:center">🎵 밴드</span>
             <span style="font-size:12px;color:var(--text-sub);align-self:center">💬 카카오</span>
           </div>
         </div>
         <div class="card-body">
           <div class="tbl-wrap hide-mobile">
             <table>
-              <thead><tr><th>날짜</th><th>인스타그램</th><th>네이버 블로그</th><th>카카오 채널</th><th>총 발송</th><th>성공율</th></tr></thead>
+              <thead><tr><th>날짜</th><th>인스타그램</th><th>네이버 블로그</th><th>네이버 밴드</th><th>카카오 채널</th><th>총 발송</th><th>성공율</th></tr></thead>
               <tbody id="snsDailyTbl"></tbody>
             </table>
           </div>
@@ -1252,15 +1254,18 @@ function renderReportCards(){
 }
 
 /* ── SNS Data ── */
-const SNS_CH_TAG={인스타그램:'purple',네이버블로그:'green',카카오채널:'yellow'};
+const SNS_CH_TAG={인스타그램:'purple',네이버블로그:'green',네이버밴드:'teal',카카오채널:'yellow'};
+
 const SNS_ST_TAG={승인대기:'yellow',승인됨:'blue',발송완료:'green',거부됨:'red'};
 const SNS_CONTENT=[
   ['14:32','스타벅스 강남점','아메리카노 30% 할인','인스타그램','☕ 오늘 하루 아메리카노 30% 할인! 동네할인 QR 인증으로...','✅','발송완료'],
   ['14:25','BBQ 마포점','치킨 1+1 이벤트','카카오채널','🍗 오늘만! 치킨 1+1 이벤트 진행 중입니다. 서두르세요!','🖼️','승인대기'],
   ['13:50','국민분식','떡볶이 20% 할인','네이버블로그','🌶️ 매콤한 떡볶이 20% 특가 행사 시작! 오늘 저녁 어때요?','🖼️','승인대기'],
+  ['13:40','뷰티라운지','왁싱 20% 할인','네이버밴드','✨ 밴드 회원 전용! 왁싱 20% 할인 특가 이벤트입니다.','🖼️','승인대기'],
   ['13:10','핑크네일','네일아트 15%','인스타그램','💅 아름다운 네일아트 15% 할인, 이번 주 한정 이벤트!','✅','승인됨'],
   ['12:44','이경희 베이커리','케이크 40% 할인','카카오채널','🎂 촉촉한 케이크 슬라이스 40% 할인! 오늘만 특가입니다.','🖼️','승인대기'],
   ['12:00','파스타하우스','런치 15% 할인','네이버블로그','🍝 점심 특선 파스타 15% 할인. 런치타임 방문하세요!','✅','발송완료'],
+  ['11:50','핑크네일','네일아트 15%','네이버밴드','💅 밴드 멤버만! 네일아트 15% 특가 오늘 종료!','✅','발송완료'],
   ['11:30','CU 이태원점','도시락 25% 할인','인스타그램','🍱 신선한 도시락 25% 할인, 동네할인 QR 스캔 필수!','❌','거부됨'],
 ];
 function renderSns(){
@@ -1306,14 +1311,17 @@ function renderSnsCards(){
 const SNS_QUEUE=[
   ['15:00','BBQ 마포점','카카오채널','치킨 1+1 이벤트 — 🍗 오늘만! 치킨 1+1...','예약'],
   ['15:30','국민분식','네이버블로그','떡볶이 20% 할인 — 🌶️ 매콤한 떡볶이...','예약'],
+  ['15:45','뷰티라운지','네이버밴드','왁싱 20% 할인 — ✨ 밴드 회원 전용!...','예약'],
   ['16:00','핑크네일','인스타그램','네일아트 15% — 💅 아름다운 네일아트...','예약'],
   ['17:00','이경희 베이커리','카카오채널','케이크 40% 할인 — 🎂 촉촉한 케이크...','예약'],
 ];
 const SNS_LOG=[
   ['14:32','스타벅스 강남점','인스타그램','성공','—','1',''],
   ['14:00','파스타하우스','네이버블로그','성공','—','1',''],
+  ['13:55','핑크네일','네이버밴드','성공','—','1',''],
   ['13:30','CU 이태원점','인스타그램','실패','금칙어 감지: 대박','2','재시도'],
   ['12:50','뷰티라운지','카카오채널','실패','API 인증 만료','3','재시도'],
+  ['12:40','뷰티라운지','네이버밴드','실패','밴드 게시 권한 없음','1','재시도'],
   ['12:00','맛있는 분식집','네이버블로그','성공','—','1',''],
 ];
 const LOG_ST={성공:'green',실패:'red'};
@@ -1380,17 +1388,17 @@ const SNS_INDUSTRY=[
   ['분식',12,430,68,'15.8%'],
 ];
 const SNS_DAILY=[
-  ['06.24(화)',8,12,9,29,'96.6%'],
-  ['06.25(수)',10,14,11,35,'94.3%'],
-  ['06.26(목)',9,13,10,32,'100%'],
-  ['06.27(금)',12,15,12,39,'97.4%'],
-  ['06.28(토)',14,18,14,46,'93.5%'],
-  ['06.29(일)',11,16,12,39,'100%'],
-  ['06.30(월)',8,11,9,28,'96.4%'],
+  ['06.24(화)',8,12,5,9,34,'96.6%'],
+  ['06.25(수)',10,14,7,11,42,'94.3%'],
+  ['06.26(목)',9,13,6,10,38,'100%'],
+  ['06.27(금)',12,15,8,12,47,'97.4%'],
+  ['06.28(토)',14,18,10,14,56,'93.5%'],
+  ['06.29(일)',11,16,8,12,47,'100%'],
+  ['06.30(월)',8,11,5,9,33,'96.4%'],
 ];
 function renderSnsStats(){
   /* channel bar chart */
-  const channels=[['인스타그램',3180,'var(--purple)'],['네이버 블로그',2440,'var(--green)'],['카카오 채널',721,'var(--yellow)']];
+  const channels=[['인스타그램',3180,'var(--purple)'],['네이버 블로그',2440,'var(--green)'],['네이버 밴드',1120,'var(--teal)'],['카카오 채널',721,'var(--yellow)']];
   const max=channels[0][1];
   document.getElementById('snsChartBars').innerHTML=channels.map(([name,val,color])=>`
     <div>
@@ -1422,21 +1430,22 @@ function renderSnsStats(){
     </div>`).join('');
   document.getElementById('snsDailyTbl').innerHTML=SNS_DAILY.map(r=>`
     <tr>
-      <td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td>
-      <td><strong>${r[4]}</strong></td>
-      <td><span class="tag ${parseFloat(r[5])>=95?'green':'yellow'}">${r[5]}</span></td>
+      <td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td>
+      <td><strong>${r[5]}</strong></td>
+      <td><span class="tag ${parseFloat(r[6])>=95?'green':'yellow'}">${r[6]}</span></td>
     </tr>`).join('');
   document.getElementById('snsDailyCards').innerHTML=SNS_DAILY.map(r=>`
     <div class="mcard">
       <div class="mcard-row">
         <div class="mcard-name">${r[0]}</div>
-        <span class="tag ${parseFloat(r[5])>=95?'green':'yellow'}">${r[5]}</span>
+        <span class="tag ${parseFloat(r[6])>=95?'green':'yellow'}">${r[6]}</span>
       </div>
       <div class="mcard-meta">
         <span class="mcard-stat">📸 <strong>${r[1]}</strong></span>
         <span class="mcard-stat">📗 <strong>${r[2]}</strong></span>
-        <span class="mcard-stat">💬 <strong>${r[3]}</strong></span>
-        <span class="mcard-stat">총 <strong>${r[4]}건</strong></span>
+        <span class="mcard-stat">🎵 <strong>${r[3]}</strong></span>
+        <span class="mcard-stat">💬 <strong>${r[4]}</strong></span>
+        <span class="mcard-stat">총 <strong>${r[5]}건</strong></span>
       </div>
     </div>`).join('');
 }
