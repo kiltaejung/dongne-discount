@@ -47,6 +47,37 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
 .store-save-btn{width:100%;padding:16px;background:var(--primary);border:none;border-radius:16px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(255,90,31,.35)}
 .store-save-btn:active{transform:scale(.98)}
 
+/* ── 섹션 구분 헤더 ── */
+.sec-group{font-size:13px;font-weight:800;color:var(--text);padding:6px 0 10px;border-bottom:2px solid var(--border);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+
+/* ── 전화번호 3칸 ── */
+.phone-row{display:grid;grid-template-columns:80px 1fr 1fr;gap:6px;align-items:center}
+.phone-sep{text-align:center;font-weight:700;color:var(--dim);font-size:16px}
+
+/* ── 영업시간 선택 ── */
+.hours-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ampm-group{display:flex;gap:4px}
+.ampm-btn{padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:12px;font-weight:700;color:var(--sub);background:#fff;cursor:pointer;font-family:inherit;transition:all .15s}
+.ampm-btn.on{border-color:var(--primary);background:var(--primary-light);color:var(--primary)}
+.hours-sep{font-size:14px;font-weight:700;color:var(--dim)}
+.hours-select{padding:10px 8px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-weight:700;color:var(--text);background:#fff;outline:none;font-family:inherit;cursor:pointer;-webkit-appearance:none;text-align:center}
+.hours-select:focus{border-color:var(--primary)}
+
+/* ── 카카오 주소 ── */
+.addr-search-btn{width:100%;padding:12px;border:1.5px solid var(--primary);border-radius:12px;background:var(--primary-light);color:var(--primary);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px}
+.addr-display{padding:12px 14px;background:var(--bg);border-radius:12px;font-size:13px;font-weight:600;color:var(--text);min-height:44px;display:none}
+.addr-detail-inp{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:13px;font-weight:600;color:var(--text);background:#fff;outline:none;font-family:inherit;margin-top:6px;display:none}
+.addr-detail-inp:focus{border-color:var(--primary)}
+
+/* ── 네이버 지도 ── */
+.map-box{border-radius:14px;overflow:hidden;border:1.5px solid var(--border);margin-top:10px;display:none;flex-direction:column}
+.map-img-wrap{position:relative;background:#E8F0E8}
+.map-img-wrap img{width:100%;display:block;min-height:140px;object-fit:cover}
+.map-placeholder{height:140px;background:linear-gradient(135deg,#E8F5E9,#C8E6C9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.map-placeholder-ico{font-size:32px}
+.map-placeholder-txt{font-size:12px;color:#2E7D32;font-weight:700}
+.map-find-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;background:#03C75A;color:#fff;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;border:none;width:100%;font-family:inherit}
+
 /* ── 헤더 ── */
 .hdr{background:var(--primary);padding:16px 20px 14px;display:flex;align-items:center;gap:12px;flex-shrink:0}
 .hdr-logo{font-size:20px;font-weight:900;color:#fff;letter-spacing:-.5px}
@@ -247,11 +278,29 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
     <div class="store-content">
       <div class="required-note">※ 모든 항목을 입력해야 상품 등록이 가능합니다</div>
 
+      <!-- 사업자 정보 -->
+      <div class="sec-group">📋 사업자 정보</div>
+
       <div class="fgrp">
-        <div class="flabel">가게명 <span class="req">*필수</span></div>
+        <div class="flabel">상호명 <span class="req">*필수</span></div>
         <input type="text" class="finp" id="s_name" placeholder="예: 홍길동 카페">
-        <div class="err-msg" id="serr-name">가게명을 입력해주세요</div>
+        <div class="err-msg" id="serr-name">상호명을 입력해주세요</div>
       </div>
+
+      <div class="fgrp">
+        <div class="flabel">대표자명 <span class="req">*필수</span></div>
+        <input type="text" class="finp" id="s_ceo" placeholder="예: 홍길동">
+        <div class="err-msg" id="serr-ceo">대표자명을 입력해주세요</div>
+      </div>
+
+      <div class="fgrp">
+        <div class="flabel">사업자등록번호 <span class="req">*필수</span></div>
+        <input type="text" class="finp" id="s_biz" placeholder="예: 123-45-67890" maxlength="12" oninput="formatBizNum(this)">
+        <div class="err-msg" id="serr-biz">사업자등록번호를 입력해주세요</div>
+      </div>
+
+      <!-- 매장 정보 -->
+      <div class="sec-group" style="margin-top:8px">🏪 매장 정보</div>
 
       <div class="fgrp">
         <div class="flabel">업종 <span class="req">*필수</span></div>
@@ -264,23 +313,105 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
         <div class="err-msg" id="serr-cate">업종을 선택해주세요</div>
       </div>
 
+      <!-- 영업시간 (오전/오후 + 시각 선택) -->
       <div class="fgrp">
-        <div class="flabel">주소 <span class="req">*필수</span></div>
-        <input type="text" class="finp" id="s_addr" placeholder="예: 서울 강남구 역삼동 123-45">
-        <div class="err-msg" id="serr-addr">주소를 입력해주세요</div>
+        <div class="flabel">영업시간 <span class="req">*필수</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <!-- 오픈 -->
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:12px;font-weight:700;color:var(--sub);width:36px">오픈</span>
+            <div class="ampm-group">
+              <button class="ampm-btn on" id="open-am" onclick="setAmPm('open','am')">AM</button>
+              <button class="ampm-btn" id="open-pm" onclick="setAmPm('open','pm')">PM</button>
+            </div>
+            <select class="hours-select" id="open-h" style="width:64px" onchange="updateHoursPreview()">
+              <option>12</option><option>1</option><option>2</option><option>3</option>
+              <option>4</option><option>5</option><option>6</option><option>7</option>
+              <option>8</option><option>9</option><option>10</option><option>11</option>
+            </select>
+            <span style="font-size:14px;font-weight:700;color:var(--dim)">:</span>
+            <select class="hours-select" id="open-m" style="width:64px" onchange="updateHoursPreview()">
+              <option>00</option><option>10</option><option>15</option>
+              <option>20</option><option>30</option><option>40</option><option>45</option><option>50</option>
+            </select>
+          </div>
+          <!-- 마감 -->
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:12px;font-weight:700;color:var(--sub);width:36px">마감</span>
+            <div class="ampm-group">
+              <button class="ampm-btn" id="close-am" onclick="setAmPm('close','am')">AM</button>
+              <button class="ampm-btn on" id="close-pm" onclick="setAmPm('close','pm')">PM</button>
+            </div>
+            <select class="hours-select" id="close-h" style="width:64px" onchange="updateHoursPreview()">
+              <option>12</option><option>1</option><option>2</option><option>3</option>
+              <option>4</option><option>5</option><option>6</option><option>7</option>
+              <option>8</option><option>9</option><option>10</option><option>11</option>
+            </select>
+            <span style="font-size:14px;font-weight:700;color:var(--dim)">:</span>
+            <select class="hours-select" id="close-m" style="width:64px" onchange="updateHoursPreview()">
+              <option>00</option><option>10</option><option>15</option>
+              <option>20</option><option>30</option><option>40</option><option>45</option><option>50</option>
+            </select>
+          </div>
+        </div>
+        <div id="hours-preview" style="margin-top:8px;font-size:12px;color:var(--primary);font-weight:700"></div>
+        <div class="err-msg" id="serr-hours">영업시간을 확인해주세요</div>
       </div>
 
+      <!-- 전화번호 3칸 -->
       <div class="fgrp">
         <div class="flabel">전화번호 <span class="req">*필수</span></div>
-        <input type="tel" class="finp" id="s_phone" placeholder="예: 02-1234-5678">
+        <div class="phone-row">
+          <input type="tel" class="finp" id="s_phone1" placeholder="010" maxlength="4"
+            oninput="phoneNext(this,'s_phone2',4)" style="text-align:center">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="phone-sep">-</span>
+            <input type="tel" class="finp" id="s_phone2" placeholder="0000" maxlength="4"
+              oninput="phoneNext(this,'s_phone3',4)" style="text-align:center">
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="phone-sep">-</span>
+            <input type="tel" class="finp" id="s_phone3" placeholder="0000" maxlength="4"
+              style="text-align:center">
+          </div>
+        </div>
         <div class="err-msg" id="serr-phone">전화번호를 입력해주세요</div>
       </div>
 
+      <!-- 메뉴 및 서비스 정보 -->
+      <div class="sec-group" style="margin-top:8px">🍽 메뉴 및 서비스 정보</div>
+
       <div class="fgrp">
-        <div class="flabel">영업시간 <span class="req">*필수</span></div>
-        <input type="text" class="finp" id="s_hours" placeholder="예: 09:00 ~ 22:00">
-        <div class="err-msg" id="serr-hours">영업시간을 입력해주세요</div>
+        <div class="flabel">대표 메뉴(서비스) <span class="req">*필수</span></div>
+        <textarea class="finp" id="s_menu" placeholder="예: 아메리카노, 카페라떼, 딸기케이크&#10;쉼표(,)로 구분해서 입력해주세요" style="min-height:72px;resize:none;line-height:1.6"></textarea>
+        <div class="err-msg" id="serr-menu">대표 메뉴(서비스)를 입력해주세요</div>
       </div>
+
+      <!-- 가게 위치 (카카오 주소) -->
+      <div class="fgrp">
+        <div class="flabel">가게 위치 <span class="req">*필수</span></div>
+        <button class="addr-search-btn" onclick="openKakaoAddr()">
+          🔍 카카오 주소 검색
+        </button>
+        <div class="addr-display" id="s_addr_display"></div>
+        <input type="text" class="finp addr-detail-inp" id="s_addr_detail" placeholder="상세주소 (동/호수 등)">
+        <input type="hidden" id="s_addr">
+        <div class="err-msg" id="serr-addr">주소를 검색해주세요</div>
+
+        <!-- 네이버 지도 -->
+        <div class="map-box" id="mapBox">
+          <div class="map-img-wrap">
+            <div class="map-placeholder" id="mapPlaceholder">
+              <div class="map-placeholder-ico">📍</div>
+              <div class="map-placeholder-txt" id="mapAddrTxt">주소 검색 후 지도가 표시됩니다</div>
+            </div>
+          </div>
+          <a class="map-find-btn" id="mapNaverLink" href="#" target="_blank" rel="noopener">
+            🗺 네이버 지도에서 길찾기
+          </a>
+        </div>
+      </div>
+
     </div>
     <div class="store-btns">
       <button class="store-save-btn" onclick="saveStoreInfo()">저장하고 상품 등록하기 →</button>
@@ -575,6 +706,7 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
   <div class="toast" id="toast"></div>
 </div>
 
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 <script>
 const SUPABASE_URL='https://ezcofypuyhgxglzxdith.supabase.co';
@@ -634,37 +766,160 @@ function showStoreScreen(){
   document.getElementById('doneWrap').classList.remove('show');
   document.getElementById('qrScreen').classList.remove('show');
 
-  // 기존 정보 있으면 채우기
   const info=si();
   if(info.name) document.getElementById('s_name').value=info.name||'';
+  if(info.ceo) document.getElementById('s_ceo').value=info.ceo||'';
+  if(info.biz) document.getElementById('s_biz').value=info.biz||'';
   if(info.cate) document.getElementById('s_cate').value=info.cate||'';
-  if(info.addr) document.getElementById('s_addr').value=info.addr||'';
-  if(info.phone) document.getElementById('s_phone').value=info.phone||'';
-  if(info.hours) document.getElementById('s_hours').value=info.hours||'';
+  if(info.addr){
+    document.getElementById('s_addr').value=info.addr;
+    document.getElementById('s_addr_display').textContent=info.addr;
+    document.getElementById('s_addr_display').style.display='block';
+    document.getElementById('s_addr_detail').style.display='block';
+    updateNaverMap(info.addr);
+  }
+  if(info.addrDetail) document.getElementById('s_addr_detail').value=info.addrDetail||'';
+  if(info.phone){
+    const parts=info.phone.split('-');
+    document.getElementById('s_phone1').value=parts[0]||'';
+    document.getElementById('s_phone2').value=parts[1]||'';
+    document.getElementById('s_phone3').value=parts[2]||'';
+  }
+  if(info.hours) restoreHours(info.hours);
+  if(info.menu) document.getElementById('s_menu').value=info.menu||'';
+  updateHoursPreview();
+}
+
+// ── 사업자번호 포맷 ──
+function formatBizNum(el){
+  let v=el.value.replace(/[^0-9]/g,'');
+  if(v.length>3&&v.length<=5) v=v.slice(0,3)+'-'+v.slice(3);
+  else if(v.length>5) v=v.slice(0,3)+'-'+v.slice(3,5)+'-'+v.slice(5,10);
+  el.value=v;
+}
+
+// ── AM/PM 선택 ──
+function setAmPm(type,val){
+  document.getElementById(type+'-am').classList.toggle('on',val==='am');
+  document.getElementById(type+'-pm').classList.toggle('on',val==='pm');
+  updateHoursPreview();
+}
+function getAmPm(type){
+  return document.getElementById(type+'-am').classList.contains('on')?'am':'pm';
+}
+
+function updateHoursPreview(){
+  const openAmPm=getAmPm('open');
+  const closeAmPm=getAmPm('close');
+  const oh=parseInt(document.getElementById('open-h').value);
+  const om=document.getElementById('open-m').value;
+  const ch=parseInt(document.getElementById('close-h').value);
+  const cm=document.getElementById('close-m').value;
+
+  const fmt=(h,ap,m)=>{
+    let h24=h;
+    if(ap==='am'&&h===12) h24=0;
+    if(ap==='pm'&&h!==12) h24=h+12;
+    return String(h24).padStart(2,'0')+':'+m;
+  };
+  const openStr=fmt(oh,openAmPm,om);
+  const closeStr=fmt(ch,closeAmPm,cm);
+  const el=document.getElementById('hours-preview');
+  el.textContent='⏰ '+openStr+' ~ '+closeStr;
+  return openStr+' ~ '+closeStr;
+}
+
+function restoreHours(hoursStr){
+  // "09:00 ~ 22:00" 파싱
+  const m=hoursStr.match(/(\d+):(\d+)\s*~\s*(\d+):(\d+)/);
+  if(!m) return;
+  const setHourSel=(selId,h24)=>{
+    let h=h24%12||12;
+    const ap=h24<12?'am':'pm';
+    document.getElementById(selId).value=String(h);
+    return ap;
+  };
+  const openAp=setHourSel('open-h',parseInt(m[1]));
+  document.getElementById('open-m').value=m[2]==='00'?'00':m[2];
+  document.getElementById('open-am').classList.toggle('on',openAp==='am');
+  document.getElementById('open-pm').classList.toggle('on',openAp==='pm');
+
+  const closeAp=setHourSel('close-h',parseInt(m[3]));
+  document.getElementById('close-m').value=m[4]==='00'?'00':m[4];
+  document.getElementById('close-am').classList.toggle('on',closeAp==='am');
+  document.getElementById('close-pm').classList.toggle('on',closeAp==='pm');
+}
+
+// ── 전화번호 자동 이동 ──
+function phoneNext(el,nextId,maxLen){
+  if(el.value.length>=maxLen){
+    const next=document.getElementById(nextId);
+    if(next) next.focus();
+  }
+}
+
+// ── 카카오 주소 검색 ──
+function openKakaoAddr(){
+  if(typeof daum==='undefined'||!daum.Postcode){
+    showToast('주소 검색 로딩 중입니다. 잠시 후 다시 시도하세요.');
+    return;
+  }
+  new daum.Postcode({
+    oncomplete:function(data){
+      const addr=data.roadAddress||data.jibunAddress;
+      document.getElementById('s_addr').value=addr;
+      const display=document.getElementById('s_addr_display');
+      display.textContent=addr;
+      display.style.display='block';
+      document.getElementById('s_addr_detail').style.display='block';
+      document.getElementById('s_addr_detail').focus();
+      document.getElementById('serr-addr').classList.remove('show');
+      updateNaverMap(addr);
+    }
+  }).open();
+}
+
+// ── 네이버 지도 업데이트 ──
+function updateNaverMap(addr){
+  const box=document.getElementById('mapBox');
+  box.style.display='flex';
+  document.getElementById('mapAddrTxt').textContent=addr;
+  const encoded=encodeURIComponent(addr);
+  document.getElementById('mapNaverLink').href=`https://map.naver.com/v5/search/${encoded}`;
 }
 
 function saveStoreInfo(){
   const name=document.getElementById('s_name').value.trim();
+  const ceo=document.getElementById('s_ceo').value.trim();
+  const biz=document.getElementById('s_biz').value.trim();
   const cate=document.getElementById('s_cate').value;
   const addr=document.getElementById('s_addr').value.trim();
-  const phone=document.getElementById('s_phone').value.trim();
-  const hours=document.getElementById('s_hours').value.trim();
+  const addrDetail=document.getElementById('s_addr_detail').value.trim();
+  const p1=document.getElementById('s_phone1').value.trim();
+  const p2=document.getElementById('s_phone2').value.trim();
+  const p3=document.getElementById('s_phone3').value.trim();
+  const phone=p1&&p2&&p3?`${p1}-${p2}-${p3}`:'';
+  const hours=updateHoursPreview();
+  const menu=document.getElementById('s_menu').value.trim();
 
   let ok=true;
-  const chk=(id,errId,val)=>{
+  const chk=(errId,val)=>{
     const e=document.getElementById(errId);
     if(!val){e.classList.add('show');ok=false;}
     else e.classList.remove('show');
   };
-  chk('s_name','serr-name',name);
-  chk('s_cate','serr-cate',cate);
-  chk('s_addr','serr-addr',addr);
-  chk('s_phone','serr-phone',phone);
-  chk('s_hours','serr-hours',hours);
+  chk('serr-name',name);
+  chk('serr-ceo',ceo);
+  chk('serr-biz',biz);
+  chk('serr-cate',cate);
+  chk('serr-menu',menu);
+  chk('serr-addr',addr);
+  chk('serr-phone',phone);
 
   if(!ok){showToast('모든 항목을 입력해주세요');return;}
 
-  localStorage.setItem('storeInfo',JSON.stringify({name,cate,addr,phone,hours}));
+  const fullAddr=addrDetail?addr+' '+addrDetail:addr;
+  localStorage.setItem('storeInfo',JSON.stringify({name,ceo,biz,cate,menu,addr:fullAddr,addrDetail,phone,hours}));
   showToast('✅ 가게 정보 저장 완료');
   setTimeout(()=>showFormWrap(),600);
 }
