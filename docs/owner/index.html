@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>동네할인 - 점주 등록</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --primary:#FF5A1F;--primary-dark:#E04010;
+  --yellow:#FFC93C;--green:#10B981;--red:#EF4444;
+  --text:#111827;--sub:#6B7280;--dim:#9CA3AF;
+  --bg:#F5F6F8;--card:#fff;--border:#E5E7EB;
+}
+body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-height:100dvh;display:flex;flex-direction:column;align-items:center}
+.shell{width:100%;max-width:430px;min-height:100dvh;background:#fff;display:flex;flex-direction:column}
+
+/* header */
+.hdr{background:var(--primary);padding:16px 20px 14px;display:flex;align-items:center;gap:12px}
+.hdr-logo{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.5px}
+.hdr-sub{font-size:12px;color:rgba(255,255,255,.8);margin-top:1px}
+.hdr-badge{margin-left:auto;background:rgba(255,255,255,.2);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;color:#fff}
+
+/* photo area */
+.photo-area{margin:20px 16px 0;position:relative;border-radius:18px;overflow:hidden;background:#F3F4F6;border:2px dashed var(--border);cursor:pointer;transition:border-color .2s}
+.photo-area.has-img{border:none}
+.photo-area:active{border-color:var(--primary)}
+.photo-preview{width:100%;aspect-ratio:1/1;object-fit:cover;display:none;border-radius:16px}
+.photo-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:1/1;gap:10px}
+.photo-ico{font-size:52px}
+.photo-txt{font-size:15px;font-weight:700;color:var(--sub)}
+.photo-sub{font-size:12px;color:var(--dim)}
+.photo-btns{position:absolute;bottom:12px;right:12px;display:none;gap:8px}
+.photo-area.has-img .photo-btns{display:flex}
+.pbtn{background:rgba(0,0,0,.55);border:none;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;backdrop-filter:blur(4px)}
+input[type=file]{display:none}
+
+/* form */
+.form{padding:20px 16px;display:flex;flex-direction:column;gap:14px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgrp{display:flex;flex-direction:column;gap:6px}
+.flabel{font-size:12px;font-weight:700;color:var(--sub)}
+.finp{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:600;color:var(--text);background:#fff;outline:none;font-family:inherit;transition:border-color .2s}
+.finp:focus{border-color:var(--primary)}
+select.finp{cursor:pointer}
+.finp-full{grid-column:1/-1}
+
+/* AI 생성 결과 */
+.ai-box{background:#F8F9FF;border:1.5px solid #E0E7FF;border-radius:14px;padding:16px;display:none}
+.ai-box.show{display:block}
+.ai-title{font-size:12px;font-weight:700;color:#6366F1;margin-bottom:8px}
+.ai-caption{font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;word-break:break-all}
+.ai-edit{width:100%;min-height:80px;border:1px solid #C7D2FE;border-radius:10px;padding:10px;font-size:13px;color:var(--text);font-family:inherit;line-height:1.6;resize:vertical;outline:none}
+.ai-edit:focus{border-color:#6366F1}
+
+/* 채널 선택 */
+.channels{display:flex;flex-direction:column;gap:10px}
+.ch-item{display:flex;align-items:center;gap:12px;padding:14px;background:#F9FAFB;border-radius:14px;border:1.5px solid var(--border);cursor:pointer;transition:all .15s}
+.ch-item.on{background:#FFF7ED;border-color:var(--primary)}
+.ch-item.disabled{opacity:.45;cursor:not-allowed}
+.ch-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ch-info{flex:1}
+.ch-name{font-size:14px;font-weight:700;color:var(--text)}
+.ch-desc{font-size:11px;color:var(--dim);margin-top:2px}
+.ch-chk{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0}
+.ch-item.on .ch-chk{background:var(--primary);border-color:var(--primary);color:#fff}
+
+/* 등록 버튼 */
+.submit-area{padding:0 16px 32px}
+.submit-btn{width:100%;padding:17px;background:var(--primary);border:none;border-radius:16px;font-size:17px;font-weight:800;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;box-shadow:0 4px 16px rgba(255,90,31,.35)}
+.submit-btn:active{transform:scale(.98)}
+.submit-btn:disabled{background:#D1D5DB;box-shadow:none;cursor:not-allowed}
+
+/* 진행 상태 */
+.progress{padding:0 16px 20px;display:none;flex-direction:column;gap:8px}
+.progress.show{display:flex}
+.prog-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#F9FAFB;border-radius:12px}
+.prog-ico{font-size:18px;width:24px;text-align:center}
+.prog-name{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.prog-status{font-size:12px;font-weight:700}
+.prog-status.wait{color:var(--dim)}
+.prog-status.ing{color:#F59E0B}
+.prog-status.ok{color:var(--green)}
+.prog-status.err{color:var(--red)}
+
+/* 완료 화면 */
+.done-screen{display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;flex:1;gap:16px}
+.done-screen.show{display:flex}
+.done-ico{font-size:72px}
+.done-title{font-size:24px;font-weight:900;color:var(--text)}
+.done-sub{font-size:14px;color:var(--sub);line-height:1.6}
+.done-btns{display:flex;flex-direction:column;gap:10px;width:100%}
+.done-btn{padding:14px;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer}
+.done-btn.primary{background:var(--primary);color:#fff}
+.done-btn.sec{background:var(--bg);color:var(--text)}
+
+/* 가게정보 없음 안내 */
+.no-store{margin:16px;padding:14px 16px;background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:14px;font-size:13px;color:#C2410C;display:none}
+.no-store a{color:var(--primary);font-weight:700}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="hdr">
+    <div>
+      <div class="hdr-logo">🏷 동네할인</div>
+      <div class="hdr-sub">점주 빠른 등록</div>
+    </div>
+    <div class="hdr-badge" id="storeName">가게정보 없음</div>
+  </div>
+
+  <div class="no-store" id="noStoreWarn">
+    가게정보가 없어요. <a href="../admin/" target="_blank">관리자 → 가게정보</a>에서 먼저 설정해주세요.
+  </div>
+
+  <!-- 메인 폼 -->
+  <div id="mainForm">
+    <!-- 사진 -->
+    <div class="photo-area" id="photoArea" onclick="triggerPhoto()">
+      <div class="photo-placeholder" id="photoPlaceholder">
+        <div class="photo-ico">📸</div>
+        <div class="photo-txt">사진 촬영 / 불러오기</div>
+        <div class="photo-sub">탭하여 상품 사진 추가</div>
+      </div>
+      <img class="photo-preview" id="photoPreview">
+      <div class="photo-btns">
+        <button class="pbtn" onclick="event.stopPropagation();triggerPhoto()">📷 변경</button>
+        <button class="pbtn" onclick="event.stopPropagation();removePhoto()">🗑 삭제</button>
+      </div>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="onPhotoSelected(this)">
+
+    <div class="form">
+      <!-- 기본 정보 -->
+      <div class="frow">
+        <div class="fgrp">
+          <label class="flabel">업종 *</label>
+          <select id="f_업종" class="finp">
+            <option value="">선택</option>
+            <option>카페</option><option>음식점</option><option>베이커리</option>
+            <option>미용실</option><option>옷가게</option><option>편의점</option>
+            <option>마트</option><option>기타</option>
+          </select>
+        </div>
+        <div class="fgrp">
+          <label class="flabel">할인유형</label>
+          <select id="f_할인유형" class="finp">
+            <option>한정수량</option><option>시간한정</option><option>당일특가</option>
+            <option>재고처리</option><option>이벤트</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="fgrp">
+        <label class="flabel">상품명 *</label>
+        <input id="f_상품명" class="finp" type="text" placeholder="예: 아메리카노 그란데">
+      </div>
+
+      <div class="frow">
+        <div class="fgrp">
+          <label class="flabel">정상가 (원)</label>
+          <input id="f_정상가" class="finp" type="number" placeholder="5000">
+        </div>
+        <div class="fgrp">
+          <label class="flabel">할인가 (원)</label>
+          <input id="f_할인가" class="finp" type="number" placeholder="3500">
+        </div>
+      </div>
+
+      <div class="frow">
+        <div class="fgrp">
+          <label class="flabel">할인율 (%)</label>
+          <input id="f_할인율" class="finp" type="number" placeholder="30">
+        </div>
+        <div class="fgrp">
+          <label class="flabel">종료시간</label>
+          <input id="f_종료시간" class="finp" type="time" value="22:00">
+        </div>
+      </div>
+
+      <!-- AI 캡션 -->
+      <div class="ai-box" id="aiBox">
+        <div class="ai-title">🤖 AI 생성 캡션 (수정 가능)</div>
+        <textarea class="ai-edit" id="aiCaption"></textarea>
+        <textarea class="ai-edit" id="aiHashtags" style="min-height:48px;margin-top:6px"></textarea>
+      </div>
+
+      <!-- 채널 선택 -->
+      <div class="flabel" style="margin-bottom:-4px">📡 게시 채널 선택</div>
+      <div class="channels">
+        <div class="ch-item on" id="ch-dongne" onclick="toggleChannel('dongne')">
+          <div class="ch-ico" style="background:#FFF0EB">🏷</div>
+          <div class="ch-info"><div class="ch-name">동네할인</div><div class="ch-desc">고객 페이지에 즉시 노출</div></div>
+          <div class="ch-chk">✓</div>
+        </div>
+        <div class="ch-item on" id="ch-insta" onclick="toggleChannel('insta')">
+          <div class="ch-ico" style="background:#FDF2F8">📸</div>
+          <div class="ch-info"><div class="ch-name">인스타그램</div><div class="ch-desc">AI 캡션+이미지 자동 게시</div></div>
+          <div class="ch-chk">✓</div>
+        </div>
+        <div class="ch-item disabled" id="ch-band">
+          <div class="ch-ico" style="background:#EFF6FF">📗</div>
+          <div class="ch-info"><div class="ch-name">네이버밴드</div><div class="ch-desc">준비 중</div></div>
+          <div class="ch-chk"></div>
+        </div>
+        <div class="ch-item disabled" id="ch-kakao">
+          <div class="ch-ico" style="background:#FEFCE8">💬</div>
+          <div class="ch-info"><div class="ch-name">카카오알림</div><div class="ch-desc">준비 중</div></div>
+          <div class="ch-chk"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 진행 상태 -->
+    <div class="progress" id="progress">
+      <div class="prog-item" id="prog-upload">
+        <span class="prog-ico">📤</span>
+        <span class="prog-name">이미지 업로드</span>
+        <span class="prog-status wait" id="ps-upload">대기</span>
+      </div>
+      <div class="prog-item" id="prog-ai">
+        <span class="prog-ico">🤖</span>
+        <span class="prog-name">AI 캡션 생성</span>
+        <span class="prog-status wait" id="ps-ai">대기</span>
+      </div>
+      <div class="prog-item" id="prog-dongne">
+        <span class="prog-ico">🏷</span>
+        <span class="prog-name">동네할인 등록</span>
+        <span class="prog-status wait" id="ps-dongne">대기</span>
+      </div>
+      <div class="prog-item" id="prog-insta">
+        <span class="prog-ico">📸</span>
+        <span class="prog-name">인스타그램 게시</span>
+        <span class="prog-status wait" id="ps-insta">대기</span>
+      </div>
+    </div>
+
+    <div class="submit-area">
+      <button class="submit-btn" id="submitBtn" onclick="submit()">
+        🚀 30초 등록하기
+      </button>
+    </div>
+  </div>
+
+  <!-- 완료 화면 -->
+  <div class="done-screen" id="doneScreen">
+    <div class="done-ico">🎉</div>
+    <div class="done-title">등록 완료!</div>
+    <div class="done-sub" id="doneMsg">할인 정보가 성공적으로 등록됐어요.</div>
+    <div class="done-btns">
+      <button class="done-btn primary" onclick="viewDeal()">👀 고객 페이지에서 보기</button>
+      <button class="done-btn sec" onclick="reset()">➕ 다음 상품 등록</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL='https://ezcofypuyhgxglzxdith.supabase.co';
+const SUPABASE_KEY='sb_publishable_8bA2iL8WleI-PDahO4XaFg__0gnVrK9';
+
+let photoFile=null, photoDataUrl=null, uploadedImageUrl=null;
+let channels={dongne:true,insta:true};
+let lastDealId=null;
+
+// 가게정보 로드
+function getStoreInfo(){return JSON.parse(localStorage.getItem('storeInfo')||'{}')}
+function initStore(){
+  const si=getStoreInfo();
+  if(si.name){
+    document.getElementById('storeName').textContent=si.name;
+  } else {
+    document.getElementById('noStoreWarn').style.display='block';
+  }
+}
+
+// 사진
+function triggerPhoto(){document.getElementById('fileInput').click()}
+function onPhotoSelected(input){
+  const file=input.files[0];
+  if(!file)return;
+  photoFile=file;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    photoDataUrl=e.target.result;
+    const area=document.getElementById('photoArea');
+    const prev=document.getElementById('photoPreview');
+    const ph=document.getElementById('photoPlaceholder');
+    prev.src=photoDataUrl;
+    prev.style.display='block';
+    ph.style.display='none';
+    area.classList.add('has-img');
+  };
+  reader.readAsDataURL(file);
+}
+function removePhoto(){
+  photoFile=null;photoDataUrl=null;uploadedImageUrl=null;
+  const area=document.getElementById('photoArea');
+  document.getElementById('photoPreview').style.display='none';
+  document.getElementById('photoPlaceholder').style.display='flex';
+  area.classList.remove('has-img');
+  document.getElementById('fileInput').value='';
+}
+
+// 채널 토글
+function toggleChannel(id){
+  channels[id]=!channels[id];
+  const el=document.getElementById('ch-'+id);
+  if(channels[id]){el.classList.add('on');el.querySelector('.ch-chk').textContent='✓';}
+  else{el.classList.remove('on');el.querySelector('.ch-chk').textContent='';}
+}
+
+// 진행 상태
+function setStatus(id,state,text){
+  const el=document.getElementById('ps-'+id);
+  el.className='prog-status '+state;
+  el.textContent=text;
+}
+
+// 메인 등록
+async function submit(){
+  const 상품명=document.getElementById('f_상품명').value.trim();
+  const 업종=document.getElementById('f_업종').value;
+  if(!상품명){alert('상품명을 입력해주세요.');return;}
+  if(!photoDataUrl){alert('사진을 선택해주세요.');return;}
+
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true;
+  btn.textContent='⏳ 등록 중...';
+  document.getElementById('progress').classList.add('show');
+
+  const si=getStoreInfo();
+
+  try{
+    // 1. 이미지 업로드
+    setStatus('upload','ing','업로드 중...');
+    const filename=`owner_${Date.now()}.jpg`;
+    const uploadRes=await fetch(`${SUPABASE_URL}/functions/v1/clever-handler`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+      body:JSON.stringify({imageData:photoDataUrl,filename})
+    });
+    const uploadData=await uploadRes.json();
+    if(!uploadData.url)throw new Error('이미지 업로드 실패');
+    uploadedImageUrl=uploadData.url;
+    setStatus('upload','ok','✅ 완료');
+
+    // 2. AI 캡션 생성
+    setStatus('ai','ing','생성 중...');
+    const body={
+      매장명:si.name||'매장',
+      상품명,
+      업종,
+      할인율:document.getElementById('f_할인율').value,
+      정상가:document.getElementById('f_정상가').value,
+      할인가:document.getElementById('f_할인가').value,
+      종료시간:document.getElementById('f_종료시간').value,
+      할인유형:document.getElementById('f_할인유형').value,
+      위치:si.addr||'',
+    };
+    const aiRes=await fetch(`${SUPABASE_URL}/functions/v1/generate-content`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+      body:JSON.stringify(body)
+    });
+    const aiData=await aiRes.json();
+    const caption=aiData.caption||'';
+    const hashtags=aiData.hashtags||'';
+    setStatus('ai','ok','✅ 완료');
+
+    // 3. 동네할인 등록
+    if(channels.dongne){
+      setStatus('dongne','ing','등록 중...');
+      const deal={
+        store_name:si.name||body.매장명,
+        product_name:상품명,
+        category:업종||null,
+        discount_pct:body.할인율?parseInt(body.할인율):null,
+        original_price:body.정상가?parseInt(body.정상가):null,
+        sale_price:body.할인가?parseInt(body.할인가):null,
+        location:si.addr||null,
+        end_time:body.종료시간||null,
+        event_text:body.할인유형||null,
+        image_url:uploadedImageUrl,
+        is_active:true,
+      };
+      const dealRes=await fetch(`${SUPABASE_URL}/rest/v1/deals`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=representation'},
+        body:JSON.stringify(deal)
+      });
+      const dealData=await dealRes.json();
+      lastDealId=dealData[0]?.id||null;
+      setStatus('dongne','ok','✅ 완료');
+    }
+
+    // 4. 인스타그램 게시
+    if(channels.insta){
+      setStatus('insta','ing','게시 중...');
+      const dealUrl=lastDealId
+        ?`https://kiltaejung.github.io/dongne-discount/?deal=${lastDealId}`
+        :'https://kiltaejung.github.io/dongne-discount/';
+      const storeBlock=[
+        si.name?`📍 ${si.name}`:'',
+        si.addr?`🗺 ${si.addr}`:'',
+        si.phone?`📞 ${si.phone}`:'',
+        si.hours?`⏰ 운영시간: ${si.hours}`:'',
+      ].filter(Boolean).join('\n');
+      const coupon=`🎟 쿠폰 다운받기 : 동네할인\n${dealUrl}`;
+      const fullCaption=caption+'\n\n'+(storeBlock?storeBlock+'\n\n':'')+hashtags+'\n\n'+coupon;
+
+      const instaRes=await fetch(`${SUPABASE_URL}/functions/v1/instagram-post`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+        body:JSON.stringify({image_url:uploadedImageUrl,caption:fullCaption})
+      });
+      const instaData=await instaRes.json();
+      if(instaData.success){setStatus('insta','ok','✅ 완료');}
+      else{setStatus('insta','err','⚠️ 실패');}
+    }
+
+    // 완료
+    showDone(channels);
+
+  }catch(e){
+    btn.disabled=false;
+    btn.textContent='🚀 30초 등록하기';
+    alert('오류: '+e.message);
+  }
+}
+
+function showDone(ch){
+  document.getElementById('mainForm').style.display='none';
+  const done=document.getElementById('doneScreen');
+  done.classList.add('show');
+  const msgs=[];
+  if(ch.dongne)msgs.push('동네할인');
+  if(ch.insta)msgs.push('인스타그램');
+  document.getElementById('doneMsg').textContent=msgs.join(', ')+'에 성공적으로 등록됐어요! 🎉';
+}
+
+function viewDeal(){
+  const url=lastDealId
+    ?`https://kiltaejung.github.io/dongne-discount/?deal=${lastDealId}`
+    :'https://kiltaejung.github.io/dongne-discount/';
+  window.open(url,'_blank');
+}
+
+function reset(){
+  location.reload();
+}
+
+initStore();
+</script>
+</body>
+</html>
