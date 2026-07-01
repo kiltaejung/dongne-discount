@@ -250,7 +250,49 @@ select.finp{cursor:pointer}
     <div class="done-sub" id="doneMsg">할인 정보가 성공적으로 등록됐어요.</div>
     <div class="done-btns">
       <button class="done-btn primary" onclick="viewDeal()">👀 고객 페이지에서 보기</button>
+      <button class="done-btn sec" onclick="goQrScan()">📷 QR 쿠폰 인증하기</button>
       <button class="done-btn sec" onclick="reset()">➕ 다음 상품 등록</button>
+    </div>
+  </div>
+
+  <!-- QR 인증 화면 -->
+  <div id="qrScreen" style="display:none;flex-direction:column;flex:1">
+    <div style="padding:20px 16px 0;display:flex;align-items:center;gap:10px">
+      <button onclick="closeQrScreen()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#6B7280">‹</button>
+      <div style="font-size:17px;font-weight:800">📷 QR 쿠폰 인증</div>
+    </div>
+
+    <!-- 탭 -->
+    <div style="display:flex;margin:16px 16px 0;background:#F3F4F6;border-radius:12px;padding:4px">
+      <button id="qrtab-scan" onclick="switchQrTab('scan')" style="flex:1;padding:9px;border:none;border-radius:9px;font-size:13px;font-weight:700;background:#fff;color:#111;cursor:pointer">📷 QR 스캔</button>
+      <button id="qrtab-manual" onclick="switchQrTab('manual')" style="flex:1;padding:9px;border:none;border-radius:9px;font-size:13px;font-weight:700;background:transparent;color:#6B7280;cursor:pointer">⌨️ 번호 입력</button>
+    </div>
+
+    <!-- QR 스캔 탭 -->
+    <div id="qr-scan-panel" style="padding:16px;display:flex;flex-direction:column;gap:12px">
+      <div style="background:#000;border-radius:16px;overflow:hidden;aspect-ratio:1/1;position:relative">
+        <video id="qrVideo" style="width:100%;height:100%;object-fit:cover" playsinline autoplay></video>
+        <canvas id="qrCanvas" style="display:none"></canvas>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none">
+          <div style="width:60%;aspect-ratio:1/1;border:3px solid #FF5A1F;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.4)"></div>
+        </div>
+      </div>
+      <div id="scanMsg" style="text-align:center;font-size:13px;color:#6B7280">QR 코드를 네모 안에 맞춰주세요</div>
+      <button onclick="startScan()" id="scanBtn" style="padding:13px;background:var(--primary);border:none;border-radius:12px;font-size:14px;font-weight:700;color:#fff;cursor:pointer">📷 카메라 시작</button>
+    </div>
+
+    <!-- 번호 입력 탭 -->
+    <div id="qr-manual-panel" style="padding:16px;display:none;flex-direction:column;gap:12px">
+      <div style="font-size:13px;color:#6B7280">고객에게 쿠폰번호를 받아 입력하세요</div>
+      <input id="couponInput" type="text" placeholder="예: DC1A2B3C" style="padding:14px;border:1.5px solid #E5E7EB;border-radius:12px;font-size:16px;font-weight:700;text-align:center;letter-spacing:3px;text-transform:uppercase;outline:none;font-family:inherit">
+      <button onclick="verifyCoupon(document.getElementById('couponInput').value.trim().toUpperCase())" style="padding:13px;background:var(--primary);border:none;border-radius:12px;font-size:14px;font-weight:700;color:#fff;cursor:pointer">✅ 쿠폰 인증하기</button>
+    </div>
+
+    <!-- 인증 결과 -->
+    <div id="verifyResult" style="margin:0 16px;display:none;padding:16px;border-radius:14px;text-align:center">
+      <div id="verifyIco" style="font-size:48px;margin-bottom:8px"></div>
+      <div id="verifyTitle" style="font-size:18px;font-weight:800;margin-bottom:4px"></div>
+      <div id="verifyDesc" style="font-size:13px;color:#6B7280"></div>
     </div>
   </div>
 </div>
@@ -450,7 +492,121 @@ function reset(){
   location.reload();
 }
 
+// QR 인증 화면
+let scanStream=null, scanInterval=null;
+
+function goQrScan(){
+  document.getElementById('doneScreen').classList.remove('show');
+  document.getElementById('qrScreen').style.display='flex';
+}
+
+function closeQrScreen(){
+  stopScan();
+  document.getElementById('qrScreen').style.display='none';
+  document.getElementById('doneScreen').classList.add('show');
+  document.getElementById('verifyResult').style.display='none';
+}
+
+function switchQrTab(tab){
+  const isScan=(tab==='scan');
+  document.getElementById('qr-scan-panel').style.display=isScan?'flex':'none';
+  document.getElementById('qr-manual-panel').style.display=isScan?'none':'flex';
+  document.getElementById('qrtab-scan').style.background=isScan?'#fff':'transparent';
+  document.getElementById('qrtab-scan').style.color=isScan?'#111':'#6B7280';
+  document.getElementById('qrtab-manual').style.background=isScan?'transparent':'#fff';
+  document.getElementById('qrtab-manual').style.color=isScan?'#6B7280':'#111';
+  if(!isScan) stopScan();
+  document.getElementById('verifyResult').style.display='none';
+}
+
+async function startScan(){
+  const btn=document.getElementById('scanBtn');
+  const video=document.getElementById('qrVideo');
+  const msg=document.getElementById('scanMsg');
+  try{
+    stopScan();
+    scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    video.srcObject=scanStream;
+    btn.textContent='⏹ 스캔 중지';
+    btn.onclick=stopScan;
+    msg.textContent='QR 코드를 네모 안에 맞춰주세요';
+
+    const canvas=document.getElementById('qrCanvas');
+    const ctx=canvas.getContext('2d');
+    scanInterval=setInterval(()=>{
+      if(video.readyState<video.HAVE_ENOUGH_DATA)return;
+      canvas.width=video.videoWidth;
+      canvas.height=video.videoHeight;
+      ctx.drawImage(video,0,0);
+      const imageData=ctx.getImageData(0,0,canvas.width,canvas.height);
+      const code=jsQR(imageData.data,imageData.width,imageData.height);
+      if(code&&code.data){
+        stopScan();
+        verifyCoupon(code.data.trim().toUpperCase());
+      }
+    },300);
+  }catch(e){
+    msg.textContent='카메라 접근 실패: '+e.message;
+  }
+}
+
+function stopScan(){
+  if(scanInterval){clearInterval(scanInterval);scanInterval=null;}
+  if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}
+  const btn=document.getElementById('scanBtn');
+  if(btn){btn.textContent='📷 카메라 시작';btn.onclick=startScan;}
+}
+
+async function verifyCoupon(code){
+  if(!code){alert('쿠폰번호를 입력해주세요.');return;}
+  const res=document.getElementById('verifyResult');
+  res.style.display='block';
+  res.style.background='#F9FAFB';
+  document.getElementById('verifyIco').textContent='⏳';
+  document.getElementById('verifyTitle').textContent='확인 중...';
+  document.getElementById('verifyDesc').textContent=code;
+
+  try{
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/coupons?coupon_code=eq.${encodeURIComponent(code)}&select=*`,{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+    });
+    const data=await r.json();
+    if(!data||data.length===0){
+      res.style.background='#FEF2F2';
+      document.getElementById('verifyIco').textContent='❌';
+      document.getElementById('verifyTitle').textContent='유효하지 않은 쿠폰';
+      document.getElementById('verifyDesc').textContent='쿠폰번호를 다시 확인해주세요.';
+      return;
+    }
+    const coupon=data[0];
+    if(coupon.status==='used'){
+      res.style.background='#FEF2F2';
+      document.getElementById('verifyIco').textContent='⚠️';
+      document.getElementById('verifyTitle').textContent='이미 사용된 쿠폰';
+      document.getElementById('verifyDesc').textContent='이 쿠폰은 이미 사용됐습니다.';
+      return;
+    }
+    // 사용 처리
+    await fetch(`${SUPABASE_URL}/rest/v1/coupons?coupon_code=eq.${encodeURIComponent(code)}`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},
+      body:JSON.stringify({status:'used',used_at:new Date().toISOString()})
+    });
+    res.style.background='#F0FDF4';
+    document.getElementById('verifyIco').textContent='✅';
+    document.getElementById('verifyTitle').textContent='할인 인증 완료!';
+    document.getElementById('verifyDesc').textContent=`쿠폰번호: ${code}`;
+    document.getElementById('couponInput').value='';
+  }catch(e){
+    res.style.background='#FEF2F2';
+    document.getElementById('verifyIco').textContent='❌';
+    document.getElementById('verifyTitle').textContent='오류 발생';
+    document.getElementById('verifyDesc').textContent=e.message;
+  }
+}
+
 initStore();
 </script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </body>
 </html>

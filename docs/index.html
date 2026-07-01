@@ -398,9 +398,24 @@ body{background:#fff;min-height:100dvh;display:flex;align-items:center;justify-c
         <div class="modal-info" id="mInfo"></div>
         <div class="modal-btns">
           <button class="mbtn sec" id="mWishBtn" onclick="toggleWishModal()">❤️ 찜하기</button>
-          <button class="mbtn pri" onclick="shareModal()">📤 공유하기</button>
+          <button class="mbtn pri" onclick="getCoupon()">🎟 쿠폰 받기</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- QR 쿠폰 모달 -->
+  <div id="qrBack" onclick="closeQr(event)" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.6);align-items:flex-end;justify-content:center">
+    <div style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:28px 24px 40px;text-align:center">
+      <div style="font-size:18px;font-weight:900;color:#111;margin-bottom:4px">🎟 할인 쿠폰</div>
+      <div style="font-size:13px;color:#6B7280;margin-bottom:20px" id="qrDealName"></div>
+      <div id="qrImgWrap" style="display:flex;justify-content:center;margin-bottom:16px">
+        <img id="qrImg" style="width:200px;height:200px;border-radius:12px;border:1.5px solid #E5E7EB">
+      </div>
+      <div style="font-size:13px;color:#6B7280;margin-bottom:6px">쿠폰번호</div>
+      <div id="qrCode" style="font-size:22px;font-weight:900;letter-spacing:4px;color:#FF5A1F;margin-bottom:20px"></div>
+      <div style="font-size:12px;color:#9CA3AF;margin-bottom:20px">가게에서 이 화면을 보여주세요</div>
+      <button onclick="closeQr(null,true)" style="width:100%;padding:14px;background:#F3F4F6;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer">닫기</button>
     </div>
   </div>
 
@@ -693,6 +708,28 @@ function doSearch(q){
     `).join('')}
     </div>
   `;
+}
+
+/* ── QR 쿠폰 ── */
+async function getCoupon(){
+  if(!curDeal) return;
+  const code = 'DC' + Date.now().toString(36).toUpperCase().slice(-6) + Math.random().toString(36).toUpperCase().slice(2,5);
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/coupons`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},
+      body:JSON.stringify({deal_id:curDeal.id, coupon_code:code})
+    });
+  } catch(e){}
+  document.getElementById('qrDealName').textContent = curDeal.store + ' · ' + curDeal.name;
+  document.getElementById('qrCode').textContent = code;
+  document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${code}&color=FF5A1F`;
+  const el = document.getElementById('qrBack');
+  el.style.display='flex';
+}
+function closeQr(e, force){
+  if(force || e?.target===document.getElementById('qrBack'))
+    document.getElementById('qrBack').style.display='none';
 }
 
 /* ── 공유 ── */
