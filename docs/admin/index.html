@@ -354,7 +354,8 @@ tr:hover td{background:#FAFBFC}
     </div>
     <div class="topbar-right">
       <div class="notif"><span>🔔</span><div class="notif-dot"></div></div>
-      <button class="tbtn" onclick="alert('데이터 내보내기 준비 중')">📥 내보내기</button>
+      <button class="tbtn" id="btnNewSns" style="display:none;background:#833AB4;color:#fff" onclick="openSnsModal()">✨ <span>새 콘텐츠 만들기</span></button>
+      <button class="tbtn" id="btnExport" onclick="alert('데이터 내보내기 준비 중')">📥 <span>내보내기</span></button>
     </div>
   </div>
 
@@ -875,6 +876,166 @@ tr:hover td{background:#FAFBFC}
       </div>
     </div>
 
+    <!-- ── SNS 콘텐츠 생성 모달 ── -->
+    <div id="snsModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.45);overflow-y:auto">
+      <div style="max-width:860px;margin:40px auto;background:#fff;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.2);overflow:hidden">
+        <!-- 모달 헤더 -->
+        <div style="background:linear-gradient(135deg,#0E1116,#1E2A3A);padding:22px 28px;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:17px;font-weight:800;color:#F5F6F8">📱 인스타그램 콘텐츠 자동 생성</div>
+            <div style="font-size:12px;color:#9AA3AF;margin-top:3px">점주 정보 입력 → AI 캡션·해시태그 생성 → 인스타그램 자동 등록</div>
+          </div>
+          <button onclick="closeSnsModal()" style="background:none;border:none;color:#9AA3AF;font-size:22px;cursor:pointer;padding:4px">✕</button>
+        </div>
+
+        <div style="display:flex;gap:0">
+          <!-- 왼쪽: 입력 폼 -->
+          <div style="flex:1;padding:24px;border-right:1px solid #E5E7EB;overflow-y:auto;max-height:80vh">
+            <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:16px">📋 점주 입력 항목 (섹션 2)</div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div>
+                <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">업종 <span style="color:#EF4444">*</span></label>
+                <select id="f_업종" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px;background:#fff">
+                  <option value="">선택</option>
+                  <option>미용실</option><option>음식점</option><option>카페</option><option>베이커리</option>
+                  <option>뷰티</option><option>의류</option><option>편의점</option><option>헬스/운동</option><option>기타</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">매장명 <span style="color:#EF4444">*</span></label>
+                <input id="f_매장명" type="text" placeholder="예: 블랙헤어" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">상품명 <span style="color:#EF4444">*</span></label>
+                <input id="f_상품명" type="text" placeholder="예: 굵은 히피펌" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">할인율 (%)</label>
+                <input id="f_할인율" type="number" placeholder="예: 20" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">정상가 (원)</label>
+                <input id="f_정상가" type="number" placeholder="예: 80000" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">할인가 (원)</label>
+                <input id="f_할인가" type="number" placeholder="예: 64000" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">할인 유형</label>
+                <select id="f_할인유형" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px;background:#fff">
+                  <option>타임세일</option><option>1시간 한정</option><option>오늘만</option>
+                  <option>주말특가</option><option>평일할인</option><option>기간한정</option><option>기타</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">종료 시간</label>
+                <input id="f_종료시간" type="text" placeholder="예: 오후 3시" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">유효 시간</label>
+                <input id="f_유효시간" type="text" placeholder="예: 60분, 120분" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">위치</label>
+                <input id="f_위치" type="text" placeholder="예: 성동구 성수동 12" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">운영 시간</label>
+                <input id="f_운영시간" type="text" placeholder="예: 매일 08:00-21:00" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">쿠폰 링크 (URL)</label>
+                <input id="f_쿠폰링크" type="url" placeholder="예: https://onelink.me/abc123" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
+              </div>
+            </div>
+
+            <div style="margin-top:12px">
+              <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">이벤트 문구 (강조하고 싶은 문구)</label>
+              <input id="f_이벤트문구" type="text" placeholder="예: 베이커리 감성, 오늘만 가능" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
+            </div>
+
+            <div style="margin-top:12px">
+              <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">대표 이미지 URL</label>
+              <input id="f_이미지" type="url" placeholder="Supabase Storage 공개 URL" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
+              <div style="font-size:11px;color:#9CA3AF;margin-top:4px">Supabase → Storage → sns-images 버킷에 업로드 후 URL 복사</div>
+            </div>
+
+            <div style="margin-top:12px">
+              <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">기타 요구사항</label>
+              <textarea id="f_기타" rows="2" placeholder="예: 배이커리 감성, 핑크 톤 강조" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px;resize:none"></textarea>
+            </div>
+
+            <button onclick="generateContent()" id="genBtn" style="width:100%;margin-top:16px;padding:12px;background:#FFC93C;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .15s">
+              ✨ AI 콘텐츠 생성
+            </button>
+          </div>
+
+          <!-- 오른쪽: AI 미리보기 -->
+          <div style="width:320px;flex-shrink:0;padding:24px;background:#F9FAFB;display:flex;flex-direction:column;max-height:80vh;overflow-y:auto">
+            <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:16px">👁 AI 생성 미리보기</div>
+
+            <!-- 인스타 미리보기 카드 -->
+            <div id="igPreview" style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;overflow:hidden;margin-bottom:16px">
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid #F3F4F6">
+                <div style="width:32px;height:32px;border-radius:50%;background:#E5E7EB;display:flex;align-items:center;justify-content:center;font-size:16px">📸</div>
+                <div>
+                  <div style="font-size:12px;font-weight:700">dongne_discount</div>
+                  <div style="font-size:10px;color:#9CA3AF" id="igLocation">위치</div>
+                </div>
+              </div>
+              <div id="igImgBox" style="background:#E5E7EB;height:200px;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:13px">이미지 URL 입력 후 표시</div>
+              <div style="padding:10px 12px">
+                <div id="igCaption" style="font-size:12px;color:#374151;line-height:1.6;white-space:pre-wrap;max-height:150px;overflow-y:auto">캡션이 여기에 표시됩니다.</div>
+                <div id="igHashtags" style="font-size:11px;color:#3B82F6;margin-top:6px;line-height:1.7;word-break:break-all"></div>
+              </div>
+            </div>
+
+            <!-- 편집 영역 -->
+            <div id="editArea" style="display:none">
+              <div style="font-size:12px;font-weight:600;color:#6B7280;margin-bottom:6px">캡션 편집</div>
+              <textarea id="editCaption" rows="8" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:12px;resize:none;line-height:1.6"></textarea>
+              <div style="font-size:12px;font-weight:600;color:#6B7280;margin:10px 0 6px">해시태그 편집</div>
+              <textarea id="editHashtags" rows="3" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:12px;resize:none"></textarea>
+
+              <!-- 필수 준수 체크 (섹션 8) -->
+              <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px 12px;margin-top:12px">
+                <div style="font-size:11px;font-weight:700;color:#DC2626;margin-bottom:6px">⚠️ 게시 전 필수 확인 (섹션 8)</div>
+                <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:#374151;margin-bottom:4px;cursor:pointer">
+                  <input type="checkbox" id="chk1"> 허위·과장 광고 없음
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:#374151;margin-bottom:4px;cursor:pointer">
+                  <input type="checkbox" id="chk2"> 할인가·마감시간 정확함
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:#374151;margin-bottom:4px;cursor:pointer">
+                  <input type="checkbox" id="chk3"> 쿠폰 링크 유효성 확인
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:#374151;cursor:pointer">
+                  <input type="checkbox" id="chk4"> 인스타그램 정책 준수
+                </label>
+              </div>
+
+              <div style="display:flex;gap:8px;margin-top:12px">
+                <button onclick="postToInstagram()" id="postBtn" style="flex:1;padding:11px;background:#833AB4;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">
+                  📸 인스타 게시
+                </button>
+                <button onclick="saveAsDraft()" style="padding:11px 14px;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:#374151">
+                  💾 임시저장
+                </button>
+              </div>
+
+              <div id="postResult" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:12px;font-weight:600;text-align:center"></div>
+            </div>
+
+            <div id="genHint" style="text-align:center;color:#9CA3AF;font-size:12px;margin-top:8px">
+              왼쪽 폼을 작성하고<br>"AI 콘텐츠 생성" 버튼을 누르세요
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- A-09 SNS 콘텐츠 관리 -->
     <div class="screen" id="sc-sns">
       <!-- 채널 모드 범례 -->
@@ -1138,6 +1299,146 @@ function go(id){
   document.getElementById('nav-'+id).classList.add('active');
   document.getElementById('pageTitle').textContent=PAGE_TITLES[id][0];
   document.getElementById('pageSub').textContent=PAGE_TITLES[id][1];
+  // SNS 화면일 때만 "새 콘텐츠" 버튼 표시
+  document.getElementById('btnNewSns').style.display=id==='sns'?'flex':'none';
+}
+
+/* ── SNS 콘텐츠 생성 모달 ── */
+const SUPABASE_URL='https://ezcofypuyhgxglzxdith.supabase.co';
+const SUPABASE_KEY='sb_publishable_8bA2iL8WleI-PDahO4XaFg__0gnVrK9';
+
+function openSnsModal(){
+  document.getElementById('snsModal').style.display='block';
+  document.body.style.overflow='hidden';
+}
+function closeSnsModal(){
+  document.getElementById('snsModal').style.display='none';
+  document.body.style.overflow='';
+  document.getElementById('editArea').style.display='none';
+  document.getElementById('genHint').style.display='block';
+  document.getElementById('postResult').style.display='none';
+  // 체크박스 초기화
+  ['chk1','chk2','chk3','chk4'].forEach(id=>document.getElementById(id).checked=false);
+}
+
+function getFormVal(id){return document.getElementById(id).value.trim();}
+
+async function generateContent(){
+  const 매장명=getFormVal('f_매장명');
+  const 상품명=getFormVal('f_상품명');
+  if(!매장명||!상품명){alert('매장명과 상품명은 필수입니다.');return;}
+
+  const btn=document.getElementById('genBtn');
+  btn.textContent='⏳ AI 생성 중...';
+  btn.disabled=true;
+
+  const body={
+    업종:getFormVal('f_업종'),
+    매장명, 상품명,
+    할인율:getFormVal('f_할인율'),
+    정상가:getFormVal('f_정상가'),
+    할인가:getFormVal('f_할인가'),
+    할인유형:getFormVal('f_할인유형'),
+    이벤트문구:getFormVal('f_이벤트문구'),
+    종료시간:getFormVal('f_종료시간'),
+    유효시간:getFormVal('f_유효시간'),
+    위치:getFormVal('f_위치'),
+    운영시간:getFormVal('f_운영시간'),
+    쿠폰링크:getFormVal('f_쿠폰링크'),
+    기타요구사항:getFormVal('f_기타'),
+  };
+
+  try {
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/generate-content`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+      body:JSON.stringify(body)
+    });
+    const data=await res.json();
+
+    if(!data.success){
+      alert('생성 실패: '+(data.error||'알 수 없는 오류'));
+      return;
+    }
+
+    // 미리보기 업데이트
+    document.getElementById('igCaption').textContent=data.caption;
+    document.getElementById('igHashtags').textContent=data.hashtags;
+    document.getElementById('igLocation').textContent=body.위치||body.매장명;
+
+    // 이미지 미리보기
+    const imgUrl=getFormVal('f_이미지');
+    if(imgUrl){
+      document.getElementById('igImgBox').innerHTML=`<img src="${imgUrl}" style="width:100%;height:200px;object-fit:cover">`;
+    }
+
+    // 편집 영역 표시
+    document.getElementById('editCaption').value=data.caption;
+    document.getElementById('editHashtags').value=data.hashtags;
+    document.getElementById('editArea').style.display='block';
+    document.getElementById('genHint').style.display='none';
+
+  } catch(e){
+    alert('네트워크 오류: '+e.message);
+  } finally {
+    btn.textContent='✨ AI 콘텐츠 재생성';
+    btn.disabled=false;
+  }
+}
+
+async function postToInstagram(){
+  // 필수 준수 사항 확인
+  const checks=['chk1','chk2','chk3','chk4'];
+  if(!checks.every(id=>document.getElementById(id).checked)){
+    alert('게시 전 필수 확인 항목 4개를 모두 체크해주세요.');
+    return;
+  }
+
+  const imageUrl=getFormVal('f_이미지');
+  if(!imageUrl){alert('대표 이미지 URL을 입력해주세요.');return;}
+
+  const caption=document.getElementById('editCaption').value;
+  const hashtags=document.getElementById('editHashtags').value;
+  const fullCaption=caption+'\n\n'+hashtags;
+
+  const btn=document.getElementById('postBtn');
+  btn.textContent='⏳ 게시 중...';
+  btn.disabled=true;
+
+  try {
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/instagram-post`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+      body:JSON.stringify({image_url:imageUrl, caption:fullCaption})
+    });
+    const data=await res.json();
+    const resultEl=document.getElementById('postResult');
+    resultEl.style.display='block';
+
+    if(data.success){
+      resultEl.style.background='#ECFDF5';
+      resultEl.style.color='#065F46';
+      resultEl.textContent='✅ 인스타그램 게시 완료! post_id: '+data.post_id;
+      // 목록에 추가
+      const now=new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+      SNS_CONTENT.unshift([now, getFormVal('f_매장명'), getFormVal('f_상품명'), '인스타그램', caption.substring(0,40)+'...', '✅', '발송완료']);
+      renderSns(); renderSnsCards();
+    } else {
+      resultEl.style.background='#FEF2F2';
+      resultEl.style.color='#991B1B';
+      resultEl.textContent='❌ 게시 실패: '+(data.error||JSON.stringify(data));
+    }
+  } catch(e){
+    alert('게시 오류: '+e.message);
+  } finally {
+    btn.textContent='📸 인스타 게시';
+    btn.disabled=false;
+  }
+}
+
+function saveAsDraft(){
+  alert('임시저장됐습니다. (실제 DB 연동 후 저장됩니다)');
+  closeSnsModal();
 }
 
 /* ── Mock data ── */
