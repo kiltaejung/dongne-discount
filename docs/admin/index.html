@@ -961,6 +961,8 @@ tr:hover td{background:#FAFBFC}
               <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">대표 이미지 URL</label>
               <input id="f_이미지" type="url" placeholder="Supabase Storage 공개 URL" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
               <div style="font-size:11px;color:#9CA3AF;margin-top:4px">Supabase → Storage → sns-images 버킷에 업로드 후 URL 복사</div>
+              <button onclick="addImageOverlay()" id="overlayBtn" style="margin-top:8px;padding:8px 14px;background:#1ABC9C;border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">🖼️ 할인 배지 자동 추가</button>
+              <span id="overlayStatus" style="font-size:11px;color:#6B7280;margin-left:8px"></span>
             </div>
 
             <div style="margin-top:12px">
@@ -1307,6 +1309,89 @@ function go(id){
 /* ── SNS 콘텐츠 생성 모달 ── */
 const SUPABASE_URL='https://ezcofypuyhgxglzxdith.supabase.co';
 const SUPABASE_KEY='sb_publishable_8bA2iL8WleI-PDahO4XaFg__0gnVrK9';
+const sbClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+async function addImageOverlay(){
+  const imageUrl=getFormVal('f_이미지');
+  if(!imageUrl){alert('대표 이미지 URL을 먼저 입력해주세요.');return;}
+
+  const btn=document.getElementById('overlayBtn');
+  const status=document.getElementById('overlayStatus');
+  btn.disabled=true; btn.textContent='⏳ 처리 중...'; status.textContent='';
+
+  try {
+    // 배지 텍스트 구성
+    const badges=[];
+    const 할인유형=getFormVal('f_할인유형');
+    const 이벤트문구=getFormVal('f_이벤트문구');
+    const 시간=getFormVal('f_유효시간')||getFormVal('f_종료시간');
+    const 할인율=getFormVal('f_할인율');
+    if(할인율) badges.push({icon:'🔥',text:(할인유형||'할인')+' '+할인율+'%',color:'#FF6B4A'});
+    else if(할인유형) badges.push({icon:'🔥',text:할인유형,color:'#FF6B4A'});
+    if(이벤트문구) badges.push({icon:'🎁',text:이벤트문구,color:'#9B59B6'});
+    if(시간) badges.push({icon:'⏰',text:시간,color:'#1ABC9C'});
+    if(badges.length===0){alert('할인유형, 이벤트문구, 시간 중 하나 이상 입력해주세요.');return;}
+
+    // Canvas에 이미지 로드
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=imageUrl+'?t='+Date.now();});
+
+    const canvas=document.createElement('canvas');
+    canvas.width=img.width||1080;
+    canvas.height=img.height||1080;
+    const ctx=canvas.getContext('2d');
+    ctx.drawImage(img,0,0);
+
+    // 배지 그리기 (오른쪽 상단)
+    const bW=Math.min(200,canvas.width*0.38);
+    const bH=50;
+    const bPad=10;
+    const bX=canvas.width-bW-18;
+    let bY=18;
+    ctx.font=`bold ${Math.round(bH*0.38)}px sans-serif`;
+
+    badges.forEach(({icon,text,color})=>{
+      // 배경 (반투명 어두운 색 + 왼쪽 컬러 바)
+      ctx.fillStyle='rgba(0,0,0,0.72)';
+      roundRect(ctx,bX,bY,bW,bH,12);
+      ctx.fill();
+      ctx.fillStyle=color;
+      roundRect(ctx,bX,bY,8,bH,{tl:12,bl:12,tr:0,br:0});
+      ctx.fill();
+      // 텍스트
+      ctx.fillStyle='#FFFFFF';
+      ctx.fillText(icon+' '+text,bX+18,bY+bH*0.65,bW-24);
+      bY+=bH+bPad;
+    });
+
+    // Blob → Supabase Storage 업로드
+    const blob=await new Promise(res=>canvas.toBlob(res,'image/jpeg',0.92));
+    const filename=`overlay_${Date.now()}.jpg`;
+    const {error}=await sbClient.storage.from('sns-images').upload(filename,blob,{contentType:'image/jpeg',upsert:true});
+    if(error) throw error;
+
+    const {data:{publicUrl}}=sbClient.storage.from('sns-images').getPublicUrl(filename);
+    document.getElementById('f_이미지').value=publicUrl;
+    document.getElementById('igImgBox').innerHTML=`<img src="${publicUrl}" style="width:100%;height:200px;object-fit:cover">`;
+    status.textContent='✅ 배지 추가 완료';
+  } catch(e){
+    alert('오버레이 실패: '+e.message);
+  } finally {
+    btn.disabled=false; btn.textContent='🖼️ 할인 배지 자동 추가';
+  }
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  if(typeof r==='number') r={tl:r,tr:r,br:r,bl:r};
+  ctx.beginPath();
+  ctx.moveTo(x+r.tl,y);
+  ctx.lineTo(x+w-r.tr,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r.tr);
+  ctx.lineTo(x+w,y+h-r.br); ctx.quadraticCurveTo(x+w,y+h,x+w-r.br,y+h);
+  ctx.lineTo(x+r.bl,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r.bl);
+  ctx.lineTo(x,y+r.tl); ctx.quadraticCurveTo(x,y,x+r.tl,y);
+  ctx.closePath();
+}
 
 function openSnsModal(){
   document.getElementById('snsModal').style.display='block';
