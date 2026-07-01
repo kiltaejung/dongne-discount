@@ -946,8 +946,9 @@ tr:hover td{background:#FAFBFC}
                 <input id="f_운영시간" type="text" placeholder="예: 매일 08:00-21:00" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
               </div>
               <div>
-                <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">쿠폰 링크 (URL)</label>
-                <input id="f_쿠폰링크" type="url" placeholder="예: https://onelink.me/abc123" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px">
+                <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">상품 ID</label>
+                <input id="f_상품id" type="text" placeholder="예: 123" style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px" oninput="updateProductUrl()">
+                <div style="font-size:11px;color:#9CA3AF;margin-top:4px" id="productUrlPreview"></div>
               </div>
             </div>
 
@@ -1322,6 +1323,14 @@ function closeSnsModal(){
 }
 
 function getFormVal(id){return document.getElementById(id).value.trim();}
+function getProductUrl(){
+  const id=document.getElementById('f_상품id').value.trim();
+  return id?`https://kiltaejung.github.io/dongne-discount/?id=${id}`:'';
+}
+function updateProductUrl(){
+  const url=getProductUrl();
+  document.getElementById('productUrlPreview').textContent=url?'→ '+url:'';
+}
 
 async function generateContent(){
   const 매장명=getFormVal('f_매장명');
@@ -1344,7 +1353,7 @@ async function generateContent(){
     유효시간:getFormVal('f_유효시간'),
     위치:getFormVal('f_위치'),
     운영시간:getFormVal('f_운영시간'),
-    쿠폰링크:getFormVal('f_쿠폰링크'),
+    상품페이지URL:getProductUrl(),
     기타요구사항:getFormVal('f_기타'),
   };
 
