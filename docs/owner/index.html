@@ -71,28 +71,14 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
 
 /* ── 네이버 지도 카드 ── */
 .map-box{border-radius:16px;overflow:hidden;border:1px solid var(--border);margin-top:10px;display:none;flex-direction:column;box-shadow:0 2px 12px rgba(0,0,0,.08)}
-.map-canvas{position:relative;height:180px;background:#EEF0EA;overflow:hidden}
-/* 도로 패턴 (CSS로 지도 느낌) */
-.map-canvas::before{content:'';position:absolute;inset:0;background:
-  linear-gradient(90deg,transparent 48%,#fff 48%,#fff 52%,transparent 52%),
-  linear-gradient(0deg,transparent 48%,#fff 48%,#fff 52%,transparent 52%);
-  background-size:80px 80px;opacity:.5}
-.map-canvas::after{content:'';position:absolute;inset:0;background:
-  linear-gradient(90deg,transparent 20%,#D4E0C4 20%,#D4E0C4 40%,transparent 40%,transparent 60%,#D8E8D0 60%,#D8E8D0 80%,transparent 80%);
-  background-size:100% 100%;opacity:.4}
-.map-pin{position:absolute;top:50%;left:50%;transform:translate(-50%,-100%) translateY(-8px);z-index:2;display:flex;flex-direction:column;align-items:center}
-.map-pin-dot{width:44px;height:44px;background:#FF5A1F;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 3px 10px rgba(255,90,31,.5)}
-.map-pin-dot::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}
-.map-addr-chip{position:absolute;top:50%;left:50%;transform:translate(-16px,2px);background:#fff;border:2px solid #1B6AC6;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:800;color:#1B6AC6;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.15);z-index:2}
-.map-thumb{position:absolute;left:12px;bottom:12px;width:64px;height:64px;border-radius:8px;border:2px solid #fff;background:#ccc;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.2);z-index:3}
-.map-thumb img{width:100%;height:100%;object-fit:cover}
-.map-thumb-placeholder{width:100%;height:100%;background:linear-gradient(135deg,#C8E6C9,#A5D6A7);display:flex;align-items:center;justify-content:center;font-size:24px}
-.map-info{background:#fff;padding:14px 16px 12px}
-.map-info-addr{font-size:18px;font-weight:900;color:#111827;line-height:1.3;margin-bottom:4px}
+.map-iframe-wrap{position:relative;height:200px;background:#e8e8e8}
+.map-iframe-wrap iframe{width:100%;height:100%;border:none;display:block}
+.map-info{background:#fff;padding:14px 16px 10px}
+.map-info-addr{font-size:17px;font-weight:900;color:#111827;line-height:1.3;margin-bottom:3px}
 .map-info-sub{font-size:12px;color:var(--sub)}
-.map-btns{display:flex;gap:8px;padding:0 12px 12px;background:#fff}
-.map-btn-naver{flex:1;padding:10px;background:#03C75A;border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px;text-decoration:none}
-.map-btn-copy{padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.map-btns{display:flex;gap:8px;padding:10px 12px 12px;background:#fff}
+.map-btn-naver{flex:1;padding:11px;background:#03C75A;border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px;text-decoration:none}
+.map-btn-copy{padding:11px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
 
 /* ── 헤더 ── */
 .hdr{background:var(--primary);padding:16px 20px 14px;display:flex;align-items:center;gap:12px;flex-shrink:0}
@@ -414,18 +400,15 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
         <input type="hidden" id="s_addr">
         <div class="err-msg" id="serr-addr">주소를 검색해주세요</div>
 
-        <!-- 네이버 지도 카드 -->
+        <!-- 지도 카드 -->
         <div class="map-box" id="mapBox">
-          <div class="map-canvas">
-            <div class="map-pin"><div class="map-pin-dot"></div></div>
-            <div class="map-addr-chip" id="mapAddrChip">주소</div>
-            <div class="map-thumb">
-              <div class="map-thumb-placeholder">🏪</div>
-            </div>
+          <div class="map-iframe-wrap">
+            <iframe id="mapIframe" src="" allowfullscreen loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
           <div class="map-info">
             <div class="map-info-addr" id="mapInfoAddr">—</div>
-            <div class="map-info-sub" id="mapInfoSub">네이버 지도에서 확인하세요</div>
+            <div class="map-info-sub">지도를 탭하면 크게 볼 수 있습니다</div>
           </div>
           <div class="map-btns">
             <a class="map-btn-naver" id="mapNaverLink" href="#" target="_blank" rel="noopener">
@@ -903,18 +886,19 @@ function openKakaoAddr(){
   }).open();
 }
 
-// ── 네이버 지도 업데이트 ──
+// ── 지도 업데이트 ──
 let _mapAddr='';
 function updateNaverMap(addr){
   _mapAddr=addr;
   document.getElementById('mapBox').style.display='flex';
-  // 주소 칩: 도로명 끝 부분만 (공간 절약)
-  const short=addr.split(' ').slice(-2).join(' ');
-  document.getElementById('mapAddrChip').textContent=short;
   document.getElementById('mapInfoAddr').textContent=addr;
-  document.getElementById('mapInfoSub').textContent='네이버 지도에서 위치를 확인하세요';
+  // Google Maps embed (API 키 불필요)
   const encoded=encodeURIComponent(addr);
-  document.getElementById('mapNaverLink').href=`https://map.naver.com/v5/search/${encoded}`;
+  document.getElementById('mapIframe').src=
+    `https://maps.google.com/maps?q=${encoded}&output=embed&hl=ko&z=16`;
+  // 네이버 길찾기 링크
+  document.getElementById('mapNaverLink').href=
+    `https://map.naver.com/v5/search/${encoded}`;
 }
 function copyAddr(){
   if(!_mapAddr){return;}
