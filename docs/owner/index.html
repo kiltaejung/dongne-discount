@@ -283,21 +283,22 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
       <!-- 사업자 정보 -->
       <div class="sec-group">📋 사업자 정보</div>
 
-      <div class="fgrp">
-        <div class="flabel">상호명 <span class="req">*필수</span></div>
-        <input type="text" class="finp" id="s_name" placeholder="예: 홍길동 카페">
-        <div class="err-msg" id="serr-name">상호명을 입력해주세요</div>
-      </div>
-
-      <div class="fgrp">
-        <div class="flabel">대표자명 <span class="req">*필수</span></div>
-        <input type="text" class="finp" id="s_ceo" placeholder="예: 홍길동">
-        <div class="err-msg" id="serr-ceo">대표자명을 입력해주세요</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        <div class="fgrp" style="margin-bottom:0">
+          <div class="flabel">상호명 <span class="req">*필수</span></div>
+          <input type="text" class="finp" id="s_name" placeholder="">
+          <div class="err-msg" id="serr-name">상호명을 입력해주세요</div>
+        </div>
+        <div class="fgrp" style="margin-bottom:0">
+          <div class="flabel">대표자명 <span class="req">*필수</span></div>
+          <input type="text" class="finp" id="s_ceo" placeholder="">
+          <div class="err-msg" id="serr-ceo">대표자명을 입력해주세요</div>
+        </div>
       </div>
 
       <div class="fgrp">
         <div class="flabel">사업자등록번호 <span class="req">*필수</span></div>
-        <input type="text" class="finp" id="s_biz" placeholder="예: 123-45-67890" maxlength="12" oninput="formatBizNum(this)">
+        <input type="text" class="finp" id="s_biz" placeholder="" maxlength="12" oninput="formatBizNum(this)">
         <div class="err-msg" id="serr-biz">사업자등록번호를 입력해주세요</div>
       </div>
 
