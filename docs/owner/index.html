@@ -4,221 +4,256 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>동네할인 - 점주</title>
-<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   --primary:#FF5A1F;--primary-dark:#E04010;--primary-light:#FFF3EE;
+  --navy:#1B2A4A;--navy2:#243557;
   --green:#16A34A;--green-light:#F0FDF4;
-  --yellow:#D97706;--yellow-light:#FFFBEB;
+  --yellow:#B45309;--yellow-light:#FFFBEB;
   --red:#DC2626;--red-light:#FEF2F2;
-  --blue:#2563EB;--blue-light:#EFF6FF;
-  --gray:#6B7280;--gray-light:#F9FAFB;
   --text:#111827;--sub:#6B7280;--dim:#9CA3AF;
-  --bg:#F3F4F6;--card:#fff;--border:#E5E7EB;
+  --bg:#F2F4F7;--card:#fff;--border:#E5E7EB;
 }
-body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-height:100dvh;display:flex;align-items:center;justify-content:center}
-.shell{width:100%;max-width:430px;min-height:100dvh;background:#fff;display:flex;flex-direction:column;position:relative;overflow:hidden}
+html,body{height:100%}
+body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;min-height:100dvh;display:flex;align-items:center;justify-content:center}
+.shell{width:100%;max-width:430px;min-height:100dvh;background:var(--bg);display:flex;flex-direction:column;position:relative;overflow:hidden}
 @media(max-width:480px){body{align-items:flex-start}.shell{max-width:100%}}
 
+/* ── 공통 ── */
+.screen{display:none;flex-direction:column;flex:1;overflow:hidden}
+.screen.show{display:flex}
+.scroll-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:80px}
+.scroll-content::-webkit-scrollbar{display:none}
+
+/* ── 하단 탭바 ── */
+.tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0 8px;cursor:pointer;gap:4px;border:none;background:none;font-family:inherit}
+.tab-icon{width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+.tab-icon svg{width:24px;height:24px;stroke:var(--dim);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
+.tab-item.active .tab-icon svg{stroke:var(--primary)}
+.tab-label{font-size:11px;font-weight:700;color:var(--dim);transition:color .2s}
+.tab-item.active .tab-label{color:var(--primary)}
+.tab-badge{position:absolute;top:6px;right:calc(50% - 20px);background:var(--primary);color:#fff;font-size:9px;font-weight:800;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+
 /* ── 로그인 ── */
-.login-screen{display:flex;flex-direction:column;flex:1;align-items:center;justify-content:center;padding:48px 28px}
-.login-brand-wrap{text-align:center;margin-bottom:52px}
-.login-brand{font-size:32px;font-weight:900;color:var(--text);letter-spacing:-.5px}
+#loginScreen{background:#fff;align-items:center;justify-content:center;padding:48px 28px}
+.login-brand-wrap{text-align:center;margin-bottom:56px}
+.login-logo-box{display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;background:var(--primary);border-radius:20px;margin-bottom:16px}
+.login-logo-box svg{width:40px;height:40px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+.login-brand{font-size:28px;font-weight:900;color:var(--text)}
 .login-brand span{color:var(--primary)}
-.login-sub{font-size:14px;color:var(--sub);margin-top:6px}
-.login-label{font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;align-self:flex-start;width:100%}
-.social-btn{width:100%;padding:16px;border-radius:12px;border:1.5px solid var(--border);background:#fff;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;font-family:inherit;transition:all .15s}
+.login-sub{font-size:15px;color:var(--sub);margin-top:6px;font-weight:500}
+.login-label{font-size:16px;font-weight:800;color:var(--text);margin-bottom:16px;align-self:flex-start;width:100%}
+.social-btn{width:100%;padding:18px;border-radius:14px;border:1.5px solid var(--border);background:#fff;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px;font-family:inherit}
 .social-btn:active{transform:scale(.98)}
 .social-btn.kakao{background:#FEE500;border-color:#FEE500;color:#3C1E1E}
 .social-btn.naver{background:#03C75A;border-color:#03C75A;color:#fff}
-.social-btn.google{background:#fff;border-color:#E5E7EB;color:var(--text)}
-.social-ico{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900}
-.login-terms{font-size:11px;color:var(--dim);text-align:center;margin-top:20px;line-height:1.7}
+.social-btn.google{color:var(--text)}
+.social-ico{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900}
+.login-terms{font-size:12px;color:var(--dim);text-align:center;margin-top:20px;line-height:1.7}
 .login-terms a{color:var(--primary);text-decoration:none}
 
-/* ── 공통 헤더 ── */
-.page-hdr{padding:20px 20px 18px;border-bottom:1px solid var(--border);flex-shrink:0}
-.page-hdr-title{font-size:22px;font-weight:900;color:var(--text);letter-spacing:-.3px}
-.page-hdr-sub{font-size:13px;color:var(--sub);margin-top:4px}
+/* ── 가게정보 화면 ── */
+.page-hdr{background:var(--navy);padding:20px 20px 18px;flex-shrink:0}
+.page-hdr-back{background:none;border:none;color:rgba(255,255,255,.7);font-size:22px;cursor:pointer;padding:0;margin-bottom:10px;display:flex;align-items:center;gap:6px;font-family:inherit;font-size:15px;font-weight:700}
+.page-hdr-back svg{width:20px;height:20px;stroke:rgba(255,255,255,.7);fill:none;stroke-width:2;stroke-linecap:round}
+.page-hdr-title{font-size:24px;font-weight:900;color:#fff;letter-spacing:-.3px}
+.page-hdr-sub{font-size:14px;color:rgba(255,255,255,.6);margin-top:5px;font-weight:500}
 
-/* ── 가게 정보 화면 ── */
-.store-screen{display:none;flex-direction:column;flex:1;overflow:hidden}
-.store-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px}
-.store-content::-webkit-scrollbar{display:none}
-.store-btns{padding:16px 20px 32px;flex-shrink:0}
-
-/* ── 섹션 그룹 헤더 ── */
-.sec-group{font-size:11px;font-weight:800;color:var(--sub);letter-spacing:.08em;text-transform:uppercase;padding:14px 0 10px;border-bottom:1px solid var(--border);margin-bottom:14px}
-.sec-group:first-child{padding-top:0}
-
-/* ── 폼 ── */
-.fgrp{margin-bottom:16px}
-.flabel{font-size:13px;font-weight:700;color:var(--text);margin-bottom:7px;display:flex;align-items:center;gap:5px}
-.req{color:var(--primary);font-size:11px;font-weight:700}
-.finp{width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-weight:500;color:var(--text);background:#fff;outline:none;font-family:inherit;transition:border-color .2s}
+.sec-group{font-size:13px;font-weight:800;color:var(--sub);letter-spacing:.04em;padding:20px 0 10px;border-bottom:1.5px solid var(--border);margin-bottom:16px}
+.sec-group:first-of-type{padding-top:0}
+.fgrp{margin-bottom:18px}
+.flabel{font-size:15px;font-weight:800;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.req{color:var(--primary);font-size:12px;font-weight:700}
+.finp{width:100%;padding:15px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:16px;font-weight:600;color:var(--text);background:#fff;outline:none;font-family:inherit;transition:border-color .2s}
 .finp:focus{border-color:var(--primary)}
-.finp:disabled{background:var(--bg);color:var(--dim)}
 .finp-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.err-msg{font-size:11px;color:var(--red);margin-top:5px;display:none}
+.err-msg{font-size:12px;color:var(--red);margin-top:6px;display:none;font-weight:600}
 .err-msg.show{display:block}
 .finp.err{border-color:var(--red)}
 
-/* ── 전화번호 ── */
 .phone-row{display:grid;grid-template-columns:76px 1fr 1fr;gap:6px;align-items:center}
-.phone-sep{text-align:center;font-weight:700;color:var(--dim);font-size:15px}
+.phone-sep{text-align:center;font-weight:800;color:var(--dim);font-size:16px}
 
-/* ── 영업시간 ── */
 .ampm-group{display:flex;gap:4px}
-.ampm-btn{padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;color:var(--sub);background:#fff;cursor:pointer;font-family:inherit;transition:all .15s}
+.ampm-btn{padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:800;color:var(--sub);background:#fff;cursor:pointer;font-family:inherit}
 .ampm-btn.on{border-color:var(--primary);background:var(--primary-light);color:var(--primary)}
-.hours-select{padding:10px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-weight:700;color:var(--text);background:#fff;outline:none;font-family:inherit;cursor:pointer;-webkit-appearance:none;text-align:center}
+.hours-select{padding:11px 8px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-weight:700;color:var(--text);background:#fff;outline:none;font-family:inherit;cursor:pointer;-webkit-appearance:none;text-align:center}
 .hours-select:focus{border-color:var(--primary)}
 
-/* ── 주소 ── */
-.addr-search-btn{width:100%;padding:13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px;transition:all .15s}
-.addr-search-btn:active{border-color:var(--primary);color:var(--primary)}
-.addr-display{padding:13px 14px;background:var(--bg);border-radius:10px;font-size:14px;font-weight:600;color:var(--text);min-height:46px;display:none}
+.addr-search-btn{width:100%;padding:15px;border:1.5px solid var(--border);border-radius:12px;background:var(--bg);color:var(--text);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}
+.addr-search-btn:active{border-color:var(--primary)}
+.addr-display{padding:15px 16px;background:var(--bg);border-radius:12px;font-size:15px;font-weight:600;color:var(--text);min-height:50px;display:none}
 
-/* ── 저장 버튼 ── */
-.primary-btn{width:100%;padding:17px;background:var(--primary);border:none;border-radius:12px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit}
+.store-btns{padding:16px 20px 32px;background:var(--bg);flex-shrink:0}
+.primary-btn{width:100%;padding:18px;background:var(--primary);border:none;border-radius:14px;font-size:17px;font-weight:900;color:#fff;cursor:pointer;font-family:inherit}
 .primary-btn:active{transform:scale(.98)}
 
-/* ── 상품 등록 폼 헤더 ── */
-.form-hdr{background:#fff;padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.form-hdr-logo{font-size:18px;font-weight:900;color:var(--text)}
-.form-hdr-logo span{color:var(--primary)}
-.form-hdr-store{font-size:12px;font-weight:700;color:var(--sub);background:var(--bg);border-radius:20px;padding:6px 12px;cursor:pointer;border:none;font-family:inherit}
+/* ── 홈 대시보드 ── */
+.home-hdr{background:var(--navy);padding:20px 20px 28px;flex-shrink:0}
+.home-hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.home-hdr-logo{font-size:20px;font-weight:900;color:#fff}
+.home-hdr-logo span{color:var(--primary)}
+.home-hdr-store{font-size:13px;font-weight:700;color:rgba(255,255,255,.7);background:rgba(255,255,255,.12);border-radius:20px;padding:6px 14px;cursor:pointer;border:none;font-family:inherit}
+.home-summary-card{background:rgba(255,255,255,.12);border-radius:16px;padding:18px 20px;margin-top:4px}
+.home-summary-label{font-size:13px;color:rgba(255,255,255,.65);font-weight:600;margin-bottom:10px}
+.home-summary-row{display:flex;gap:0}
+.home-stat{flex:1;text-align:center;position:relative}
+.home-stat:not(:last-child)::after{content:'';position:absolute;right:0;top:10%;height:80%;width:1px;background:rgba(255,255,255,.2)}
+.home-stat-num{font-size:28px;font-weight:900;color:#fff}
+.home-stat-label{font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;font-weight:600}
 
-/* ── 스텝 바 ── */
-.step-bar{background:#fff;padding:14px 20px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.quick-actions{background:#fff;padding:20px 20px 16px;border-bottom:8px solid var(--bg);flex-shrink:0}
+.quick-row{display:flex;justify-content:space-around}
+.quick-item{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;flex:1}
+.quick-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center}
+.quick-icon svg{width:26px;height:26px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.quick-label{font-size:13px;font-weight:800;color:var(--text)}
+
+.list-section{background:#fff;padding:20px}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:19px;font-weight:900;color:var(--text)}
+.section-more{font-size:13px;font-weight:700;color:var(--sub);background:none;border:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:2px}
+
+.deal-card{border:1.5px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px}
+.deal-card-top{display:flex;align-items:flex-start;gap:14px}
+.deal-thumb{width:68px;height:68px;border-radius:12px;background:var(--bg);object-fit:cover;flex-shrink:0}
+.deal-thumb-ph{width:68px;height:68px;border-radius:12px;background:var(--bg);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.deal-thumb-ph svg{width:28px;height:28px;stroke:var(--dim);fill:none;stroke-width:1.5}
+.deal-info{flex:1;min-width:0}
+.deal-name{font-size:17px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.deal-price-row{display:flex;align-items:center;gap:8px;margin-top:5px}
+.deal-orig{font-size:13px;color:var(--dim);text-decoration:line-through;font-weight:500}
+.deal-sale{font-size:16px;font-weight:900;color:var(--primary)}
+.deal-pct{font-size:13px;font-weight:800;color:var(--primary);background:var(--primary-light);padding:2px 8px;border-radius:6px}
+.deal-status{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:800;padding:5px 12px;border-radius:20px;margin-top:8px}
+.deal-status::before{content:'';width:7px;height:7px;border-radius:50%}
+.deal-status.pending{background:var(--yellow-light);color:var(--yellow)}
+.deal-status.pending::before{background:var(--yellow)}
+.deal-status.active{background:var(--green-light);color:var(--green)}
+.deal-status.active::before{background:var(--green)}
+.deal-status.ended{background:var(--bg);color:var(--sub)}
+.deal-status.ended::before{background:var(--dim)}
+.deal-reapply-btn{width:100%;margin-top:14px;padding:13px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:800;color:var(--text);cursor:pointer;font-family:inherit}
+.deal-reapply-btn:active{border-color:var(--primary);color:var(--primary)}
+
+.list-empty{text-align:center;padding:64px 20px}
+.list-empty-title{font-size:18px;font-weight:900;color:var(--text);margin-bottom:8px}
+.list-empty-sub{font-size:15px;color:var(--sub);line-height:1.7;font-weight:500}
+
+/* ── 상품 등록 폼 ── */
+.form-hdr{background:var(--navy);padding:20px 20px 18px;flex-shrink:0}
+.form-hdr-inner{display:flex;align-items:center;gap:14px}
+.form-back-btn{background:none;border:none;cursor:pointer;padding:0}
+.form-back-btn svg{width:22px;height:22px;stroke:rgba(255,255,255,.8);fill:none;stroke-width:2.5;stroke-linecap:round}
+.form-hdr-title{font-size:20px;font-weight:900;color:#fff}
+
+.step-bar{background:#fff;padding:16px 20px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
 .step-row{display:flex;align-items:center}
 .step-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;position:relative}
-.step-item:not(:last-child)::after{content:'';position:absolute;top:13px;left:58%;width:84%;height:1.5px;background:var(--border);z-index:0}
+.step-item:not(:last-child)::after{content:'';position:absolute;top:13px;left:58%;width:84%;height:2px;background:var(--border);z-index:0}
 .step-item.done::after{background:var(--primary)}
-.step-circle{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--dim);z-index:1;position:relative}
+.step-circle{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:var(--dim);z-index:1;position:relative}
 .step-item.active .step-circle{border-color:var(--primary);background:var(--primary);color:#fff}
 .step-item.done .step-circle{border-color:var(--primary);background:var(--primary);color:#fff}
-.step-lbl{font-size:11px;font-weight:700;color:var(--dim)}
+.step-lbl{font-size:12px;font-weight:800;color:var(--dim)}
 .step-item.active .step-lbl,.step-item.done .step-lbl{color:var(--primary)}
 
-/* ── 콘텐츠 ── */
-.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.content::-webkit-scrollbar{display:none}
-.sec{padding:20px 20px 0}
-.sec-title{font-size:18px;font-weight:900;color:var(--text);margin-bottom:18px;letter-spacing:-.3px}
+.form-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:20px}
+.form-content::-webkit-scrollbar{display:none}
+.form-sec{padding:20px 20px 0}
+.form-sec-title{font-size:20px;font-weight:900;color:var(--text);margin-bottom:20px;letter-spacing:-.3px}
 
-/* ── 버튼 그룹 / 라디오 ── */
-.btn-group{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
-.bopt{padding:10px 16px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-weight:700;color:var(--sub);background:#fff;cursor:pointer;transition:all .15s;flex-shrink:0}
+.btn-group{display:flex;flex-wrap:wrap;gap:8px}
+.bopt{padding:12px 18px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:800;color:var(--sub);background:#fff;cursor:pointer;transition:all .15s;flex-shrink:0;font-family:inherit}
 .bopt.on{border-color:var(--primary);background:var(--primary-light);color:var(--primary)}
-.bopt:active{transform:scale(.97)}
 .radio-group{display:flex;gap:8px}
-.ropt{flex:1;padding:13px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-weight:700;color:var(--sub);background:#fff;cursor:pointer;text-align:center;transition:all .15s}
+.ropt{flex:1;padding:14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:800;color:var(--sub);background:#fff;cursor:pointer;text-align:center;font-family:inherit}
 .ropt.on{border-color:var(--primary);background:var(--primary-light);color:var(--primary)}
 
-/* ── 이미지 업로드 ── */
-.img-upload-area{display:flex;gap:8px;flex-wrap:wrap}
-.img-thumb{width:84px;height:84px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;position:relative;flex-shrink:0}
+.img-upload-area{display:flex;gap:10px;flex-wrap:wrap}
+.img-thumb{width:90px;height:90px;border-radius:12px;border:1.5px solid var(--border);overflow:hidden;position:relative;flex-shrink:0}
 .img-thumb img{width:100%;height:100%;object-fit:cover}
-.img-thumb .del{position:absolute;top:4px;right:4px;width:20px;height:20px;background:rgba(0,0,0,.65);border-radius:50%;border:none;color:#fff;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.img-add{width:84px;height:84px;border-radius:10px;border:1.5px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:4px;flex-shrink:0;background:var(--bg)}
-.img-add:active{border-color:var(--primary)}
-.img-add-txt{font-size:11px;font-weight:700;color:var(--dim)}
-.img-count{font-size:11px;color:var(--dim);margin-top:5px}
+.img-thumb .del{position:absolute;top:4px;right:4px;width:22px;height:22px;background:rgba(0,0,0,.65);border-radius:50%;border:none;color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.img-add{width:90px;height:90px;border-radius:12px;border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:5px;flex-shrink:0;background:var(--bg)}
+.img-add svg{width:28px;height:28px;stroke:var(--dim);fill:none;stroke-width:1.8;stroke-linecap:round}
+.img-add-txt{font-size:12px;font-weight:800;color:var(--dim)}
+.img-count{font-size:12px;color:var(--dim);margin-top:6px;font-weight:600}
 
-/* ── 할인율 ── */
-.discount-box{padding:13px 14px;background:var(--bg);border-radius:10px;font-size:20px;font-weight:900;color:var(--primary)}
+.discount-box{padding:15px 16px;background:var(--bg);border-radius:12px;font-size:22px;font-weight:900;color:var(--primary)}
 
-/* ── 날짜 그리드 ── */
-.date-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.date-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.qty-row{display:flex;align-items:center;gap:10px}
+.qty-badge{background:var(--primary-light);color:var(--primary);font-size:13px;font-weight:800;padding:8px 16px;border-radius:10px;white-space:nowrap}
 
-/* ── 수량 ── */
-.qty-row{display:flex;align-items:center;gap:8px}
-.qty-badge{background:var(--primary-light);color:var(--primary);font-size:12px;font-weight:700;padding:7px 14px;border-radius:8px;white-space:nowrap}
-
-/* ── 네비 버튼 ── */
-.nav-btns{padding:14px 20px 32px;display:flex;gap:10px;flex-shrink:0;background:#fff;border-top:1px solid var(--border)}
-.nav-btn{flex:1;padding:16px;border:none;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .15s}
-.nav-btn:active{transform:scale(.98)}
+.nav-btns{padding:14px 20px 20px;display:flex;gap:10px;flex-shrink:0;background:#fff;border-top:1px solid var(--border)}
+.nav-btn{flex:1;padding:18px;border:none;border-radius:14px;font-size:17px;font-weight:900;cursor:pointer;font-family:inherit}
 .nav-btn.prev{background:var(--bg);color:var(--text);border:1.5px solid var(--border)}
 .nav-btn.next{background:var(--primary);color:#fff}
-.nav-btn:disabled{background:#D1D5DB;cursor:not-allowed}
 
 /* ── 진행 상태 ── */
-.progress-wrap{padding:24px 20px}
-.prog-title{font-size:18px;font-weight:900;color:var(--text);margin-bottom:20px}
-.prog-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--bg);border-radius:10px;margin-bottom:8px}
-.prog-name{font-size:14px;font-weight:600;color:var(--text);flex:1}
-.prog-st{font-size:13px;font-weight:700}
+.progress-wrap{flex:1;overflow-y:auto;padding:28px 20px;background:#fff}
+.prog-title{font-size:22px;font-weight:900;color:var(--text);margin-bottom:24px}
+.prog-item{display:flex;align-items:center;gap:14px;padding:16px 18px;background:var(--bg);border-radius:12px;margin-bottom:10px}
+.prog-name{font-size:16px;font-weight:700;color:var(--text);flex:1}
+.prog-st{font-size:14px;font-weight:800}
 .prog-st.wait{color:var(--dim)}
 .prog-st.ing{color:var(--yellow)}
 .prog-st.ok{color:var(--green)}
 .prog-st.err{color:var(--red)}
 
-/* ── 상품 목록 화면 ── */
-.list-screen{display:none;flex-direction:column;flex:1;overflow:hidden}
-.list-screen.show{display:flex}
-.list-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 20px}
-.list-content::-webkit-scrollbar{display:none}
-.list-add-btn{margin:0 20px 20px;padding:16px;background:var(--primary);border:none;border-radius:12px;font-size:15px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;text-align:center}
-.list-add-btn:active{transform:scale(.98)}
-.deal-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
-.deal-card-top{display:flex;align-items:flex-start;gap:12px}
-.deal-thumb{width:60px;height:60px;border-radius:8px;background:var(--bg);object-fit:cover;flex-shrink:0}
-.deal-thumb-placeholder{width:60px;height:60px;border-radius:8px;background:var(--bg);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px}
-.deal-info{flex:1;min-width:0}
-.deal-name{font-size:15px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.deal-price{font-size:13px;color:var(--sub);margin-top:3px}
-.deal-price strong{color:var(--primary);font-weight:800}
-.deal-status{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin-top:6px}
-.deal-status.pending{background:var(--yellow-light);color:var(--yellow)}
-.deal-status.active{background:var(--green-light);color:var(--green)}
-.deal-status.ended{background:var(--bg);color:var(--sub)}
-.deal-date{font-size:11px;color:var(--dim);margin-top:4px}
-.deal-reapply-btn{width:100%;margin-top:12px;padding:11px;background:#fff;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;transition:all .15s}
-.deal-reapply-btn:active{border-color:var(--primary);color:var(--primary)}
-.list-empty{text-align:center;padding:60px 20px;color:var(--sub)}
-.list-empty-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px}
-.list-empty-sub{font-size:13px;line-height:1.6}
-
 /* ── QR 화면 ── */
-.qr-screen{display:none;flex-direction:column;flex:1}
-.qr-screen.show{display:flex}
-.qr-hdr{padding:16px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
-.qr-back{background:none;border:none;font-size:20px;cursor:pointer;color:var(--sub)}
-.qr-title{font-size:17px;font-weight:800;color:var(--text)}
-.qr-tab-bar{display:flex;margin:12px 16px 0;background:var(--bg);border-radius:10px;padding:4px}
-.qr-tab{flex:1;padding:10px;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.qr-hdr{background:var(--navy);padding:20px 20px 18px;display:flex;align-items:center;gap:14px;flex-shrink:0}
+.qr-back{background:none;border:none;cursor:pointer;padding:0}
+.qr-back svg{width:22px;height:22px;stroke:rgba(255,255,255,.8);fill:none;stroke-width:2.5;stroke-linecap:round}
+.qr-title{font-size:20px;font-weight:900;color:#fff}
+.qr-tab-bar{display:flex;margin:14px 16px 0;background:var(--bg);border-radius:12px;padding:4px}
+.qr-tab{flex:1;padding:12px;border:none;border-radius:9px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit}
 .qr-tab.on{background:#fff;color:var(--text)}
 .qr-tab.off{background:transparent;color:var(--sub)}
-.qr-panel{padding:16px;flex:1;display:flex;flex-direction:column;gap:12px}
-.qr-video-box{background:#000;border-radius:14px;overflow:hidden;aspect-ratio:1/1;position:relative}
+.qr-panel{padding:16px;flex:1;display:flex;flex-direction:column;gap:14px}
+.qr-video-box{background:#000;border-radius:16px;overflow:hidden;aspect-ratio:1/1;position:relative}
 .qr-video-box video{width:100%;height:100%;object-fit:cover}
 .qr-guide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.qr-frame{width:60%;aspect-ratio:1/1;border:3px solid var(--primary);border-radius:10px;box-shadow:0 0 0 9999px rgba(0,0,0,.4)}
-.qr-msg{text-align:center;font-size:13px;color:var(--sub)}
-.qr-start-btn,.verify-btn{padding:14px;background:var(--primary);border:none;border-radius:10px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;width:100%}
-.manual-hint{font-size:12px;color:var(--dim)}
-.manual-inp{padding:14px;border:1.5px solid var(--border);border-radius:10px;font-size:16px;font-weight:700;text-align:center;letter-spacing:3px;text-transform:uppercase;outline:none;font-family:inherit;width:100%}
+.qr-frame{width:60%;aspect-ratio:1/1;border:3px solid var(--primary);border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.4)}
+.qr-msg{text-align:center;font-size:14px;color:var(--sub);font-weight:600}
+.qr-start-btn,.verify-btn{padding:16px;background:var(--primary);border:none;border-radius:12px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;width:100%}
+.manual-hint{font-size:14px;color:var(--sub);font-weight:600}
+.manual-inp{padding:16px;border:1.5px solid var(--border);border-radius:12px;font-size:18px;font-weight:900;text-align:center;letter-spacing:4px;text-transform:uppercase;outline:none;font-family:inherit;width:100%}
 .manual-inp:focus{border-color:var(--primary)}
-.verify-result{padding:16px;border-radius:12px;text-align:center;display:none}
-.vr-ico{font-size:44px;margin-bottom:6px}
-.vr-title{font-size:18px;font-weight:800;margin-bottom:4px}
-.vr-desc{font-size:13px;color:var(--sub)}
+.verify-result{padding:20px;border-radius:14px;text-align:center;display:none}
+.vr-ico{font-size:48px;margin-bottom:8px}
+.vr-title{font-size:20px;font-weight:900;margin-bottom:6px}
+.vr-desc{font-size:14px;color:var(--sub);font-weight:600}
+
+/* ── 통계 화면 ── */
+.stat-hdr{background:var(--navy);padding:20px 20px 18px;flex-shrink:0}
+.stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px}
+.stat-card{background:#fff;border-radius:14px;padding:18px;border:1.5px solid var(--border)}
+.stat-card-label{font-size:13px;font-weight:700;color:var(--sub);margin-bottom:8px}
+.stat-card-num{font-size:26px;font-weight:900;color:var(--text)}
+.stat-card-unit{font-size:14px;font-weight:700;color:var(--sub);margin-left:2px}
+.stat-card.primary .stat-card-num{color:var(--primary)}
+.stat-section{background:#fff;margin:0 0 8px;padding:20px}
+.stat-section-title{font-size:18px;font-weight:900;color:var(--text);margin-bottom:14px}
+.stat-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
+.stat-row:last-child{border-bottom:none}
+.stat-row-label{font-size:15px;font-weight:700;color:var(--text)}
+.stat-row-val{font-size:16px;font-weight:900;color:var(--primary)}
 
 /* ── 사진 바텀시트 ── */
 .photo-sheet{position:fixed;inset:0;z-index:200;display:none;flex-direction:column;justify-content:flex-end}
 .photo-sheet.show{display:flex}
 .photo-sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.45)}
-.photo-sheet-box{position:relative;background:#fff;border-radius:18px 18px 0 0;padding:14px 20px 40px;display:flex;flex-direction:column;gap:8px;z-index:1}
-.photo-sheet-title{font-size:13px;font-weight:700;color:var(--sub);padding:4px 0 8px;text-align:center}
-.photo-opt{width:100%;padding:16px;border:1.5px solid var(--border);border-radius:12px;background:#fff;font-size:15px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;text-align:center;transition:all .15s}
-.photo-opt:active{background:var(--bg)}
+.photo-sheet-box{position:relative;background:#fff;border-radius:20px 20px 0 0;padding:16px 20px 40px;display:flex;flex-direction:column;gap:10px;z-index:1}
+.photo-sheet-title{font-size:14px;font-weight:800;color:var(--sub);padding:4px 0 10px;text-align:center}
+.photo-opt{width:100%;padding:18px;border:1.5px solid var(--border);border-radius:14px;background:#fff;font-size:16px;font-weight:800;color:var(--text);cursor:pointer;font-family:inherit;text-align:center}
 .photo-opt.cancel{color:var(--sub);background:var(--bg);border-color:transparent}
 
 /* ── 토스트 ── */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;font-size:13px;font-weight:600;padding:11px 22px;border-radius:22px;white-space:nowrap;opacity:0;transition:opacity .25s;pointer-events:none;z-index:999}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#111;color:#fff;font-size:14px;font-weight:700;padding:12px 24px;border-radius:24px;white-space:nowrap;opacity:0;transition:opacity .25s;pointer-events:none;z-index:999}
 .toast.show{opacity:1}
 </style>
 </head>
@@ -226,43 +261,46 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
 <div class="shell">
 
   <!-- ══ 로그인 ══ -->
-  <div id="loginScreen" class="login-screen">
-    <div class="login-brand-wrap">
-      <div class="login-brand">동네<span>할인</span></div>
-      <div class="login-sub">점주 전용 상품 등록</div>
-    </div>
-
-    <div class="login-label">간편 로그인으로 시작하기</div>
-
-    <button class="social-btn kakao" onclick="doLogin('kakao')">
-      <span class="social-ico" style="background:#3C1E1E;color:#FEE500">K</span>
-      카카오톡으로 시작하기
-    </button>
-    <button class="social-btn naver" onclick="doLogin('naver')">
-      <span class="social-ico" style="background:#fff;color:#03C75A">N</span>
-      네이버로 시작하기
-    </button>
-    <button class="social-btn google" onclick="doLogin('google')">
-      <span class="social-ico" style="background:var(--bg);color:var(--text)">G</span>
-      Google로 시작하기
-    </button>
-
-    <div class="login-terms">
-      로그인 시 <a href="#">이용약관</a> 및 <a href="#">개인정보처리방침</a>에 동의합니다
+  <div id="loginScreen" class="screen" style="background:#fff">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 28px">
+      <div class="login-brand-wrap">
+        <div class="login-logo-box">
+          <svg viewBox="0 0 40 40"><path d="M8 20h24M20 8v24M8 12l4 4M28 12l-4 4M8 28l4-4M28 28l-4-4" stroke-width="2.5"/></svg>
+        </div>
+        <div class="login-brand">동네<span>할인</span></div>
+        <div class="login-sub">점주 전용 상품 관리</div>
+      </div>
+      <div class="login-label">간편 로그인으로 시작하기</div>
+      <button class="social-btn kakao" onclick="doLogin('kakao')">
+        <span class="social-ico" style="background:#3C1E1E;color:#FEE500;font-size:15px">K</span>
+        카카오톡으로 시작하기
+      </button>
+      <button class="social-btn naver" onclick="doLogin('naver')">
+        <span class="social-ico" style="background:#fff;color:#03C75A;font-size:15px">N</span>
+        네이버로 시작하기
+      </button>
+      <button class="social-btn google" onclick="doLogin('google')">
+        <span class="social-ico" style="background:var(--bg);font-size:15px">G</span>
+        Google로 시작하기
+      </button>
+      <div class="login-terms">로그인 시 <a href="#">이용약관</a> 및 <a href="#">개인정보처리방침</a>에 동의합니다</div>
     </div>
   </div>
 
-  <!-- ══ 가게 정보 등록 ══ -->
-  <div id="storeScreen" class="store-screen">
+  <!-- ══ 가게정보 등록 ══ -->
+  <div id="storeScreen" class="screen">
     <div class="page-hdr">
+      <button class="page-hdr-back" onclick="goHomeOrLogin()">
+        <svg viewBox="0 0 20 20"><path d="M13 4l-6 6 6 6"/></svg>
+        뒤로
+      </button>
       <div class="page-hdr-title">가게 정보 등록</div>
       <div class="page-hdr-sub">상품 등록 전 가게 정보를 먼저 입력해주세요</div>
     </div>
-    <div class="store-content">
+    <div class="scroll-content" style="padding:20px;padding-bottom:100px">
 
       <div class="sec-group">사업자 정보</div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
         <div class="fgrp" style="margin-bottom:0">
           <div class="flabel">상호명 <span class="req">필수</span></div>
           <input type="text" class="finp" id="s_name">
@@ -274,7 +312,6 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
           <div class="err-msg" id="serr-ceo">대표자명을 입력해주세요</div>
         </div>
       </div>
-
       <div class="fgrp">
         <div class="flabel">사업자등록번호 <span class="req">필수</span></div>
         <input type="text" class="finp" id="s_biz" maxlength="12" oninput="formatBizNum(this)" placeholder="000-00-00000">
@@ -282,7 +319,6 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
       </div>
 
       <div class="sec-group">매장 정보</div>
-
       <div class="fgrp">
         <div class="flabel">업종 <span class="req">필수</span></div>
         <select class="finp" id="s_cate">
@@ -293,49 +329,47 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
         </select>
         <div class="err-msg" id="serr-cate">업종을 선택해주세요</div>
       </div>
-
       <div class="fgrp">
         <div class="flabel">영업시간 <span class="req">필수</span></div>
         <div style="display:flex;flex-direction:column;gap:10px">
           <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:13px;font-weight:700;color:var(--sub);width:34px">오픈</span>
+            <span style="font-size:14px;font-weight:800;color:var(--sub);width:36px">오픈</span>
             <div class="ampm-group">
               <button class="ampm-btn on" id="open-am" onclick="setAmPm('open','am')">AM</button>
               <button class="ampm-btn" id="open-pm" onclick="setAmPm('open','pm')">PM</button>
             </div>
-            <select class="hours-select" id="open-h" style="width:62px" onchange="updateHoursPreview()">
+            <select class="hours-select" id="open-h" style="width:64px" onchange="updateHoursPreview()">
               <option>12</option><option>1</option><option>2</option><option>3</option>
               <option>4</option><option>5</option><option>6</option><option>7</option>
               <option>8</option><option>9</option><option>10</option><option>11</option>
             </select>
-            <span style="font-size:15px;font-weight:700;color:var(--dim)">:</span>
-            <select class="hours-select" id="open-m" style="width:62px" onchange="updateHoursPreview()">
+            <span style="font-size:16px;font-weight:800;color:var(--dim)">:</span>
+            <select class="hours-select" id="open-m" style="width:64px" onchange="updateHoursPreview()">
               <option>00</option><option>10</option><option>15</option>
               <option>20</option><option>30</option><option>40</option><option>45</option><option>50</option>
             </select>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:13px;font-weight:700;color:var(--sub);width:34px">마감</span>
+            <span style="font-size:14px;font-weight:800;color:var(--sub);width:36px">마감</span>
             <div class="ampm-group">
               <button class="ampm-btn" id="close-am" onclick="setAmPm('close','am')">AM</button>
               <button class="ampm-btn on" id="close-pm" onclick="setAmPm('close','pm')">PM</button>
             </div>
-            <select class="hours-select" id="close-h" style="width:62px" onchange="updateHoursPreview()">
+            <select class="hours-select" id="close-h" style="width:64px" onchange="updateHoursPreview()">
               <option>12</option><option>1</option><option>2</option><option>3</option>
               <option>4</option><option>5</option><option>6</option><option>7</option>
               <option>8</option><option>9</option><option>10</option><option>11</option>
             </select>
-            <span style="font-size:15px;font-weight:700;color:var(--dim)">:</span>
-            <select class="hours-select" id="close-m" style="width:62px" onchange="updateHoursPreview()">
+            <span style="font-size:16px;font-weight:800;color:var(--dim)">:</span>
+            <select class="hours-select" id="close-m" style="width:64px" onchange="updateHoursPreview()">
               <option>00</option><option>10</option><option>15</option>
               <option>20</option><option>30</option><option>40</option><option>45</option><option>50</option>
             </select>
           </div>
         </div>
-        <div id="hours-preview" style="margin-top:8px;font-size:13px;color:var(--primary);font-weight:700"></div>
+        <div id="hours-preview" style="margin-top:10px;font-size:15px;color:var(--primary);font-weight:800"></div>
         <div class="err-msg" id="serr-hours">영업시간을 확인해주세요</div>
       </div>
-
       <div class="fgrp">
         <div class="flabel">전화번호 <span class="req">필수</span></div>
         <div class="phone-row">
@@ -354,7 +388,6 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
         </div>
         <div class="err-msg" id="serr-phone">전화번호를 입력해주세요</div>
       </div>
-
       <div class="fgrp">
         <div class="flabel">가게 위치 <span class="req">필수</span></div>
         <button class="addr-search-btn" onclick="openKakaoAddr()">주소 검색</button>
@@ -366,29 +399,99 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
       </div>
 
       <div class="sec-group">메뉴 및 서비스</div>
-
       <div class="fgrp">
         <div class="flabel">대표 메뉴(서비스) <span class="req">필수</span></div>
         <textarea class="finp" id="s_menu" placeholder="예: 아메리카노, 카페라떼, 딸기케이크&#10;쉼표(,)로 구분해서 입력해주세요"
-          style="min-height:76px;resize:none;line-height:1.6"></textarea>
+          style="min-height:80px;resize:none;line-height:1.6"></textarea>
         <div class="err-msg" id="serr-menu">대표 메뉴(서비스)를 입력해주세요</div>
       </div>
-
-      <div style="height:8px"></div>
     </div>
     <div class="store-btns">
-      <button class="primary-btn" onclick="saveStoreInfo()">저장하고 상품 등록하기</button>
+      <button class="primary-btn" onclick="saveStoreInfo()">저장하고 시작하기</button>
+    </div>
+  </div>
+
+  <!-- ══ 홈 대시보드 ══ -->
+  <div id="homeScreen" class="screen">
+    <div class="home-hdr">
+      <div class="home-hdr-top">
+        <div class="home-hdr-logo">동네<span>할인</span></div>
+        <button class="home-hdr-store" id="storeName" onclick="goTab('store')">가게정보 수정</button>
+      </div>
+      <div class="home-summary-card">
+        <div class="home-summary-label">오늘의 현황</div>
+        <div class="home-summary-row">
+          <div class="home-stat">
+            <div class="home-stat-num" id="stat-active">—</div>
+            <div class="home-stat-label">행사중 상품</div>
+          </div>
+          <div class="home-stat">
+            <div class="home-stat-num" id="stat-pending">—</div>
+            <div class="home-stat-label">심사 대기</div>
+          </div>
+          <div class="home-stat">
+            <div class="home-stat-num" id="stat-total">—</div>
+            <div class="home-stat-label">전체 상품</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <div class="quick-row">
+        <div class="quick-item" onclick="goTab('register')">
+          <div class="quick-icon" style="background:#FFF3EE">
+            <svg viewBox="0 0 26 26" style="stroke:var(--primary)"><rect x="4" y="4" width="18" height="18" rx="3"/><path d="M13 9v8M9 13h8"/></svg>
+          </div>
+          <span class="quick-label">상품등록</span>
+        </div>
+        <div class="quick-item" onclick="goTab('qr')">
+          <div class="quick-icon" style="background:#F0FDF4">
+            <svg viewBox="0 0 26 26" style="stroke:var(--green)"><rect x="4" y="4" width="8" height="8" rx="1.5"/><rect x="14" y="4" width="8" height="8" rx="1.5"/><rect x="4" y="14" width="8" height="8" rx="1.5"/><rect x="14" y="14" width="3" height="3"/><rect x="19" y="14" width="3" height="3"/><rect x="14" y="19" width="3" height="3"/><rect x="19" y="19" width="3" height="3"/></svg>
+          </div>
+          <span class="quick-label">QR 인증</span>
+        </div>
+        <div class="quick-item" onclick="goTab('stat')">
+          <div class="quick-icon" style="background:#EFF6FF">
+            <svg viewBox="0 0 26 26" style="stroke:#2563EB"><path d="M4 20h18"/><rect x="6" y="12" width="4" height="8"/><rect x="11" y="8" width="4" height="12"/><rect x="16" y="5" width="4" height="15"/></svg>
+          </div>
+          <span class="quick-label">통계</span>
+        </div>
+        <div class="quick-item" onclick="goTab('store')">
+          <div class="quick-icon" style="background:#F5F3FF">
+            <svg viewBox="0 0 26 26" style="stroke:#7C3AED"><path d="M4 10l9-6 9 6v12a1 1 0 01-1 1H5a1 1 0 01-1-1V10z"/><path d="M10 22V16h6v6"/></svg>
+          </div>
+          <span class="quick-label">가게정보</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-content">
+      <div class="list-section">
+        <div class="section-hdr">
+          <div class="section-title">등록 상품 목록</div>
+          <button class="section-more" onclick="showToast('준비 중입니다')">전체보기 ›</button>
+        </div>
+        <div id="listContent">
+          <div class="list-empty">
+            <div class="list-empty-title">등록된 상품이 없습니다</div>
+            <div class="list-empty-sub">상품등록 버튼을 눌러<br>첫 번째 상품을 등록해보세요</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- ══ 상품 등록 폼 ══ -->
-  <div id="formWrap" style="display:none;flex-direction:column;flex:1;overflow:hidden">
-
+  <div id="registerScreen" class="screen">
     <div class="form-hdr">
-      <div class="form-hdr-logo">동네<span>할인</span></div>
-      <button class="form-hdr-store" id="storeName" onclick="editStore()">가게정보</button>
+      <div class="form-hdr-inner">
+        <button class="form-back-btn" onclick="goTab('home')">
+          <svg viewBox="0 0 22 22"><path d="M15 4l-7 7 7 7"/></svg>
+        </button>
+        <div class="form-hdr-title">상품 등록</div>
+      </div>
     </div>
-
     <div class="step-bar">
       <div class="step-row">
         <div class="step-item active" id="si1">
@@ -402,24 +505,23 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
       </div>
     </div>
 
-    <!-- STEP 1 -->
-    <div class="content" id="step1">
-      <div class="sec">
-        <div class="sec-title">STEP 1. 상품 정보</div>
-
+    <!-- STEP1 -->
+    <div class="form-content" id="step1">
+      <div class="form-sec">
+        <div class="form-sec-title">상품 정보 입력</div>
         <div class="fgrp">
           <div class="flabel">상품 이미지 <span class="req">필수</span>
-            <span style="font-size:11px;color:var(--dim);font-weight:500">최소 1장 · 최대 5장</span>
+            <span style="font-size:12px;color:var(--dim);font-weight:500">최소 1장·최대 5장</span>
           </div>
           <div class="img-upload-area" id="imgArea">
             <div class="img-add" onclick="showPhotoSheet()">
-              <div class="img-add-txt">+ 사진</div>
+              <svg viewBox="0 0 28 28"><path d="M14 5v18M5 14h18"/></svg>
+              <div class="img-add-txt">사진 추가</div>
             </div>
           </div>
           <div class="img-count" id="imgCount">0 / 5장</div>
           <div class="err-msg" id="err-img">이미지를 최소 1장 업로드해주세요</div>
         </div>
-
         <input type="file" id="fileCamera" accept="image/*" capture="environment" onchange="onPhotoSelected(this)" style="display:none">
         <input type="file" id="fileGallery" accept="image/*" onchange="onPhotoSelected(this)" style="display:none">
 
@@ -428,7 +530,6 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
           <input type="text" class="finp" id="f_name" placeholder="예: 아메리카노 그란데">
           <div class="err-msg" id="err-name">상품명을 입력해주세요</div>
         </div>
-
         <div class="finp-row">
           <div class="fgrp">
             <div class="flabel">정상가 (원) <span class="req">*</span></div>
@@ -441,18 +542,15 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
             <div class="err-msg" id="err-sale">정상가보다 낮아야 합니다</div>
           </div>
         </div>
-
         <div class="fgrp">
-          <div class="flabel">할인율 <span style="font-size:11px;font-weight:600;color:var(--sub)">자동 계산</span></div>
+          <div class="flabel">할인율 <span style="font-size:12px;font-weight:600;color:var(--sub)">자동 계산</span></div>
           <div class="discount-box" id="discountDisplay">—</div>
         </div>
-
         <div class="fgrp">
-          <div class="flabel">상세 정보 <span style="font-size:11px;font-weight:500;color:var(--dim)">선택</span></div>
+          <div class="flabel">상세 정보 <span style="font-size:12px;font-weight:500;color:var(--dim)">선택</span></div>
           <textarea class="finp" id="f_desc" placeholder="상품에 대한 간단한 설명을 입력해주세요"
-            style="min-height:80px;resize:vertical;line-height:1.5"></textarea>
+            style="min-height:84px;resize:vertical;line-height:1.6"></textarea>
         </div>
-
         <div class="fgrp">
           <div class="flabel">업종</div>
           <select class="finp" id="f_cate">
@@ -462,57 +560,42 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
             <option>마트</option><option>기타</option>
           </select>
         </div>
+        <div style="height:8px"></div>
       </div>
-      <div style="height:20px"></div>
     </div>
 
-    <!-- STEP 2 -->
-    <div class="content" id="step2" style="display:none">
-      <div class="sec">
-        <div class="sec-title">STEP 2. 상품 혜택</div>
-
+    <!-- STEP2 -->
+    <div class="form-content" id="step2" style="display:none">
+      <div class="form-sec">
+        <div class="form-sec-title">혜택 설정</div>
         <div class="fgrp">
           <div class="flabel">혜택 종류 <span class="req">필수</span></div>
           <div class="btn-group" id="bg-benefit">
-            <div class="bopt on" data-v="할인" onclick="selectBtn('bg-benefit','할인')">할인</div>
-            <div class="bopt" data-v="증정" onclick="selectBtn('bg-benefit','증정')">증정</div>
-            <div class="bopt" data-v="서비스" onclick="selectBtn('bg-benefit','서비스')">서비스</div>
-            <div class="bopt" data-v="적립" onclick="selectBtn('bg-benefit','적립')">적립</div>
+            <button class="bopt on" data-v="할인" onclick="selectBtn('bg-benefit','할인')">할인</button>
+            <button class="bopt" data-v="증정" onclick="selectBtn('bg-benefit','증정')">증정</button>
+            <button class="bopt" data-v="서비스" onclick="selectBtn('bg-benefit','서비스')">서비스</button>
+            <button class="bopt" data-v="적립" onclick="selectBtn('bg-benefit','적립')">적립</button>
           </div>
         </div>
-
         <div class="fgrp">
           <div class="flabel">행사 일정 <span class="req">필수</span></div>
           <div class="btn-group" id="bg-schedule">
-            <div class="bopt" data-v="30분" onclick="selectBtn('bg-schedule','30분');setSchedule('quick')">30분</div>
-            <div class="bopt" data-v="1시간" onclick="selectBtn('bg-schedule','1시간');setSchedule('quick')">1시간</div>
-            <div class="bopt" data-v="2시간" onclick="selectBtn('bg-schedule','2시간');setSchedule('quick')">2시간</div>
-            <div class="bopt" data-v="오늘마감" onclick="selectBtn('bg-schedule','오늘마감');setSchedule('quick')">오늘마감</div>
-            <div class="bopt" data-v="직접선택" onclick="selectBtn('bg-schedule','직접선택');setSchedule('manual')">직접선택</div>
+            <button class="bopt" data-v="30분" onclick="selectBtn('bg-schedule','30분');setSchedule('quick')">30분</button>
+            <button class="bopt" data-v="1시간" onclick="selectBtn('bg-schedule','1시간');setSchedule('quick')">1시간</button>
+            <button class="bopt" data-v="2시간" onclick="selectBtn('bg-schedule','2시간');setSchedule('quick')">2시간</button>
+            <button class="bopt" data-v="오늘마감" onclick="selectBtn('bg-schedule','오늘마감');setSchedule('quick')">오늘마감</button>
+            <button class="bopt" data-v="직접선택" onclick="selectBtn('bg-schedule','직접선택');setSchedule('manual')">직접선택</button>
           </div>
-          <div id="manualDate" style="display:none;margin-top:8px">
+          <div id="manualDate" style="display:none;margin-top:10px">
             <div class="date-grid">
-              <div class="fgrp" style="margin-bottom:0">
-                <div class="flabel">시작일</div>
-                <input type="date" class="finp" id="startDate">
-              </div>
-              <div class="fgrp" style="margin-bottom:0">
-                <div class="flabel">종료일</div>
-                <input type="date" class="finp" id="endDate">
-              </div>
-              <div class="fgrp" style="margin-bottom:0">
-                <div class="flabel">시작시간</div>
-                <input type="time" class="finp" id="startTime">
-              </div>
-              <div class="fgrp" style="margin-bottom:0">
-                <div class="flabel">종료시간</div>
-                <input type="time" class="finp" id="endTime">
-              </div>
+              <div class="fgrp" style="margin-bottom:0"><div class="flabel">시작일</div><input type="date" class="finp" id="startDate"></div>
+              <div class="fgrp" style="margin-bottom:0"><div class="flabel">종료일</div><input type="date" class="finp" id="endDate"></div>
+              <div class="fgrp" style="margin-bottom:0"><div class="flabel">시작시간</div><input type="time" class="finp" id="startTime"></div>
+              <div class="fgrp" style="margin-bottom:0"><div class="flabel">종료시간</div><input type="time" class="finp" id="endTime"></div>
             </div>
             <div class="err-msg" id="err-date">종료시간은 시작시간보다 늦어야 합니다</div>
           </div>
         </div>
-
         <div class="fgrp">
           <div class="flabel">수량 제한 <span class="req">필수</span></div>
           <div class="radio-group">
@@ -520,7 +603,6 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
             <div class="ropt" id="ropt-limited" onclick="setQtyMode('limited')">한정수량</div>
           </div>
         </div>
-
         <div class="fgrp" id="qtyWrap" style="display:none">
           <div class="flabel">최초 수량 <span class="req">필수</span></div>
           <div class="qty-row">
@@ -529,33 +611,32 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
           </div>
           <div class="err-msg" id="err-qty">수량을 입력해주세요</div>
         </div>
-
         <div class="fgrp">
           <div class="flabel">1인 최대 구매 <span class="req">필수</span></div>
           <div class="btn-group" id="bg-maxqty">
-            <div class="bopt on" data-v="제한없음" onclick="selectBtn('bg-maxqty','제한없음');showDirectQty(false)">제한없음</div>
-            <div class="bopt" data-v="1개" onclick="selectBtn('bg-maxqty','1개');showDirectQty(false)">1개</div>
-            <div class="bopt" data-v="2개" onclick="selectBtn('bg-maxqty','2개');showDirectQty(false)">2개</div>
-            <div class="bopt" data-v="3개" onclick="selectBtn('bg-maxqty','3개');showDirectQty(false)">3개</div>
-            <div class="bopt" data-v="직접입력" onclick="selectBtn('bg-maxqty','직접입력');showDirectQty(true)">직접입력</div>
+            <button class="bopt on" data-v="제한없음" onclick="selectBtn('bg-maxqty','제한없음');showDirectQty(false)">제한없음</button>
+            <button class="bopt" data-v="1개" onclick="selectBtn('bg-maxqty','1개');showDirectQty(false)">1개</button>
+            <button class="bopt" data-v="2개" onclick="selectBtn('bg-maxqty','2개');showDirectQty(false)">2개</button>
+            <button class="bopt" data-v="3개" onclick="selectBtn('bg-maxqty','3개');showDirectQty(false)">3개</button>
+            <button class="bopt" data-v="직접입력" onclick="selectBtn('bg-maxqty','직접입력');showDirectQty(true)">직접입력</button>
           </div>
-          <input type="number" class="finp" id="directMaxQty" placeholder="최대 구매 수량 입력"
-            style="display:none;margin-top:8px" min="1">
+          <input type="number" class="finp" id="directMaxQty" placeholder="최대 구매 수량 입력" style="display:none;margin-top:10px" min="1">
         </div>
+        <div style="height:8px"></div>
       </div>
-      <div style="height:20px"></div>
     </div>
 
     <div class="nav-btns" id="navBtns">
       <button class="nav-btn prev" id="prevBtn" onclick="goPrev()" style="display:none">이전</button>
       <button class="nav-btn next" id="nextBtn" onclick="goNext()">다음</button>
     </div>
-  </div><!-- /formWrap -->
+  </div>
 
-  <!-- ══ 진행 상태 (formWrap 밖으로) ══ -->
-  <div id="progressWrap" style="display:none;flex-direction:column;flex:1;background:#fff">
+  <!-- ══ 진행 상태 ══ -->
+  <div id="progressScreen" class="screen">
+    <div class="form-hdr"><div class="form-hdr-inner"><div class="form-hdr-title">등록 처리 중</div></div></div>
     <div class="progress-wrap">
-      <div class="prog-title">등록 처리 중...</div>
+      <div class="prog-title">잠시만 기다려주세요...</div>
       <div class="prog-item"><span class="prog-name">이미지 업로드</span><span class="prog-st wait" id="ps-upload">대기</span></div>
       <div class="prog-item"><span class="prog-name">AI 처리 (캡션)</span><span class="prog-st wait" id="ps-ai">대기</span></div>
       <div class="prog-item"><span class="prog-name">상품 저장</span><span class="prog-st wait" id="ps-save">대기</span></div>
@@ -565,28 +646,12 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
     </div>
   </div>
 
-  <!-- ══ 상품 목록 화면 ══ -->
-  <div class="list-screen" id="listScreen">
-    <div class="page-hdr" style="display:flex;align-items:center;gap:12px">
-      <div style="flex:1">
-        <div class="page-hdr-title" id="listStoreName">상품 목록</div>
-        <div class="page-hdr-sub">등록한 상품을 확인하고 관리하세요</div>
-      </div>
-      <button onclick="editStore()" style="font-size:12px;font-weight:700;color:var(--sub);background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:6px 12px;cursor:pointer;font-family:inherit">가게정보</button>
-    </div>
-    <div class="list-content" id="listContent">
-      <div class="list-empty">
-        <div class="list-empty-title">등록된 상품이 없습니다</div>
-        <div class="list-empty-sub">아래 버튼을 눌러<br>첫 번째 상품을 등록해보세요</div>
-      </div>
-    </div>
-    <button class="list-add-btn" onclick="goRegister()">+ 상품 등록하기</button>
-  </div>
-
-  <!-- ══ QR 인증 화면 ══ -->
-  <div class="qr-screen" id="qrScreen">
+  <!-- ══ QR 인증 ══ -->
+  <div id="qrScreen" class="screen">
     <div class="qr-hdr">
-      <button class="qr-back" onclick="closeQrScreen()">←</button>
+      <button class="qr-back" onclick="goTab('home')">
+        <svg viewBox="0 0 22 22"><path d="M15 4l-7 7 7 7"/></svg>
+      </button>
       <div class="qr-title">QR 쿠폰 인증</div>
     </div>
     <div class="qr-tab-bar">
@@ -614,6 +679,49 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
     </div>
   </div>
 
+  <!-- ══ 통계 ══ -->
+  <div id="statScreen" class="screen">
+    <div class="stat-hdr page-hdr">
+      <div class="page-hdr-title">통계</div>
+      <div class="page-hdr-sub" id="statStoreName">가게 운영 현황</div>
+    </div>
+    <div class="scroll-content">
+      <div class="stat-cards">
+        <div class="stat-card primary">
+          <div class="stat-card-label">행사중 상품</div>
+          <div><span class="stat-card-num" id="sc-active">0</span><span class="stat-card-unit">개</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">심사 대기</div>
+          <div><span class="stat-card-num" id="sc-pending">0</span><span class="stat-card-unit">개</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">행사 종료</div>
+          <div><span class="stat-card-num" id="sc-ended">0</span><span class="stat-card-unit">개</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">전체 상품</div>
+          <div><span class="stat-card-num" id="sc-total">0</span><span class="stat-card-unit">개</span></div>
+        </div>
+      </div>
+      <div class="stat-section">
+        <div class="stat-section-title">상품 현황</div>
+        <div class="stat-row">
+          <span class="stat-row-label">등록 완료</span>
+          <span class="stat-row-val" id="sr-total">0개</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-row-label">현재 행사중</span>
+          <span class="stat-row-val" id="sr-active">0개</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-row-label">승인 대기중</span>
+          <span class="stat-row-val" id="sr-pending">0개</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 사진 바텀시트 -->
   <div class="photo-sheet" id="photoSheet">
     <div class="photo-sheet-bg" onclick="closePhotoSheet()"></div>
@@ -625,6 +733,34 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
     </div>
   </div>
 
+  <!-- 하단 탭바 -->
+  <div class="tab-bar" id="tabBar" style="display:none">
+    <button class="tab-item active" id="tab-home" onclick="goTab('home')">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 22V12h6v10"/></svg>
+      </div>
+      <span class="tab-label">홈</span>
+    </button>
+    <button class="tab-item" id="tab-register" onclick="goTab('register')">
+      <div class="tab-icon" style="position:relative">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg>
+      </div>
+      <span class="tab-label">상품등록</span>
+    </button>
+    <button class="tab-item" id="tab-qr" onclick="goTab('qr')">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="14" width="3" height="3"/><rect x="14" y="18" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>
+      </div>
+      <span class="tab-label">QR인증</span>
+    </button>
+    <button class="tab-item" id="tab-stat" onclick="goTab('stat')">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 20h18"/><rect x="5" y="12" width="4" height="8"/><rect x="10" y="8" width="4" height="12"/><rect x="15" y="4" width="4" height="16"/></svg>
+      </div>
+      <span class="tab-label">통계</span>
+    </button>
+  </div>
+
   <div class="toast" id="toast"></div>
 </div>
 
@@ -634,31 +770,45 @@ body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-
 const SUPABASE_URL='https://ezcofypuyhgxglzxdith.supabase.co';
 const SUPABASE_KEY='sb_publishable_8bA2iL8WleI-PDahO4XaFg__0gnVrK9';
 
-let curStep=1;
-let photoFiles=[], photoPreviews=[];
-let uploadedImageUrl=null;
-let qtyMode='unlimited';
-let lastDealId=null;
-let currentStock=0;
+let curStep=1, photoFiles=[], photoPreviews=[], uploadedImageUrl=null;
+let qtyMode='unlimited', lastDealId=null, currentStock=0;
 let scanStream=null, scanInterval=null;
+let allDeals=[];
 
 const si=()=>JSON.parse(localStorage.getItem('storeInfo')||'{}');
 
-function hideAll(){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('storeScreen').style.display='none';
-  document.getElementById('formWrap').style.display='none';
-  document.getElementById('progressWrap').style.display='none';
-  document.getElementById('listScreen').classList.remove('show');
-  document.getElementById('qrScreen').classList.remove('show');
+const SCREENS={
+  login:'loginScreen', store:'storeScreen', home:'homeScreen',
+  register:'registerScreen', progress:'progressScreen',
+  qr:'qrScreen', stat:'statScreen'
+};
+const TAB_SCREENS=['home','register','qr','stat'];
+
+function showScreen(name){
+  Object.values(SCREENS).forEach(id=>{
+    const el=document.getElementById(id);
+    el.classList.remove('show');
+  });
+  document.getElementById(SCREENS[name]).classList.add('show');
+
+  // 탭바: home/register/qr/stat일 때만 표시
+  const tabBar=document.getElementById('tabBar');
+  if(TAB_SCREENS.includes(name)){
+    tabBar.style.display='flex';
+    TAB_SCREENS.forEach(t=>{
+      document.getElementById('tab-'+t).classList.toggle('active',t===name);
+    });
+  } else {
+    tabBar.style.display='none';
+  }
 }
 
 function init(){
   const loggedIn=localStorage.getItem('ownerLoggedIn');
   const info=si();
-  if(!loggedIn){ hideAll(); document.getElementById('loginScreen').style.display='flex'; return; }
+  if(!loggedIn){ showScreen('login'); return; }
   if(!info.name||!info.addr){ showStoreScreen(); return; }
-  showListScreen();
+  showHomeScreen();
 }
 
 function doLogin(provider){
@@ -666,13 +816,129 @@ function doLogin(provider){
   setTimeout(()=>{
     localStorage.setItem('ownerLoggedIn','1');
     const info=si();
-    if(!info.name){ showStoreScreen(); } else { showListScreen(); }
+    if(!info.name){ showStoreScreen(); } else { showHomeScreen(); }
   },1000);
 }
 
+function goHomeOrLogin(){
+  const info=si();
+  if(info.name&&info.addr) showHomeScreen(); else showScreen('login');
+}
+
+function goTab(tab){
+  if(tab==='home') showHomeScreen();
+  else if(tab==='register') goRegister();
+  else if(tab==='qr'){ stopScan(); showScreen('qr'); }
+  else if(tab==='stat') showStatScreen();
+  else if(tab==='store') showStoreScreen();
+}
+
+// ── 홈 ──
+async function showHomeScreen(){
+  showScreen('home');
+  const info=si();
+  document.getElementById('storeName').textContent=info.name||'가게정보 수정';
+  await loadDeals();
+}
+
+async function loadDeals(){
+  const info=si();
+  const content=document.getElementById('listContent');
+  content.innerHTML='<div style="padding:32px;text-align:center;color:var(--sub);font-size:15px;font-weight:600">불러오는 중...</div>';
+  try{
+    const res=await fetch(
+      `${SUPABASE_URL}/rest/v1/deals?store_name=eq.${encodeURIComponent(info.name||'')}&order=created_at.desc&limit=50`,
+      {headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}}
+    );
+    allDeals=await res.json();
+    if(!Array.isArray(allDeals)||allDeals.length===0){
+      document.getElementById('stat-active').textContent='0';
+      document.getElementById('stat-pending').textContent='0';
+      document.getElementById('stat-total').textContent='0';
+      content.innerHTML=`<div class="list-empty">
+        <div class="list-empty-title">등록된 상품이 없습니다</div>
+        <div class="list-empty-sub">하단의 상품등록 버튼을 눌러<br>첫 번째 상품을 등록해보세요</div>
+      </div>`;
+      return;
+    }
+    const active=allDeals.filter(d=>getDealStatus(d)==='active').length;
+    const pending=allDeals.filter(d=>getDealStatus(d)==='pending').length;
+    document.getElementById('stat-active').textContent=active;
+    document.getElementById('stat-pending').textContent=pending;
+    document.getElementById('stat-total').textContent=allDeals.length;
+    content.innerHTML=allDeals.map(d=>renderDealCard(d)).join('');
+  }catch(e){
+    content.innerHTML=`<div class="list-empty"><div class="list-empty-title">불러오기 실패</div><div class="list-empty-sub">${e.message}</div></div>`;
+  }
+}
+
+function getDealStatus(deal){
+  const now=new Date();
+  if(deal.end_time){
+    let endDate;
+    if(/^\d{1,2}:\d{2}$/.test(deal.end_time)){
+      const [h,m]=deal.end_time.split(':');
+      endDate=new Date(); endDate.setHours(parseInt(h),parseInt(m),0,0);
+    } else { endDate=new Date(deal.end_time); }
+    if(endDate<now) return 'ended';
+  }
+  if(deal.is_active) return 'active';
+  return 'pending';
+}
+
+function renderDealCard(deal){
+  const status=getDealStatus(deal);
+  const labelMap={pending:'심사대기',active:'행사중',ended:'행사종료'};
+  const thumb=deal.image_url
+    ?`<img class="deal-thumb" src="${deal.image_url}" onerror="this.parentNode.innerHTML='<div class=\\'deal-thumb-ph\\'><svg viewBox=\\'0 0 28 28\\' style=\\'width:28px;height:28px;stroke:var(--dim);fill:none;stroke-width:1.5\\'><rect x=\\'4\\' y=\\'4\\' width=\\'20\\' height=\\'20\\' rx=\\'3\\'/><circle cx=\\'10\\' cy=\\'10\\' r=\\'2\\'/><path d=\\'M4 18l5-5 4 4 3-3 6 6\\'/></svg></div>'">`
+    :`<div class="deal-thumb-ph"><svg viewBox="0 0 28 28"><rect x="4" y="4" width="20" height="20" rx="3"/><circle cx="10" cy="10" r="2"/><path d="M4 18l5-5 4 4 3-3 6 6"/></svg></div>`;
+  const orig=deal.original_price?deal.original_price.toLocaleString()+'원':'';
+  const sale=deal.sale_price?deal.sale_price.toLocaleString()+'원':'';
+  const pct=deal.discount_pct?`<span class="deal-pct">${deal.discount_pct}%</span>`:'';
+  const priceRow=sale?`<div class="deal-price-row"><span class="deal-orig">${orig}</span><span class="deal-sale">${sale}</span>${pct}</div>`:'';
+  const reapply=status==='ended'
+    ?`<button class="deal-reapply-btn" onclick='reapply(${JSON.stringify(deal)})'>행사 재신청하기</button>`:'';
+  return `<div class="deal-card">
+    <div class="deal-card-top">${thumb}
+      <div class="deal-info">
+        <div class="deal-name">${deal.product_name||'상품명 없음'}</div>
+        ${priceRow}
+        <div class="deal-status ${status}">${labelMap[status]}</div>
+      </div>
+    </div>${reapply}
+  </div>`;
+}
+
+// ── 통계 ──
+async function showStatScreen(){
+  showScreen('stat');
+  const info=si();
+  document.getElementById('statStoreName').textContent=(info.name||'')+'의 운영 현황';
+  if(!allDeals.length){
+    try{
+      const res=await fetch(
+        `${SUPABASE_URL}/rest/v1/deals?store_name=eq.${encodeURIComponent(info.name||'')}&order=created_at.desc&limit=50`,
+        {headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}}
+      );
+      allDeals=await res.json();
+    }catch(e){}
+  }
+  if(!Array.isArray(allDeals)) allDeals=[];
+  const active=allDeals.filter(d=>getDealStatus(d)==='active').length;
+  const pending=allDeals.filter(d=>getDealStatus(d)==='pending').length;
+  const ended=allDeals.filter(d=>getDealStatus(d)==='ended').length;
+  document.getElementById('sc-active').textContent=active;
+  document.getElementById('sc-pending').textContent=pending;
+  document.getElementById('sc-ended').textContent=ended;
+  document.getElementById('sc-total').textContent=allDeals.length;
+  document.getElementById('sr-total').textContent=allDeals.length+'개';
+  document.getElementById('sr-active').textContent=active+'개';
+  document.getElementById('sr-pending').textContent=pending+'개';
+}
+
+// ── 가게정보 ──
 function showStoreScreen(){
-  hideAll();
-  document.getElementById('storeScreen').style.display='flex';
+  showScreen('store');
   const info=si();
   if(info.name) document.getElementById('s_name').value=info.name||'';
   if(info.ceo) document.getElementById('s_ceo').value=info.ceo||'';
@@ -696,78 +962,51 @@ function showStoreScreen(){
   updateHoursPreview();
 }
 
-function editStore(){ showStoreScreen(); }
-
 function formatBizNum(el){
   let v=el.value.replace(/[^0-9]/g,'');
   if(v.length>3&&v.length<=5) v=v.slice(0,3)+'-'+v.slice(3);
   else if(v.length>5) v=v.slice(0,3)+'-'+v.slice(3,5)+'-'+v.slice(5,10);
   el.value=v;
 }
-
 function setAmPm(type,val){
   document.getElementById(type+'-am').classList.toggle('on',val==='am');
   document.getElementById(type+'-pm').classList.toggle('on',val==='pm');
   updateHoursPreview();
 }
 function getAmPm(type){ return document.getElementById(type+'-am').classList.contains('on')?'am':'pm'; }
-
 function updateHoursPreview(){
-  const openAmPm=getAmPm('open'), closeAmPm=getAmPm('close');
+  const oAP=getAmPm('open'),cAP=getAmPm('close');
   const oh=parseInt(document.getElementById('open-h').value);
   const om=document.getElementById('open-m').value;
   const ch=parseInt(document.getElementById('close-h').value);
   const cm=document.getElementById('close-m').value;
-  const fmt=(h,ap,m)=>{
-    let h24=h;
-    if(ap==='am'&&h===12) h24=0;
-    if(ap==='pm'&&h!==12) h24=h+12;
-    return String(h24).padStart(2,'0')+':'+m;
-  };
-  const openStr=fmt(oh,openAmPm,om), closeStr=fmt(ch,closeAmPm,cm);
-  const el=document.getElementById('hours-preview');
-  el.textContent=openStr+' ~ '+closeStr;
-  return openStr+' ~ '+closeStr;
+  const fmt=(h,ap,m)=>{ let h24=h; if(ap==='am'&&h===12)h24=0; if(ap==='pm'&&h!==12)h24=h+12; return String(h24).padStart(2,'0')+':'+m; };
+  const o=fmt(oh,oAP,om), c=fmt(ch,cAP,cm);
+  document.getElementById('hours-preview').textContent=o+' ~ '+c;
+  return o+' ~ '+c;
 }
-
-function restoreHours(hoursStr){
-  const m=hoursStr.match(/(\d+):(\d+)\s*~\s*(\d+):(\d+)/);
-  if(!m) return;
-  const setHourSel=(selId,h24)=>{
-    let h=h24%12||12;
-    document.getElementById(selId).value=String(h);
-    return h24<12?'am':'pm';
-  };
-  const openAp=setHourSel('open-h',parseInt(m[1]));
-  document.getElementById('open-m').value=m[2]==='00'?'00':m[2];
-  document.getElementById('open-am').classList.toggle('on',openAp==='am');
-  document.getElementById('open-pm').classList.toggle('on',openAp==='pm');
-  const closeAp=setHourSel('close-h',parseInt(m[3]));
-  document.getElementById('close-m').value=m[4]==='00'?'00':m[4];
-  document.getElementById('close-am').classList.toggle('on',closeAp==='am');
-  document.getElementById('close-pm').classList.toggle('on',closeAp==='pm');
+function restoreHours(s){
+  const m=s.match(/(\d+):(\d+)\s*~\s*(\d+):(\d+)/); if(!m)return;
+  const set=(selId,h24)=>{ document.getElementById(selId).value=String(h24%12||12); return h24<12?'am':'pm'; };
+  const oAP=set('open-h',parseInt(m[1])); document.getElementById('open-m').value=m[2];
+  document.getElementById('open-am').classList.toggle('on',oAP==='am');
+  document.getElementById('open-pm').classList.toggle('on',oAP==='pm');
+  const cAP=set('close-h',parseInt(m[3])); document.getElementById('close-m').value=m[4];
+  document.getElementById('close-am').classList.toggle('on',cAP==='am');
+  document.getElementById('close-pm').classList.toggle('on',cAP==='pm');
 }
-
-function phoneNext(el,nextId,maxLen){
-  if(el.value.length>=maxLen){ const next=document.getElementById(nextId); if(next) next.focus(); }
-}
-
+function phoneNext(el,nextId,maxLen){ if(el.value.length>=maxLen){ const n=document.getElementById(nextId); if(n)n.focus(); } }
 function openKakaoAddr(){
-  if(typeof daum==='undefined'||!daum.Postcode){ showToast('주소 검색 로딩 중입니다. 잠시 후 다시 시도하세요.'); return; }
-  new daum.Postcode({
-    oncomplete:function(data){
-      const addr=data.roadAddress||data.jibunAddress;
-      document.getElementById('s_addr').value=addr;
-      const display=document.getElementById('s_addr_display');
-      display.textContent=addr;
-      display.style.display='block';
-      document.getElementById('s_addr_detail').style.display='block';
-      document.getElementById('s_addr_detail').focus();
-      document.getElementById('serr-addr').classList.remove('show');
-    }
-  }).open();
+  if(typeof daum==='undefined'||!daum.Postcode){ showToast('주소 검색 로딩 중입니다'); return; }
+  new daum.Postcode({oncomplete:function(data){
+    const addr=data.roadAddress||data.jibunAddress;
+    document.getElementById('s_addr').value=addr;
+    const d=document.getElementById('s_addr_display'); d.textContent=addr; d.style.display='block';
+    document.getElementById('s_addr_detail').style.display='block';
+    document.getElementById('s_addr_detail').focus();
+    document.getElementById('serr-addr').classList.remove('show');
+  }}).open();
 }
-
 function saveStoreInfo(){
   const name=document.getElementById('s_name').value.trim();
   const ceo=document.getElementById('s_ceo').value.trim();
@@ -781,104 +1020,30 @@ function saveStoreInfo(){
   const phone=p1&&p2&&p3?`${p1}-${p2}-${p3}`:'';
   const hours=updateHoursPreview();
   const menu=document.getElementById('s_menu').value.trim();
-
   let ok=true;
-  const chk=(errId,val)=>{
-    const e=document.getElementById(errId);
-    if(!val){e.classList.add('show');ok=false;} else e.classList.remove('show');
-  };
-  chk('serr-name',name); chk('serr-ceo',ceo); chk('serr-biz',biz);
-  chk('serr-cate',cate); chk('serr-menu',menu); chk('serr-addr',addr); chk('serr-phone',phone);
-
+  const chk=(id,v)=>{ const e=document.getElementById(id); if(!v){e.classList.add('show');ok=false;}else e.classList.remove('show'); };
+  chk('serr-name',name);chk('serr-ceo',ceo);chk('serr-biz',biz);
+  chk('serr-cate',cate);chk('serr-menu',menu);chk('serr-addr',addr);chk('serr-phone',phone);
   if(!ok){showToast('모든 항목을 입력해주세요');return;}
-
   const fullAddr=addrDetail?addr+' '+addrDetail:addr;
   localStorage.setItem('storeInfo',JSON.stringify({name,ceo,biz,cate,menu,addr:fullAddr,addrDetail,phone,hours}));
   showToast('가게 정보 저장 완료');
-  setTimeout(()=>showListScreen(),600);
+  setTimeout(()=>showHomeScreen(),600);
 }
 
-// ── 상품 목록 화면 ──
-async function showListScreen(){
-  hideAll();
-  document.getElementById('listScreen').classList.add('show');
+// ── 상품 등록 ──
+function goRegister(){
+  resetForm();
+  showScreen('register');
   const info=si();
-  document.getElementById('listStoreName').textContent=info.name||'상품 목록';
-  await loadDeals();
+  if(info.cate) document.getElementById('f_cate').value=info.cate;
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('startDate').value=today;
+  document.getElementById('endDate').value=today;
+  document.getElementById('startTime').value='09:00';
+  document.getElementById('endTime').value='22:00';
+  renderStep();
 }
-
-async function loadDeals(){
-  const info=si();
-  const content=document.getElementById('listContent');
-  content.innerHTML='<div style="padding:40px;text-align:center;color:var(--sub)">불러오는 중...</div>';
-  try{
-    const res=await fetch(
-      `${SUPABASE_URL}/rest/v1/deals?store_name=eq.${encodeURIComponent(info.name||'')}&order=created_at.desc&limit=50`,
-      {headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}}
-    );
-    const deals=await res.json();
-    if(!Array.isArray(deals)||deals.length===0){
-      content.innerHTML=`<div class="list-empty">
-        <div class="list-empty-title">등록된 상품이 없습니다</div>
-        <div class="list-empty-sub">아래 버튼을 눌러<br>첫 번째 상품을 등록해보세요</div>
-      </div>`;
-      return;
-    }
-    content.innerHTML=deals.map(deal=>renderDealCard(deal)).join('');
-  }catch(e){
-    content.innerHTML=`<div class="list-empty">
-      <div class="list-empty-title">불러오기 실패</div>
-      <div class="list-empty-sub">${e.message}</div>
-    </div>`;
-  }
-}
-
-function getDealStatus(deal){
-  const now=new Date();
-  if(deal.end_time){
-    // end_time이 시간 형식(HH:MM)이면 오늘 기준으로 판단
-    let endDate;
-    if(/^\d{1,2}:\d{2}$/.test(deal.end_time)){
-      const [h,m]=deal.end_time.split(':');
-      endDate=new Date(); endDate.setHours(parseInt(h),parseInt(m),0,0);
-    } else {
-      endDate=new Date(deal.end_time);
-    }
-    if(endDate<now) return 'ended';
-  }
-  if(deal.is_active) return 'active';
-  return 'pending';
-}
-
-function renderDealCard(deal){
-  const status=getDealStatus(deal);
-  const statusMap={
-    pending:{label:'심사대기',cls:'pending'},
-    active:{label:'행사중',cls:'active'},
-    ended:{label:'행사종료',cls:'ended'}
-  };
-  const s=statusMap[status];
-  const thumb=deal.image_url
-    ?`<img class="deal-thumb" src="${deal.image_url}" onerror="this.style.display='none'">`
-    :`<div class="deal-thumb-placeholder"></div>`;
-  const discount=deal.original_price&&deal.sale_price
-    ?`<strong>${Math.round((deal.original_price-deal.sale_price)/deal.original_price*100)}% 할인</strong> · ${(deal.sale_price).toLocaleString()}원`
-    :'';
-  const reapplyBtn=status==='ended'
-    ?`<button class="deal-reapply-btn" onclick="reapply(${JSON.stringify(deal).replace(/"/g,'&quot;')})">행사 재신청</button>`:'';
-  return `<div class="deal-card">
-    <div class="deal-card-top">
-      ${thumb}
-      <div class="deal-info">
-        <div class="deal-name">${deal.product_name||'상품명 없음'}</div>
-        <div class="deal-price">${discount}</div>
-        <div class="deal-status ${s.cls}">${s.label}</div>
-      </div>
-    </div>
-    ${reapplyBtn}
-  </div>`;
-}
-
 function reapply(deal){
   goRegister();
   setTimeout(()=>{
@@ -890,171 +1055,93 @@ function reapply(deal){
   },100);
 }
 
-function goRegister(){
-  resetForm();
-  showFormWrap();
-}
-
-function showFormWrap(){
-  hideAll();
-  document.getElementById('formWrap').style.display='flex';
-  const info=si();
-  document.getElementById('storeName').textContent=info.name||'가게정보';
-  const today=new Date().toISOString().split('T')[0];
-  document.getElementById('startDate').value=today;
-  document.getElementById('endDate').value=today;
-  document.getElementById('startTime').value='09:00';
-  document.getElementById('endTime').value='22:00';
-  if(info.cate) document.getElementById('f_cate').value=info.cate;
-  renderStep();
-}
-
-// ── 사진 ──
-function showPhotoSheet(){
-  if(photoFiles.length>=5){showToast('최대 5장까지 업로드할 수 있습니다');return;}
-  document.getElementById('photoSheet').classList.add('show');
-}
+function showPhotoSheet(){ if(photoFiles.length>=5){showToast('최대 5장');return;} document.getElementById('photoSheet').classList.add('show'); }
 function closePhotoSheet(){ document.getElementById('photoSheet').classList.remove('show'); }
-function pickPhoto(src){
-  closePhotoSheet();
-  document.getElementById(src==='camera'?'fileCamera':'fileGallery').click();
-}
+function pickPhoto(src){ closePhotoSheet(); document.getElementById(src==='camera'?'fileCamera':'fileGallery').click(); }
 function onPhotoSelected(input){
-  const file=input.files[0];
-  if(!file) return;
+  const file=input.files[0]; if(!file)return;
   if(photoFiles.length>=5){showToast('최대 5장입니다');return;}
   photoFiles.push(file);
   const reader=new FileReader();
-  reader.onload=e=>{ photoPreviews.push(e.target.result); renderImgArea(); };
-  reader.readAsDataURL(file);
-  input.value='';
+  reader.onload=e=>{photoPreviews.push(e.target.result);renderImgArea();};
+  reader.readAsDataURL(file); input.value='';
 }
-function removePhoto(idx){ photoFiles.splice(idx,1); photoPreviews.splice(idx,1); renderImgArea(); }
+function removePhoto(idx){photoFiles.splice(idx,1);photoPreviews.splice(idx,1);renderImgArea();}
 function renderImgArea(){
-  const area=document.getElementById('imgArea');
-  const count=photoFiles.length;
-  let html=photoPreviews.map((src,i)=>`
-    <div class="img-thumb">
-      <img src="${src}">
-      <button class="del" onclick="removePhoto(${i})">✕</button>
-    </div>
-  `).join('');
-  if(count<5) html+=`<div class="img-add" onclick="showPhotoSheet()"><div class="img-add-txt">+ 사진</div></div>`;
+  const area=document.getElementById('imgArea'), count=photoFiles.length;
+  let html=photoPreviews.map((src,i)=>`<div class="img-thumb"><img src="${src}"><button class="del" onclick="removePhoto(${i})">✕</button></div>`).join('');
+  if(count<5) html+=`<div class="img-add" onclick="showPhotoSheet()"><svg viewBox="0 0 28 28"><path d="M14 5v18M5 14h18" stroke="var(--dim)" stroke-width="2" stroke-linecap="round"/></svg><div class="img-add-txt">사진 추가</div></div>`;
   area.innerHTML=html;
   document.getElementById('imgCount').textContent=count+' / 5장';
 }
-
-// ── 계산 ──
 function calcDiscount(){
-  const orig=parseInt(document.getElementById('f_orig').value)||0;
-  const sale=parseInt(document.getElementById('f_sale').value)||0;
-  const el=document.getElementById('discountDisplay');
-  if(orig>0&&sale>0&&sale<orig){
-    const pct=Math.round((orig-sale)/orig*100);
-    el.textContent=pct+'% 할인 ('+((orig-sale).toLocaleString())+'원 절약)';
-    el.style.color='var(--primary)';
-  } else if(orig>0&&sale>0&&sale>=orig){
-    el.textContent='판매가는 정상가보다 낮아야 합니다';
-    el.style.color='var(--red)';
-  } else { el.textContent='—'; el.style.color='var(--primary)'; }
-}
-function calcPct(){
   const o=parseInt(document.getElementById('f_orig').value)||0;
   const s=parseInt(document.getElementById('f_sale').value)||0;
-  if(o>0&&s>0&&s<o) return Math.round((o-s)/o*100);
-  return 0;
+  const el=document.getElementById('discountDisplay');
+  if(o>0&&s>0&&s<o){el.textContent=Math.round((o-s)/o*100)+'% 할인 ('+((o-s).toLocaleString())+'원 절약)';el.style.color='var(--primary)';}
+  else if(o>0&&s>0&&s>=o){el.textContent='판매가는 정상가보다 낮아야 합니다';el.style.color='var(--red)';}
+  else{el.textContent='—';el.style.color='var(--primary)';}
 }
-
-function selectBtn(groupId,val){
-  document.querySelectorAll(`#${groupId} .bopt`).forEach(el=>el.classList.toggle('on',el.dataset.v===val));
-}
-function getBtn(groupId){ const el=document.querySelector(`#${groupId} .bopt.on`); return el?el.dataset.v:''; }
-
-function setSchedule(mode){ document.getElementById('manualDate').style.display=mode==='manual'?'block':'none'; }
+function calcPct(){const o=parseInt(document.getElementById('f_orig').value)||0,s=parseInt(document.getElementById('f_sale').value)||0;if(o>0&&s>0&&s<o)return Math.round((o-s)/o*100);return 0;}
+function selectBtn(gid,val){document.querySelectorAll(`#${gid} .bopt`).forEach(el=>el.classList.toggle('on',el.dataset.v===val));}
+function getBtn(gid){const el=document.querySelector(`#${gid} .bopt.on`);return el?el.dataset.v:'';}
+function setSchedule(mode){document.getElementById('manualDate').style.display=mode==='manual'?'block':'none';}
 function setQtyMode(mode){
   qtyMode=mode;
   document.getElementById('ropt-unlimited').classList.toggle('on',mode==='unlimited');
   document.getElementById('ropt-limited').classList.toggle('on',mode==='limited');
   document.getElementById('qtyWrap').style.display=mode==='limited'?'block':'none';
 }
-function updateStockPreview(){ document.getElementById('qtyPreview').textContent=(parseInt(document.getElementById('initQty').value)||0)+'개'; }
-function showDirectQty(show){ document.getElementById('directMaxQty').style.display=show?'block':'none'; }
-
-// ── 스텝 네비 ──
-function goNext(){
-  if(curStep===1&&!validateStep1()) return;
-  if(curStep===2){ submitForm(); return; }
-  curStep++; renderStep();
-}
-function goPrev(){ if(curStep>1){ curStep--; renderStep(); } }
+function updateStockPreview(){document.getElementById('qtyPreview').textContent=(parseInt(document.getElementById('initQty').value)||0)+'개';}
+function showDirectQty(s){document.getElementById('directMaxQty').style.display=s?'block':'none';}
+function goNext(){if(curStep===1&&!validateStep1())return;if(curStep===2){submitForm();return;}curStep++;renderStep();}
+function goPrev(){if(curStep>1){curStep--;renderStep();}}
 function renderStep(){
   [1,2].forEach(i=>{
     document.getElementById('step'+i).style.display=i===curStep?'block':'none';
     const s=document.getElementById('si'+i);
-    s.classList.toggle('active',i===curStep);
-    s.classList.toggle('done',i<curStep);
+    s.classList.toggle('active',i===curStep);s.classList.toggle('done',i<curStep);
   });
   document.getElementById('prevBtn').style.display=curStep>1?'flex':'none';
   document.getElementById('nextBtn').textContent=curStep===2?'등록하기':'다음';
 }
-
 function validateStep1(){
   let ok=true;
   if(photoFiles.length===0){document.getElementById('err-img').classList.add('show');ok=false;}
   else document.getElementById('err-img').classList.remove('show');
-  if(!document.getElementById('f_name').value.trim()){
-    document.getElementById('err-name').classList.add('show');
-    document.getElementById('f_name').classList.add('err');
-    ok=false;
-  } else { document.getElementById('err-name').classList.remove('show'); document.getElementById('f_name').classList.remove('err'); }
-  const orig=parseInt(document.getElementById('f_orig').value)||0;
-  if(!orig){document.getElementById('err-orig').classList.add('show');ok=false;}
-  else document.getElementById('err-orig').classList.remove('show');
-  const sale=parseInt(document.getElementById('f_sale').value)||0;
-  if(!sale||sale>=orig){document.getElementById('err-sale').classList.add('show');ok=false;}
-  else document.getElementById('err-sale').classList.remove('show');
-  if(!ok) showToast('필수 항목을 확인해주세요');
+  if(!document.getElementById('f_name').value.trim()){document.getElementById('err-name').classList.add('show');document.getElementById('f_name').classList.add('err');ok=false;}
+  else{document.getElementById('err-name').classList.remove('show');document.getElementById('f_name').classList.remove('err');}
+  const o=parseInt(document.getElementById('f_orig').value)||0;
+  if(!o){document.getElementById('err-orig').classList.add('show');ok=false;}else document.getElementById('err-orig').classList.remove('show');
+  const s=parseInt(document.getElementById('f_sale').value)||0;
+  if(!s||s>=o){document.getElementById('err-sale').classList.add('show');ok=false;}else document.getElementById('err-sale').classList.remove('show');
+  if(!ok)showToast('필수 항목을 확인해주세요');
   return ok;
 }
-
 function validateStep2(){
-  const schedule=getBtn('bg-schedule');
-  if(!schedule){showToast('행사 일정을 선택해주세요');return false;}
-  if(schedule==='직접선택'){
-    const s=document.getElementById('startTime').value;
-    const e=document.getElementById('endTime').value;
-    const sd=document.getElementById('startDate').value;
-    const ed=document.getElementById('endDate').value;
+  const sch=getBtn('bg-schedule');
+  if(!sch){showToast('행사 일정을 선택해주세요');return false;}
+  if(sch==='직접선택'){
+    const s=document.getElementById('startTime').value,e=document.getElementById('endTime').value;
+    const sd=document.getElementById('startDate').value,ed=document.getElementById('endDate').value;
     if(sd===ed&&e<=s){document.getElementById('err-date').classList.add('show');return false;}
     document.getElementById('err-date').classList.remove('show');
   }
-  if(qtyMode==='limited'){
-    const qty=document.getElementById('initQty').value;
-    if(!qty||parseInt(qty)<1){document.getElementById('err-qty').classList.add('show');return false;}
-    document.getElementById('err-qty').classList.remove('show');
-  }
+  if(qtyMode==='limited'){const q=document.getElementById('initQty').value;if(!q||parseInt(q)<1){document.getElementById('err-qty').classList.add('show');return false;}document.getElementById('err-qty').classList.remove('show');}
   return true;
 }
-
-function getEndTime(schedule){
-  if(schedule==='직접선택') return document.getElementById('endTime').value||null;
+function getEndTime(sch){
+  if(sch==='직접선택') return document.getElementById('endTime').value||null;
   const now=new Date();
-  if(schedule==='30분') now.setMinutes(now.getMinutes()+30);
-  else if(schedule==='1시간') now.setHours(now.getHours()+1);
-  else if(schedule==='2시간') now.setHours(now.getHours()+2);
-  else if(schedule==='오늘마감') now.setHours(23,59,0,0);
+  if(sch==='30분')now.setMinutes(now.getMinutes()+30);
+  else if(sch==='1시간')now.setHours(now.getHours()+1);
+  else if(sch==='2시간')now.setHours(now.getHours()+2);
+  else if(sch==='오늘마감')now.setHours(23,59,0,0);
   return now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
 }
-
-// ── 등록 제출 ──
 async function submitForm(){
-  if(!validateStep2()) return;
-
-  hideAll();
-  const pw=document.getElementById('progressWrap');
-  pw.style.display='flex';
-  pw.style.flex='1';
-
+  if(!validateStep2())return;
+  showScreen('progress');
   const info=si();
   try{
     setPS('upload','ing','업로드 중...');
@@ -1062,146 +1149,71 @@ async function submitForm(){
     try{
       const filename='owner_'+Date.now()+'.jpg';
       const base64=photoPreviews[0].split(',')[1];
-      const binary=atob(base64);
-      const arr=new Uint8Array(binary.length);
-      for(let i=0;i<binary.length;i++) arr[i]=binary.charCodeAt(i);
+      const binary=atob(base64),arr=new Uint8Array(binary.length);
+      for(let i=0;i<binary.length;i++)arr[i]=binary.charCodeAt(i);
       const blob=new Blob([arr],{type:photoFiles[0].type||'image/jpeg'});
-      const uploadRes=await fetch(`${SUPABASE_URL}/functions/v1/clever-handler`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
-        body:JSON.stringify({imageData:photoPreviews[0],filename})
-      });
-      const uploadData=await uploadRes.json();
-      if(uploadData.url) imageUrl=uploadData.url;
+      const r=await fetch(`${SUPABASE_URL}/functions/v1/clever-handler`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},body:JSON.stringify({imageData:photoPreviews[0],filename})});
+      const d=await r.json(); if(d.url)imageUrl=d.url;
     }catch(e){}
     uploadedImageUrl=imageUrl;
     setPS('upload','ok','완료');
-
     setPS('ai','ing','처리 중...');
-    let caption='', hashtags='';
+    let caption='',hashtags='';
     try{
-      const aiBody={매장명:info.name||'매장',상품명:document.getElementById('f_name').value,
-        업종:document.getElementById('f_cate').value,할인율:calcPct(),
-        정상가:document.getElementById('f_orig').value,할인가:document.getElementById('f_sale').value,위치:info.addr||''};
-      const aiRes=await fetch(`${SUPABASE_URL}/functions/v1/generate-content`,{
-        method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
-        body:JSON.stringify(aiBody)
-      });
-      const aiData=await aiRes.json();
-      caption=aiData.caption||''; hashtags=aiData.hashtags||'';
+      const r=await fetch(`${SUPABASE_URL}/functions/v1/generate-content`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},body:JSON.stringify({매장명:info.name||'매장',상품명:document.getElementById('f_name').value,업종:document.getElementById('f_cate').value,할인율:calcPct(),정상가:document.getElementById('f_orig').value,할인가:document.getElementById('f_sale').value,위치:info.addr||''})});
+      const d=await r.json();caption=d.caption||'';hashtags=d.hashtags||'';
     }catch(e){}
     setPS('ai','ok','완료');
-
     setPS('save','ing','저장 중...');
-    const schedule=getBtn('bg-schedule');
+    const sch=getBtn('bg-schedule');
     const initQty=qtyMode==='limited'?parseInt(document.getElementById('initQty').value)||0:null;
-    const deal={
-      store_name:info.name||'매장',
-      product_name:document.getElementById('f_name').value,
-      category:document.getElementById('f_cate').value||null,
-      discount_pct:calcPct()||null,
-      original_price:parseInt(document.getElementById('f_orig').value)||null,
-      sale_price:parseInt(document.getElementById('f_sale').value)||null,
-      location:info.addr||null,
-      end_time:getEndTime(schedule),
-      event_text:getBtn('bg-benefit')||'할인',
-      image_url:uploadedImageUrl,
-      is_active:false,
-    };
-    const dealRes=await fetch(`${SUPABASE_URL}/rest/v1/deals`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=representation'},
-      body:JSON.stringify(deal)
-    });
-    const dealData=await dealRes.json();
-    lastDealId=dealData[0]?.id||null;
-    currentStock=initQty||0;
+    const deal={store_name:info.name||'매장',product_name:document.getElementById('f_name').value,category:document.getElementById('f_cate').value||null,discount_pct:calcPct()||null,original_price:parseInt(document.getElementById('f_orig').value)||null,sale_price:parseInt(document.getElementById('f_sale').value)||null,location:info.addr||null,end_time:getEndTime(sch),event_text:getBtn('bg-benefit')||'할인',image_url:uploadedImageUrl,is_active:false};
+    const dr=await fetch(`${SUPABASE_URL}/rest/v1/deals`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=representation'},body:JSON.stringify(deal)});
+    const dd=await dr.json();lastDealId=dd[0]?.id||null;currentStock=initQty||0;
     setPS('save','ok','완료');
-
-    setPS('event','ing','저장 중...');
-    await new Promise(r=>setTimeout(r,600));
-    setPS('event','ok','완료');
-
-    setPS('approval','ing','대기 중...');
-    await new Promise(r=>setTimeout(r,500));
-    setPS('approval','ok','승인 대기 중');
-
+    setPS('event','ing','저장 중...');await new Promise(r=>setTimeout(r,600));setPS('event','ok','완료');
+    setPS('approval','ing','대기 중...');await new Promise(r=>setTimeout(r,500));setPS('approval','ok','승인 대기 중');
     setPS('insta','ing','예약 중...');
     try{
       const dealUrl=lastDealId?`https://kiltaejung.github.io/dongne-discount/?deal=${lastDealId}`:'https://kiltaejung.github.io/dongne-discount/';
-      const storeBlock=[info.name?`📍 ${info.name}`:'',info.addr?`🗺 ${info.addr}`:'',info.phone?`📞 ${info.phone}`:'',info.hours?`⏰ ${info.hours}`:''].filter(Boolean).join('\n');
-      const fullCaption=caption+'\n\n'+(storeBlock?storeBlock+'\n\n':'')+hashtags+'\n\n🎟 쿠폰 다운받기 : 동네할인\n'+dealUrl;
-      if(uploadedImageUrl){
-        await fetch(`${SUPABASE_URL}/functions/v1/instagram-post`,{
-          method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
-          body:JSON.stringify({image_url:uploadedImageUrl,caption:fullCaption})
-        });
-      }
+      const sb=[info.name?`📍 ${info.name}`:'',info.addr?`🗺 ${info.addr}`:'',info.phone?`📞 ${info.phone}`:'',info.hours?`⏰ ${info.hours}`:''].filter(Boolean).join('\n');
+      if(uploadedImageUrl)await fetch(`${SUPABASE_URL}/functions/v1/instagram-post`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},body:JSON.stringify({image_url:uploadedImageUrl,caption:caption+'\n\n'+(sb?sb+'\n\n':'')+hashtags+'\n\n🎟 쿠폰 다운받기 : 동네할인\n'+dealUrl})});
     }catch(e){}
     setPS('insta','ok','예약 완료');
-
     showToast('상품 등록 완료!');
-    setTimeout(()=>showListScreen(), 1200);
-
-  }catch(e){
-    showToast('오류: '+e.message);
-    hideAll();
-    document.getElementById('formWrap').style.display='flex';
-  }
+    allDeals=[];
+    setTimeout(()=>showHomeScreen(),1200);
+  }catch(e){showToast('오류: '+e.message);showScreen('register');}
 }
-
-function setPS(id,state,text){
-  const el=document.getElementById('ps-'+id);
-  el.className='prog-st '+state;
-  el.textContent=text;
-}
-
+function setPS(id,state,text){const el=document.getElementById('ps-'+id);el.className='prog-st '+state;el.textContent=text;}
 function resetForm(){
-  curStep=1;
-  photoFiles=[];photoPreviews=[];
-  uploadedImageUrl=null;qtyMode='unlimited';
-  lastDealId=null;currentStock=0;
-  ['f_name','f_orig','f_sale','f_desc'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  curStep=1;photoFiles=[];photoPreviews=[];uploadedImageUrl=null;qtyMode='unlimited';lastDealId=null;currentStock=0;
+  ['f_name','f_orig','f_sale','f_desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('discountDisplay').textContent='—';
   renderImgArea();
 }
 
-// ── QR 인증 ──
-function goQrScan(){
-  hideAll();
-  document.getElementById('qrScreen').classList.add('show');
-}
-function closeQrScreen(){
-  stopScan();
-  document.getElementById('qrScreen').classList.remove('show');
-  showListScreen();
-}
+// ── QR ──
 function switchQrTab(tab){
   const isScan=tab==='scan';
   document.getElementById('qr-scan-panel').style.display=isScan?'flex':'none';
   document.getElementById('qr-manual-panel').style.display=isScan?'none':'flex';
   document.getElementById('qrtab-scan').className='qr-tab '+(isScan?'on':'off');
   document.getElementById('qrtab-manual').className='qr-tab '+(isScan?'off':'on');
-  if(!isScan) stopScan();
+  if(!isScan)stopScan();
   document.getElementById('verifyResult').style.display='none';
 }
 async function startScan(){
-  const btn=document.getElementById('scanBtn');
-  const video=document.getElementById('qrVideo');
-  const msg=document.getElementById('scanMsg');
+  const btn=document.getElementById('scanBtn'),video=document.getElementById('qrVideo'),msg=document.getElementById('scanMsg');
   try{
     stopScan();
     scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
-    video.srcObject=scanStream;
-    btn.textContent='스캔 중지';
-    btn.onclick=stopScan;
+    video.srcObject=scanStream;btn.textContent='스캔 중지';btn.onclick=stopScan;
     msg.textContent='QR 코드를 네모 안에 맞춰주세요';
-    const canvas=document.getElementById('qrCanvas');
-    const ctx=canvas.getContext('2d');
+    const canvas=document.getElementById('qrCanvas'),ctx=canvas.getContext('2d');
     scanInterval=setInterval(()=>{
-      if(video.readyState<video.HAVE_ENOUGH_DATA) return;
-      canvas.width=video.videoWidth;canvas.height=video.videoHeight;
-      ctx.drawImage(video,0,0);
+      if(video.readyState<video.HAVE_ENOUGH_DATA)return;
+      canvas.width=video.videoWidth;canvas.height=video.videoHeight;ctx.drawImage(video,0,0);
       const img=ctx.getImageData(0,0,canvas.width,canvas.height);
       const code=jsQR(img.data,img.width,img.height);
       if(code&&code.data){stopScan();verifyCoupon(code.data.trim().toUpperCase());}
@@ -1211,8 +1223,7 @@ async function startScan(){
 function stopScan(){
   if(scanInterval){clearInterval(scanInterval);scanInterval=null;}
   if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}
-  const btn=document.getElementById('scanBtn');
-  if(btn){btn.textContent='카메라 시작';btn.onclick=startScan;}
+  const btn=document.getElementById('scanBtn');if(btn){btn.textContent='카메라 시작';btn.onclick=startScan;}
 }
 async function verifyCoupon(code){
   if(!code){showToast('쿠폰번호를 입력해주세요');return;}
@@ -1222,49 +1233,17 @@ async function verifyCoupon(code){
   document.getElementById('vrTitle').textContent='확인 중...';
   document.getElementById('vrDesc').textContent=code;
   try{
-    const r=await fetch(`${SUPABASE_URL}/rest/v1/coupons?coupon_code=eq.${encodeURIComponent(code)}&select=*`,
-      {headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}});
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/coupons?coupon_code=eq.${encodeURIComponent(code)}&select=*`,{headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}});
     const data=await r.json();
-    if(!data||!data.length){
-      res.style.background='var(--red-light)';
-      document.getElementById('vrIco').textContent='❌';
-      document.getElementById('vrTitle').textContent='유효하지 않은 쿠폰';
-      document.getElementById('vrDesc').textContent='쿠폰번호를 다시 확인해주세요.';
-      return;
-    }
-    if(data[0].status==='used'){
-      res.style.background='var(--red-light)';
-      document.getElementById('vrIco').textContent='⚠️';
-      document.getElementById('vrTitle').textContent='이미 사용된 쿠폰';
-      document.getElementById('vrDesc').textContent='이 쿠폰은 이미 사용됐습니다.';
-      return;
-    }
-    await fetch(`${SUPABASE_URL}/rest/v1/coupons?coupon_code=eq.${encodeURIComponent(code)}`,{
-      method:'PATCH',
-      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},
-      body:JSON.stringify({status:'used',used_at:new Date().toISOString()})
-    });
-    res.style.background='var(--green-light)';
-    document.getElementById('vrIco').textContent='✅';
-    document.getElementById('vrTitle').textContent='할인 인증 완료!';
-    document.getElementById('vrDesc').textContent='방문 통계 +1 · 사용 통계 +1 반영됨';
-    document.getElementById('couponInput').value='';
-  }catch(e){
-    res.style.background='var(--red-light)';
-    document.getElementById('vrIco').textContent='❌';
-    document.getElementById('vrTitle').textContent='오류 발생';
-    document.getElementById('vrDesc').textContent=e.message;
-  }
+    if(!data||!data.length){res.style.background='var(--red-light)';document.getElementById('vrIco').textContent='❌';document.getElementById('vrTitle').textContent='유효하지 않은 쿠폰';document.getElementById('vrDesc').textContent='쿠폰번호를 다시 확인해주세요.';return;}
+    if(data[0].status==='used'){res.style.background='var(--red-light)';document.getElementById('vrIco').textContent='⚠️';document.getElementById('vrTitle').textContent='이미 사용된 쿠폰';document.getElementById('vrDesc').textContent='이 쿠폰은 이미 사용됐습니다.';return;}
+    await fetch(`${SUPABASE_URL}/rest/v1/coupons?coupon_code=eq.${encodeURIComponent(code)}`,{method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},body:JSON.stringify({status:'used',used_at:new Date().toISOString()})});
+    res.style.background='var(--green-light)';document.getElementById('vrIco').textContent='✅';document.getElementById('vrTitle').textContent='할인 인증 완료!';document.getElementById('vrDesc').textContent='방문 통계 +1 · 사용 통계 +1 반영됨';document.getElementById('couponInput').value='';
+  }catch(e){res.style.background='var(--red-light)';document.getElementById('vrIco').textContent='❌';document.getElementById('vrTitle').textContent='오류 발생';document.getElementById('vrDesc').textContent=e.message;}
 }
 
-// ── 토스트 ──
 let toastTimer;
-function showToast(msg){
-  const el=document.getElementById('toast');
-  el.textContent=msg;el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>el.classList.remove('show'),2200);
-}
+function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2200);}
 
 init();
 </script>
