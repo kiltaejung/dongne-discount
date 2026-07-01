@@ -235,7 +235,7 @@ body{background:#fff;min-height:100dvh;display:flex;align-items:center;justify-c
 .mbtn:active{opacity:.85}
 .mbtn.pri{background:var(--primary);color:#fff}
 .mbtn.sec{background:var(--bg);color:var(--text);border:1.5px solid var(--border)}
-.modal-close{position:absolute;top:16px;left:16px;background:rgba(255,255,255,.9);border-radius:20px;padding:6px 14px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;font-weight:700;border:none;backdrop-filter:blur(4px);color:var(--text)}
+.modal-close{position:absolute;top:16px;left:16px;width:40px;height:40px;background:rgba(255,255,255,.92);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;font-weight:700;border:none;backdrop-filter:blur(6px);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.18);line-height:1}
 
 /* ── QR 모달 ── */
 .qr-dl-btn{display:block;width:100%;padding:11px;background:var(--blue-light);border:none;border-radius:12px;font-size:13px;font-weight:700;color:var(--blue);cursor:pointer;margin-top:10px;font-family:inherit}
@@ -426,7 +426,7 @@ body{background:#fff;min-height:100dvh;display:flex;align-items:center;justify-c
     <div class="modal" id="modal">
       <div style="position:relative">
         <div class="modal-img" id="mImg">🖼️</div>
-        <button class="modal-close" onclick="closeModal(null,true)">‹ 뒤로</button>
+        <button class="modal-close" onclick="closeModal(null,true)">←</button>
       </div>
       <div class="modal-body">
         <div class="modal-tags">
@@ -706,10 +706,54 @@ function renderFeed(){
   `).join('');
 }
 
+/* ── History (휴대폰 뒤로 버튼) ── */
+history.replaceState({page:'home'},'',"");
+window.addEventListener('popstate',e=>{
+  const state=e.state||{};
+  // 모달 열려있으면 닫기
+  if(document.getElementById('modalBack').classList.contains('open')){
+    document.getElementById('modalBack').classList.remove('open');
+    return;
+  }
+  // QR 모달 열려있으면 닫기
+  if(document.getElementById('qrBack').style.display==='flex'){
+    document.getElementById('qrBack').style.display='none';
+    return;
+  }
+  // 검색/찜/쿠폰함/MY → 홈으로
+  const active=TABS.find(t=>document.getElementById('sc-'+t).classList.contains('active'));
+  if(active&&active!=='home'){
+    goTabNoHistory('home');
+    return;
+  }
+  // 홈이면 브라우저 기본 동작 (사이트 닫힘) 방지
+  history.pushState({page:'home'},'',"");
+});
+
+function pushHistory(state){
+  history.pushState(state,'',"");
+}
+
+/* ── 탭 (history 제어) ── */
+const TABS=['home','search','wish','coupon','my'];
+function goTab(t){
+  if(t!=='home') pushHistory({page:t});
+  goTabNoHistory(t);
+}
+function goTabNoHistory(t){
+  TABS.forEach(x=>{
+    document.getElementById('sc-'+x).classList.toggle('active',x===t);
+    document.getElementById('tl-'+x).classList.toggle('act',x===t);
+  });
+  if(t==='wish') renderWish();
+  if(t==='coupon') renderCouponList();
+}
+
 /* ── 모달 ── */
 function openModal(id){
   curDeal=DEALS.find(d=>d.id===id);
   if(!curDeal) return;
+  pushHistory({page:'modal',id});
   viewCount++;
   document.getElementById('statView').textContent=viewCount;
   document.getElementById('mCate').textContent=curDeal.cate;
@@ -937,16 +981,7 @@ function shareDeal(id){
   }
 }
 
-/* ── 탭 ── */
-const TABS=['home','search','wish','coupon','my'];
-function goTab(t){
-  TABS.forEach(x=>{
-    document.getElementById('sc-'+x).classList.toggle('active',x===t);
-    document.getElementById('tl-'+x).classList.toggle('act',x===t);
-  });
-  if(t==='wish') renderWish();
-  if(t==='coupon') renderCouponList();
-}
+/* ── 탭 (하단 탭바용 — history 처리는 위에서) ── */
 
 /* ── 로그인 ── */
 function openLogin(){document.getElementById('loginBack').classList.add('open');}
