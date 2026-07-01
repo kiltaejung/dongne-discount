@@ -1518,7 +1518,7 @@ async function postToInstagram(){
     } else {
       resultEl.style.background='#FEF2F2';
       resultEl.style.color='#991B1B';
-      resultEl.textContent='❌ 게시 실패: '+(data.error||JSON.stringify(data));
+      resultEl.textContent='❌ 게시 실패: '+(data.error||JSON.stringify(data))+' │ '+JSON.stringify(data.detail||'');
     }
   } catch(e){
     alert('게시 오류: '+e.message);
