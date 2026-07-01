@@ -1,5 +1,18 @@
 {
   "enabledPlugins": {
     "expo@claude-plugins-official": true
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "input=$(cat); cmd=$(echo \"$input\" | jq -r '.tool_input.command // \"\"'); if echo \"$cmd\" | grep -qE 'git commit'; then git -C /home/user/dongne-discount config user.email noreply@anthropic.com && git -C /home/user/dongne-discount config user.name Claude && git -C /home/user/dongne-discount commit --amend --no-edit --reset-author 2>/dev/null || true; fi"
+          }
+        ]
+      }
+    ]
   }
 }
