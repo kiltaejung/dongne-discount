@@ -201,7 +201,7 @@ body{background:#fff;min-height:100dvh;display:flex;align-items:center;justify-c
 .mbtn:active{opacity:.85}
 .mbtn.pri{background:var(--primary);color:#fff}
 .mbtn.sec{background:var(--bg);color:var(--text);border:1.5px solid var(--border)}
-.modal-close{position:absolute;top:16px;right:16px;width:34px;height:34px;background:rgba(255,255,255,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;border:none;backdrop-filter:blur(4px)}
+.modal-close{position:absolute;top:16px;left:16px;background:rgba(255,255,255,.9);border-radius:20px;padding:6px 14px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;font-weight:700;border:none;backdrop-filter:blur(4px);color:var(--text)}
 
 /* ── LOGIN MODAL ── */
 .login-modal-back{position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end}
@@ -379,7 +379,7 @@ body{background:#fff;min-height:100dvh;display:flex;align-items:center;justify-c
     <div class="modal" id="modal">
       <div style="position:relative">
         <div class="modal-img" id="mImg">🖼️</div>
-        <button class="modal-close" onclick="closeModal(null,true)">✕</button>
+        <button class="modal-close" onclick="closeModal(null,true)">‹ 뒤로</button>
       </div>
       <div class="modal-body">
         <div class="modal-tags">
@@ -505,16 +505,22 @@ function setCate(c){
 
 function filtered(){ return curCate==='전체' ? DEALS : DEALS.filter(d=>d.cate===curCate); }
 
+function imgHtml(d,h){
+  if(d.imageUrl) return `<img src="${d.imageUrl}" style="width:100%;height:${h}px;object-fit:cover;border-radius:10px">`;
+  return `<div style="width:100%;height:${h}px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:${h/2.5}px;border-radius:10px">${d.img}</div>`;
+}
+function fmtPrice(n){ return n>0?n.toLocaleString()+'원':''; }
+
 function renderUrgent(){
-  const urgent = DEALS.filter(d=>d.end.includes('h')&&parseInt(d.end)<8).slice(0,5);
+  const urgent = DEALS.filter(d=>d.end&&d.end.includes('h')&&parseInt(d.end)<8).slice(0,5);
   document.getElementById('urgentList').innerHTML = urgent.map(d=>`
     <div class="ucard" onclick="openModal(${d.id})">
       <div class="utimer"><div class="uddot"></div><span class="utime">⏰ ${d.end} 남음</span></div>
-      <div class="uimg">${d.img}</div>
+      ${imgHtml(d,90)}
       <div class="uname">${d.name}</div>
       <div class="ustore">${d.store}</div>
-      <div class="uprow"><span class="upct">${d.pct}%</span><span class="uprice">${fmt(d.sale)}</span></div>
-      <div class="ustrike">${fmt(d.orig)}</div>
+      <div class="uprow"><span class="upct">${d.pct}%</span><span class="uprice">${fmtPrice(d.sale)}</span></div>
+      ${d.orig>0?`<div class="ustrike">${fmtPrice(d.orig)}</div>`:''}
     </div>
   `).join('');
 }
@@ -525,24 +531,26 @@ function renderFeed(){
   document.getElementById('feedList').innerHTML = list.map(d=>`
     <div class="scard" onclick="openModal(${d.id})">
       <div class="scimg-wrap">
-        <div class="scimg">${d.img}</div>
+        ${d.imageUrl
+          ? `<img src="${d.imageUrl}" style="width:100%;height:180px;object-fit:cover">`
+          : `<div class="scimg">${d.img}</div>`}
         <div class="scbadge">${d.pct}% 할인</div>
         <button class="scwish" onclick="event.stopPropagation();toggleWish(${d.id})" id="wbtn-${d.id}">${wishes.has(d.id)?'❤️':'🤍'}</button>
       </div>
       <div class="scbody">
         <div class="scrow">
           <span class="sccate">${d.cate}</span>
-          <span class="sctime">⏰ ${d.end} 남음</span>
+          <span class="sctime">${d.end?'⏰ '+d.end+' 남음':''}</span>
         </div>
         <div class="scname">${d.name}</div>
-        <div class="scstore">${d.store} · ${d.event}</div>
+        <div class="scstore">${d.store}${d.event?' · '+d.event:''}</div>
         <div class="scprow">
           <span class="scpct">${d.pct}%</span>
-          <span class="scprice">${fmt(d.sale)}</span>
-          <span class="scstrike">${fmt(d.orig)}</span>
+          ${d.sale>0?`<span class="scprice">${fmtPrice(d.sale)}</span>`:''}
+          ${d.orig>0?`<span class="scstrike">${fmtPrice(d.orig)}</span>`:''}
         </div>
         <div class="scfoot">
-          <span class="scloc">📍 ${d.loc}</span>
+          <span class="scloc">📍 ${d.loc||''}</span>
           <button class="scshare" onclick="event.stopPropagation();shareDeal(${d.id})">📤 공유</button>
         </div>
       </div>
@@ -564,11 +572,26 @@ function openModal(id){
   document.getElementById('mPct').textContent = curDeal.pct+'% 할인';
   document.getElementById('mSale').textContent = fmt(curDeal.sale);
   document.getElementById('mOrig').textContent = fmt(curDeal.orig);
+  // 이미지
+  const mImgEl=document.getElementById('mImg');
+  if(curDeal.imageUrl){
+    mImgEl.innerHTML=`<img src="${curDeal.imageUrl}" style="width:100%;height:240px;object-fit:cover">`;
+  } else {
+    mImgEl.innerHTML=`<span style="font-size:80px">${curDeal.img}</span>`;
+  }
+  // 가격
+  document.getElementById('mSale').textContent=curDeal.sale>0?fmtPrice(curDeal.sale):'';
+  document.getElementById('mOrig').textContent=curDeal.orig>0?fmtPrice(curDeal.orig):'';
+  // 지도 링크
+  const mapQuery=encodeURIComponent((curDeal.store||'')+(curDeal.loc?' '+curDeal.loc:''));
   document.getElementById('mInfo').innerHTML = `
-    <div class="minfo-row"><div class="minfo-ico">📍</div><div class="minfo-txt">${curDeal.loc}</div></div>
-    <div class="minfo-row"><div class="minfo-ico">⏰</div><div class="minfo-txt">종료: ${curDeal.time} · ${curDeal.end} 남음</div></div>
-    <div class="minfo-row"><div class="minfo-ico">🏷️</div><div class="minfo-txt">${curDeal.event}</div></div>
-    <div class="minfo-row"><div class="minfo-ico">💰</div><div class="minfo-txt">${fmt(curDeal.orig-curDeal.sale)} 절약</div></div>
+    <div class="minfo-row"><div class="minfo-ico">📍</div><div class="minfo-txt">${curDeal.loc||''}</div></div>
+    ${curDeal.time?`<div class="minfo-row"><div class="minfo-ico">⏰</div><div class="minfo-txt">종료: ${curDeal.time}${curDeal.end?' · '+curDeal.end+' 남음':''}</div></div>`:''}
+    ${curDeal.event?`<div class="minfo-row"><div class="minfo-ico">🏷️</div><div class="minfo-txt">${curDeal.event}</div></div>`:''}
+    ${curDeal.orig>0&&curDeal.sale>0?`<div class="minfo-row"><div class="minfo-ico">💰</div><div class="minfo-txt">${fmtPrice(curDeal.orig-curDeal.sale)} 절약</div></div>`:''}
+    <div class="minfo-row" style="cursor:pointer" onclick="window.open('https://map.naver.com/v5/search/${mapQuery}','_blank')">
+      <div class="minfo-ico">🗺️</div><div class="minfo-txt" style="color:var(--blue);font-weight:600">네이버 지도에서 보기</div>
+    </div>
   `;
   document.getElementById('mWishBtn').textContent = wishes.has(id)?'❤️ 찜 취소':'🤍 찜하기';
   document.getElementById('modalBack').classList.add('open');

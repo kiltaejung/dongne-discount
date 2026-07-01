@@ -1526,7 +1526,8 @@ async function postToInstagram(){
 
   const caption=document.getElementById('editCaption').value;
   const hashtags=document.getElementById('editHashtags').value;
-  const fullCaption=caption+'\n\n'+hashtags;
+  const siteUrl='🔗 할인 정보 더 보기: https://kiltaejung.github.io/dongne-discount/';
+  const fullCaption=caption+'\n\n'+hashtags+'\n\n'+siteUrl;
 
   const btn=document.getElementById('postBtn');
   btn.textContent='⏳ 게시 중...';
