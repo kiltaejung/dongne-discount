@@ -424,40 +424,64 @@ body{background:#fff;min-height:100dvh;display:flex;align-items:center;justify-c
   <div class="toast" id="toast"></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
-/* ── 데이터 ── */
-const DEALS = [
-  {id:1, name:'공용 레드하트 후드집업', store:'빠진', cate:'의류', pct:30, orig:386000, sale:120000, loc:'부천시 상동', time:'오늘 18시', end:'2h 30m', img:'🧥', event:'인기제품', wish:false},
-  {id:2, name:'굵은 히피펌', store:'블랙헤어', cate:'뷰티', pct:20, orig:80000, sale:64000, loc:'부천시 상동', time:'오늘 21시', end:'5h 10m', img:'💇', event:'타임세일', wish:false},
-  {id:3, name:'아메리카노 2잔', store:'동네카페', cate:'카페', pct:50, orig:10000, sale:5000, loc:'부천시 중동', time:'오늘 20시', end:'4h 20m', img:'☕', event:'오늘만', wish:false},
-  {id:4, name:'갈비탕 런치 세트', store:'한식당', cate:'음식', pct:25, orig:16000, sale:12000, loc:'부천시 상동', time:'오늘 14시', end:'0h 45m', img:'🍲', event:'런치특가', wish:false},
-  {id:5, name:'에어맥스 운동화', store:'스포츠월드', cate:'신발', pct:40, orig:150000, sale:90000, loc:'부천시 원미', time:'내일 18시', end:'26h', img:'👟', event:'특별할인', wish:false},
-  {id:6, name:'비타민C 세럼', store:'올리브영', cate:'뷰티', pct:35, orig:42000, sale:27300, loc:'부천시 상동', time:'오늘 22시', end:'6h', img:'🧴', event:'온라인특가', wish:false},
-  {id:7, name:'삼겹살 1인분', store:'고기집', cate:'음식', pct:15, orig:15000, sale:12750, loc:'부천시 중동', time:'오늘 23시', end:'7h', img:'🥩', event:'평일특가', wish:false},
-  {id:8, name:'헬스 1개월 회원권', store:'PT짐', cate:'운동', pct:45, orig:100000, sale:55000, loc:'부천시 상동', time:'이번 달 말', end:'29일', img:'💪', event:'신규회원', wish:false},
-  {id:9, name:'치킨 한 마리', store:'BBQ치킨', cate:'음식', pct:20, orig:22000, sale:17600, loc:'부천시 원미', time:'오늘 23시', end:'7h 30m', img:'🍗', event:'배달특가', wish:false},
-  {id:10, name:'청바지 슬림핏', store:'청청패션', cate:'의류', pct:55, orig:69000, sale:31050, loc:'부천시 상동', time:'이번 주', end:'5일', img:'👖', event:'재고정리', wish:false},
-  {id:11, name:'마라탕 소자', store:'마라하오', cate:'음식', pct:10, orig:13000, sale:11700, loc:'부천시 중동', time:'오늘 22시', end:'6h 30m', img:'🌶️', event:'평일할인', wish:false},
-  {id:12, name:'네일아트 기본', store:'핑크네일', cate:'뷰티', pct:30, orig:30000, sale:21000, loc:'부천시 상동', time:'내일 20시', end:'28h', img:'💅', event:'신규특가', wish:false},
-];
+const SUPABASE_URL='https://ezcofypuyhgxglzxdith.supabase.co';
+const SUPABASE_KEY='sb_publishable_8bA2iL8WleI-PDahO4XaFg__0gnVrK9';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const CATES = ['전체','의류','음식','뷰티','카페','신발','운동','생활','전자기기'];
-const POP_TAGS = ['30% 이상','부천시 상동','오늘마감','의류할인','맛집할인','뷰티특가'];
+const POP_TAGS = ['30% 이상','내 주변','오늘마감','의류할인','맛집할인','뷰티특가'];
 
+let DEALS = [];
 let curCate = '전체';
 let wishes = new Set();
 let viewCount = 0;
 let curDeal = null;
 
+function dbToLocal(d){
+  const cateEmoji={의류:'👕',음식:'🍱',뷰티:'💄',카페:'☕',신발:'👟',운동:'💪',생활:'🏠',전자기기:'📱'};
+  return {
+    id: d.id,
+    name: d.product_name,
+    store: d.store_name,
+    cate: d.category||'기타',
+    pct: d.discount_pct||0,
+    orig: d.original_price||0,
+    sale: d.sale_price||0,
+    loc: d.location||'',
+    time: d.end_time||'',
+    end: d.time_remaining||'',
+    img: cateEmoji[d.category]||'🏷️',
+    event: d.event_text||'할인',
+    imageUrl: d.image_url||null,
+  };
+}
+
 /* ── 초기화 ── */
-function init(){
+async function init(){
   setTime();
   setInterval(setTime, 1000);
   renderChips();
-  renderUrgent();
-  renderFeed();
   renderPopTags();
   renderRecent();
+  await loadDeals();
+}
+
+async function loadDeals(){
+  document.getElementById('feedList').innerHTML='<div style="text-align:center;padding:40px;color:var(--text-sub)">불러오는 중...</div>';
+  const {data,error}=await sb.from('deals').select('*').eq('is_active',true).order('created_at',{ascending:false});
+  if(error||!data||data.length===0){
+    DEALS=[];
+    document.getElementById('feedList').innerHTML='<div style="text-align:center;padding:40px;color:var(--text-sub)">등록된 할인 정보가 없습니다</div>';
+    document.getElementById('urgentList').innerHTML='';
+    document.getElementById('dealCount').textContent='0';
+    return;
+  }
+  DEALS=data.map(dbToLocal);
+  document.getElementById('dealCount').textContent=DEALS.length;
+  renderUrgent();
+  renderFeed();
 }
 
 function setTime(){
