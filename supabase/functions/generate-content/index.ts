@@ -60,11 +60,8 @@ serve(async (req) => {
 - 동네할인 필수 포함
 - 한국어 해시태그
 
-반드시 아래 JSON 형식으로만 응답하세요 (다른 텍스트 없이):
-{
-  "caption": "캡션 전체 텍스트",
-  "hashtags": "#태그1 #태그2 ..."
-}`
+아래 JSON 형식으로만 응답하세요. 마크다운 코드블록(```) 없이 순수 JSON만:
+{"caption": "캡션 전체 텍스트 (줄바꿈은 \\n 사용)", "hashtags": "#태그1 #태그2 #태그3"}`
 
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -91,9 +88,9 @@ serve(async (req) => {
 
     let parsed
     try {
-      parsed = JSON.parse(data.content[0].text)
+      const raw = data.content[0].text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+      parsed = JSON.parse(raw)
     } catch {
-      // JSON 파싱 실패 시 텍스트 그대로 반환
       parsed = { caption: data.content[0].text, hashtags: '#동네할인' }
     }
 
