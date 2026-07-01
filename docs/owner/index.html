@@ -874,6 +874,9 @@ function openKakaoAddr(){
   new daum.Postcode({
     oncomplete:function(data){
       const addr=data.roadAddress||data.jibunAddress;
+      // Daum Postcode가 반환하는 WGS84 좌표
+      const lat=parseFloat(data.y);
+      const lon=parseFloat(data.x);
       document.getElementById('s_addr').value=addr;
       const display=document.getElementById('s_addr_display');
       display.textContent=addr;
@@ -881,25 +884,37 @@ function openKakaoAddr(){
       document.getElementById('s_addr_detail').style.display='block';
       document.getElementById('s_addr_detail').focus();
       document.getElementById('serr-addr').classList.remove('show');
-      updateNaverMap(addr);
+      updateMap(addr, lat, lon);
     }
   }).open();
 }
 
-// ── 지도 업데이트 ──
+// ── 지도 업데이트 (좌표 기반) ──
 let _mapAddr='';
-function updateNaverMap(addr){
+function updateMap(addr, lat, lon){
   _mapAddr=addr;
   document.getElementById('mapBox').style.display='flex';
   document.getElementById('mapInfoAddr').textContent=addr;
-  // Google Maps embed (API 키 불필요)
+
   const encoded=encodeURIComponent(addr);
-  document.getElementById('mapIframe').src=
-    `https://maps.google.com/maps?q=${encoded}&output=embed&hl=ko&z=16`;
+
+  if(lat&&lon&&!isNaN(lat)&&!isNaN(lon)){
+    // 좌표가 있으면 OSM으로 정확한 위치 표시
+    const d=0.002;
+    document.getElementById('mapIframe').src=
+      `https://www.openstreetmap.org/export/embed.html?bbox=${lon-d},${lat-d},${lon+d},${lat+d}&layer=mapnik&marker=${lat},${lon}`;
+  } else {
+    // 좌표 없으면 Google Maps 폴백
+    document.getElementById('mapIframe').src=
+      `https://maps.google.com/maps?q=${encoded}&output=embed&hl=ko&z=16`;
+  }
+
   // 네이버 길찾기 링크
   document.getElementById('mapNaverLink').href=
     `https://map.naver.com/v5/search/${encoded}`;
 }
+// 기존 호출 호환용
+function updateNaverMap(addr){ updateMap(addr, null, null); }
 function copyAddr(){
   if(!_mapAddr){return;}
   navigator.clipboard.writeText(_mapAddr).then(()=>showToast('주소가 복사됐습니다')).catch(()=>{
