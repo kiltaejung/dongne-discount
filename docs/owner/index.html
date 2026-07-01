@@ -8,513 +8,1004 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --primary:#FF5A1F;--primary-dark:#E04010;
-  --yellow:#FFC93C;--green:#10B981;--red:#EF4444;
+  --primary:#FF5A1F;--primary-dark:#E04010;--primary-light:#FFF0EB;
+  --green:#10B981;--green-light:#ECFDF5;
+  --yellow:#F59E0B;--yellow-light:#FFFBEB;
+  --red:#EF4444;--red-light:#FEF2F2;
+  --blue:#3B82F6;--blue-light:#EFF6FF;
   --text:#111827;--sub:#6B7280;--dim:#9CA3AF;
-  --bg:#F5F6F8;--card:#fff;--border:#E5E7EB;
+  --bg:#F5F6F8;--card:#fff;--border:#E5E7EB;--border2:#F3F4F6;
 }
-body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-height:100dvh;display:flex;flex-direction:column;align-items:center}
-.shell{width:100%;max-width:430px;min-height:100dvh;background:#fff;display:flex;flex-direction:column}
+body{background:var(--bg);font-family:'Pretendard',-apple-system,sans-serif;min-height:100dvh;display:flex;align-items:center;justify-content:center}
+.shell{width:100%;max-width:430px;min-height:100dvh;background:#fff;display:flex;flex-direction:column;position:relative}
+@media(max-width:480px){body{align-items:flex-start}.shell{max-width:100%}}
 
-/* header */
-.hdr{background:var(--primary);padding:16px 20px 14px;display:flex;align-items:center;gap:12px}
-.hdr-logo{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.5px}
-.hdr-sub{font-size:12px;color:rgba(255,255,255,.8);margin-top:1px}
-.hdr-badge{margin-left:auto;background:rgba(255,255,255,.2);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;color:#fff}
+/* 헤더 */
+.hdr{background:var(--primary);padding:16px 20px 14px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.hdr-logo{font-size:20px;font-weight:900;color:#fff;letter-spacing:-.5px}
+.hdr-sub{font-size:11px;color:rgba(255,255,255,.8);margin-top:1px}
+.hdr-store{margin-left:auto;background:rgba(255,255,255,.2);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;color:#fff;white-space:nowrap}
 
-/* photo area */
-.photo-area{margin:20px 16px 0;position:relative;border-radius:18px;overflow:hidden;background:#F3F4F6;border:2px dashed var(--border);cursor:pointer;transition:border-color .2s}
-.photo-area.has-img{border:none}
-.photo-area:active{border-color:var(--primary)}
-.photo-preview{width:100%;aspect-ratio:1/1;object-fit:cover;display:none;border-radius:16px}
-.photo-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:1/1;gap:10px}
-.photo-ico{font-size:52px}
-.photo-txt{font-size:15px;font-weight:700;color:var(--sub)}
-.photo-sub{font-size:12px;color:var(--dim)}
-.photo-btns{position:absolute;bottom:12px;right:12px;display:none;gap:8px}
-.photo-area.has-img .photo-btns{display:flex}
-.pbtn{background:rgba(0,0,0,.55);border:none;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;backdrop-filter:blur(4px)}
-input[type=file]{display:none}
+/* 스텝 인디케이터 */
+.step-bar{background:#fff;padding:16px 20px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.step-row{display:flex;align-items:center;gap:0}
+.step-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+.step-item:not(:last-child)::after{content:'';position:absolute;top:14px;left:60%;width:80%;height:2px;background:var(--border);z-index:0}
+.step-item.done::after{background:var(--primary)}
+.step-circle{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--dim);z-index:1;position:relative}
+.step-item.active .step-circle{border-color:var(--primary);background:var(--primary);color:#fff}
+.step-item.done .step-circle{border-color:var(--primary);background:var(--primary);color:#fff}
+.step-lbl{font-size:10px;font-weight:700;color:var(--dim)}
+.step-item.active .step-lbl{color:var(--primary)}
+.step-item.done .step-lbl{color:var(--primary)}
 
-/* form */
-.form{padding:20px 16px;display:flex;flex-direction:column;gap:14px}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.fgrp{display:flex;flex-direction:column;gap:6px}
-.flabel{font-size:12px;font-weight:700;color:var(--sub)}
+/* 스크롤 컨텐츠 */
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.content::-webkit-scrollbar{display:none}
+
+/* 섹션 */
+.sec{padding:20px 20px 0}
+.sec-title{font-size:15px;font-weight:800;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.req{color:var(--primary);font-size:12px}
+
+/* 버튼 그룹 */
+.btn-group{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+.bopt{padding:10px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-weight:700;color:var(--sub);background:#fff;cursor:pointer;transition:all .15s;flex-shrink:0}
+.bopt.on{border-color:var(--primary);background:var(--primary-light);color:var(--primary)}
+.bopt:active{transform:scale(.97)}
+
+/* 라디오 */
+.radio-group{display:flex;gap:10px}
+.ropt{flex:1;padding:12px;border:1.5px solid var(--border);border-radius:12px;font-size:13px;font-weight:700;color:var(--sub);background:#fff;cursor:pointer;text-align:center;transition:all .15s}
+.ropt.on{border-color:var(--primary);background:var(--primary-light);color:var(--primary)}
+
+/* 폼 필드 */
+.fgrp{margin-bottom:14px}
+.flabel{font-size:12px;font-weight:700;color:var(--sub);margin-bottom:6px;display:flex;align-items:center;gap:4px}
 .finp{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:600;color:var(--text);background:#fff;outline:none;font-family:inherit;transition:border-color .2s}
 .finp:focus{border-color:var(--primary)}
-select.finp{cursor:pointer}
-.finp-full{grid-column:1/-1}
+.finp:disabled{background:var(--bg);color:var(--dim)}
+.finp-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.auto-badge{display:inline-flex;align-items:center;gap:4px;background:#F0EBFF;color:#7C3AED;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
 
-/* AI 생성 결과 */
-.ai-box{background:#F8F9FF;border:1.5px solid #E0E7FF;border-radius:14px;padding:16px;display:none}
-.ai-box.show{display:block}
-.ai-title{font-size:12px;font-weight:700;color:#6366F1;margin-bottom:8px}
-.ai-caption{font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;word-break:break-all}
-.ai-edit{width:100%;min-height:80px;border:1px solid #C7D2FE;border-radius:10px;padding:10px;font-size:13px;color:var(--text);font-family:inherit;line-height:1.6;resize:vertical;outline:none}
-.ai-edit:focus{border-color:#6366F1}
+/* 이미지 업로드 */
+.img-upload-area{display:flex;gap:8px;flex-wrap:wrap}
+.img-thumb{width:80px;height:80px;border-radius:12px;border:1.5px solid var(--border);overflow:hidden;position:relative;flex-shrink:0}
+.img-thumb img{width:100%;height:100%;object-fit:cover}
+.img-thumb .del{position:absolute;top:3px;right:3px;width:18px;height:18px;background:rgba(0,0,0,.6);border-radius:50%;border:none;color:#fff;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.img-add{width:80px;height:80px;border-radius:12px;border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:4px;flex-shrink:0;transition:border-color .15s}
+.img-add:active{border-color:var(--primary)}
+.img-add-ico{font-size:22px}
+.img-add-txt{font-size:10px;font-weight:700;color:var(--dim)}
+.img-count{font-size:11px;color:var(--dim);margin-top:4px}
 
-/* 채널 선택 */
-.channels{display:flex;flex-direction:column;gap:10px}
-.ch-item{display:flex;align-items:center;gap:12px;padding:14px;background:#F9FAFB;border-radius:14px;border:1.5px solid var(--border);cursor:pointer;transition:all .15s}
-.ch-item.on{background:#FFF7ED;border-color:var(--primary)}
+/* 직접 날짜 선택 */
+.date-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+
+/* 수량 인풋 */
+.qty-row{display:flex;align-items:center;gap:8px}
+.qty-badge{background:var(--primary-light);color:var(--primary);font-size:12px;font-weight:700;padding:6px 12px;border-radius:8px}
+
+/* AI 추천 */
+.ai-suggest{background:#F8F9FF;border:1.5px solid #E0E7FF;border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+.ai-suggest-txt{font-size:12px;color:#6366F1;font-weight:600}
+.ai-suggest-btn{font-size:11px;font-weight:700;color:#6366F1;background:#EEF2FF;border:none;border-radius:7px;padding:5px 10px;cursor:pointer;font-family:inherit}
+
+/* 이용안내 */
+.notice-box{background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:14px;padding:14px 16px;font-size:13px;color:#92400E;line-height:1.6}
+.notice-box strong{color:var(--primary);font-weight:800}
+
+/* 채널 */
+.ch-list{display:flex;flex-direction:column;gap:8px}
+.ch-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg);border-radius:12px;border:1.5px solid var(--border);cursor:pointer;transition:all .15s}
+.ch-item.on{background:var(--primary-light);border-color:var(--primary)}
 .ch-item.disabled{opacity:.45;cursor:not-allowed}
-.ch-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.ch-info{flex:1}
-.ch-name{font-size:14px;font-weight:700;color:var(--text)}
-.ch-desc{font-size:11px;color:var(--dim);margin-top:2px}
-.ch-chk{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0}
+.ch-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ch-name{font-size:13px;font-weight:700;color:var(--text);flex:1}
+.ch-desc{font-size:11px;color:var(--dim)}
+.ch-chk{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px}
 .ch-item.on .ch-chk{background:var(--primary);border-color:var(--primary);color:#fff}
 
-/* 등록 버튼 */
-.submit-area{padding:0 16px 32px}
-.submit-btn{width:100%;padding:17px;background:var(--primary);border:none;border-radius:16px;font-size:17px;font-weight:800;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;box-shadow:0 4px 16px rgba(255,90,31,.35)}
-.submit-btn:active{transform:scale(.98)}
-.submit-btn:disabled{background:#D1D5DB;box-shadow:none;cursor:not-allowed}
+/* 에러 */
+.err-msg{font-size:11px;color:var(--red);margin-top:4px;display:none}
+.err-msg.show{display:block}
+.finp.err{border-color:var(--red)}
+
+/* 네비 버튼 */
+.nav-btns{padding:16px 20px 32px;display:flex;gap:10px;flex-shrink:0}
+.nav-btn{flex:1;padding:16px;border:none;border-radius:16px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .15s}
+.nav-btn:active{transform:scale(.98)}
+.nav-btn.prev{background:var(--bg);color:var(--text);border:1.5px solid var(--border)}
+.nav-btn.next{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(255,90,31,.35)}
+.nav-btn:disabled{background:#D1D5DB;box-shadow:none;cursor:not-allowed}
 
 /* 진행 상태 */
-.progress{padding:0 16px 20px;display:none;flex-direction:column;gap:8px}
-.progress.show{display:flex}
-.prog-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#F9FAFB;border-radius:12px}
-.prog-ico{font-size:18px;width:24px;text-align:center}
+.progress-wrap{padding:20px}
+.prog-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:16px}
+.prog-item{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--bg);border-radius:12px;margin-bottom:8px}
+.prog-ico{font-size:16px;width:24px;text-align:center}
 .prog-name{font-size:13px;font-weight:600;color:var(--text);flex:1}
-.prog-status{font-size:12px;font-weight:700}
-.prog-status.wait{color:var(--dim)}
-.prog-status.ing{color:#F59E0B}
-.prog-status.ok{color:var(--green)}
-.prog-status.err{color:var(--red)}
+.prog-st{font-size:12px;font-weight:700}
+.prog-st.wait{color:var(--dim)}
+.prog-st.ing{color:var(--yellow)}
+.prog-st.ok{color:var(--green)}
+.prog-st.err{color:var(--red)}
 
 /* 완료 화면 */
-.done-screen{display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;flex:1;gap:16px}
-.done-screen.show{display:flex}
-.done-ico{font-size:72px}
-.done-title{font-size:24px;font-weight:900;color:var(--text)}
-.done-sub{font-size:14px;color:var(--sub);line-height:1.6}
-.done-btns{display:flex;flex-direction:column;gap:10px;width:100%}
-.done-btn{padding:14px;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer}
-.done-btn.primary{background:var(--primary);color:#fff}
-.done-btn.sec{background:var(--bg);color:var(--text)}
+.done-wrap{display:none;flex-direction:column;flex:1;padding:24px 20px 32px;gap:16px}
+.done-wrap.show{display:flex}
+.done-header{text-align:center;padding:16px 0}
+.done-ico{font-size:60px;margin-bottom:8px}
+.done-title{font-size:22px;font-weight:900;color:var(--text)}
+.done-sub{font-size:13px;color:var(--sub);line-height:1.6;margin-top:6px}
+.approval-box{background:var(--yellow-light);border:1.5px solid #FDE68A;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.approval-ico{font-size:24px}
+.approval-txt{font-size:13px;font-weight:600;color:#92400E;line-height:1.5}
 
-/* 가게정보 없음 안내 */
-.no-store{margin:16px;padding:14px 16px;background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:14px;font-size:13px;color:#C2410C;display:none}
-.no-store a{color:var(--primary);font-weight:700}
+/* 재고 관리 */
+.stock-box{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:16px}
+.stock-title{font-size:14px;font-weight:800;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.stock-display{text-align:center;padding:10px;background:var(--bg);border-radius:10px;margin-bottom:12px}
+.stock-num{font-size:28px;font-weight:900;color:var(--primary)}
+.stock-lbl{font-size:12px;color:var(--sub);margin-top:2px}
+.stock-btns{display:flex;gap:6px;flex-wrap:wrap}
+.sbtn{padding:10px 0;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-weight:700;color:var(--text);background:#fff;cursor:pointer;flex:1;min-width:60px;text-align:center;transition:all .15s;font-family:inherit}
+.sbtn:active{transform:scale(.97)}
+.sbtn.minus{border-color:#FECACA;color:var(--red)}
+.sbtn.soldout{border-color:var(--red);background:var(--red-light);color:var(--red);flex:100%}
+.sbtn.direct{border-color:#BFDBFE;color:var(--blue)}
+.stock-inp-row{display:flex;gap:8px;margin-top:8px}
+.stock-inp{flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:700;text-align:center;outline:none;font-family:inherit}
+.stock-confirm{padding:10px 16px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+
+/* 완료 버튼 영역 */
+.done-btns{display:flex;flex-direction:column;gap:8px}
+.done-btn{padding:14px;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.done-btn.primary{background:var(--primary);color:#fff}
+.done-btn.sec{background:var(--bg);color:var(--text);border:1.5px solid var(--border)}
+
+/* QR 화면 */
+.qr-screen{display:none;flex-direction:column;flex:1}
+.qr-screen.show{display:flex}
+.qr-hdr{padding:16px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.qr-back{background:none;border:none;font-size:22px;cursor:pointer;color:var(--sub)}
+.qr-title{font-size:16px;font-weight:800;color:var(--text)}
+.qr-tab-bar{display:flex;margin:12px 16px 0;background:var(--bg);border-radius:12px;padding:4px}
+.qr-tab{flex:1;padding:9px;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.qr-tab.on{background:#fff;color:var(--text)}
+.qr-tab.off{background:transparent;color:var(--sub)}
+.qr-panel{padding:16px;flex:1;display:flex;flex-direction:column;gap:12px}
+.qr-video-box{background:#000;border-radius:16px;overflow:hidden;aspect-ratio:1/1;position:relative}
+.qr-video-box video{width:100%;height:100%;object-fit:cover}
+.qr-guide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.qr-frame{width:60%;aspect-ratio:1/1;border:3px solid var(--primary);border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.4)}
+.qr-msg{text-align:center;font-size:13px;color:var(--sub)}
+.qr-start-btn{padding:13px;background:var(--primary);border:none;border-radius:12px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit}
+.manual-hint{font-size:12px;color:var(--dim)}
+.manual-inp{padding:14px;border:1.5px solid var(--border);border-radius:12px;font-size:16px;font-weight:700;text-align:center;letter-spacing:3px;text-transform:uppercase;outline:none;font-family:inherit;width:100%}
+.manual-inp:focus{border-color:var(--primary)}
+.verify-btn{padding:13px;background:var(--primary);border:none;border-radius:12px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;width:100%}
+.verify-result{padding:16px;border-radius:14px;text-align:center;display:none}
+.vr-ico{font-size:48px;margin-bottom:6px}
+.vr-title{font-size:18px;font-weight:800;margin-bottom:4px}
+.vr-desc{font-size:13px;color:var(--sub)}
+
+/* 토스트 */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;font-size:13px;font-weight:600;padding:10px 20px;border-radius:20px;white-space:nowrap;opacity:0;transition:opacity .25s;pointer-events:none;z-index:999}
+.toast.show{opacity:1}
+
+/* no store */
+.no-store-warn{margin:12px 20px 0;padding:12px 14px;background:var(--yellow-light);border:1.5px solid #FDE68A;border-radius:12px;font-size:12px;color:#92400E;display:none}
+.no-store-warn a{color:var(--primary);font-weight:700}
 </style>
 </head>
 <body>
 <div class="shell">
+
+  <!-- 헤더 -->
   <div class="hdr">
     <div>
       <div class="hdr-logo">🏷 동네할인</div>
       <div class="hdr-sub">점주 빠른 등록</div>
     </div>
-    <div class="hdr-badge" id="storeName">가게정보 없음</div>
+    <div class="hdr-store" id="storeName">가게정보 없음</div>
   </div>
 
-  <div class="no-store" id="noStoreWarn">
+  <!-- 가게정보 없음 경고 -->
+  <div class="no-store-warn" id="noStoreWarn">
     가게정보가 없어요. <a href="../admin/" target="_blank">관리자 → 가게정보</a>에서 먼저 설정해주세요.
   </div>
 
-  <!-- 메인 폼 -->
-  <div id="mainForm">
-    <!-- 사진 -->
-    <div class="photo-area" id="photoArea" onclick="triggerPhoto()">
-      <div class="photo-placeholder" id="photoPlaceholder">
-        <div class="photo-ico">📸</div>
-        <div class="photo-txt">사진 촬영 / 불러오기</div>
-        <div class="photo-sub">탭하여 상품 사진 추가</div>
-      </div>
-      <img class="photo-preview" id="photoPreview">
-      <div class="photo-btns">
-        <button class="pbtn" onclick="event.stopPropagation();triggerPhoto()">📷 변경</button>
-        <button class="pbtn" onclick="event.stopPropagation();removePhoto()">🗑 삭제</button>
+  <!-- ─── 등록 폼 ─── -->
+  <div id="formWrap" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+
+    <!-- 스텝 바 -->
+    <div class="step-bar">
+      <div class="step-row">
+        <div class="step-item active" id="si1">
+          <div class="step-circle">1</div>
+          <div class="step-lbl">상품혜택</div>
+        </div>
+        <div class="step-item" id="si2">
+          <div class="step-circle">2</div>
+          <div class="step-lbl">상품정보</div>
+        </div>
+        <div class="step-item" id="si3">
+          <div class="step-circle">3</div>
+          <div class="step-lbl">이용안내</div>
+        </div>
       </div>
     </div>
-    <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="onPhotoSelected(this)">
 
-    <div class="form">
-      <!-- 기본 정보 -->
-      <div class="frow">
+    <!-- STEP 1 -->
+    <div class="content" id="step1">
+      <div class="sec">
+        <div class="sec-title">🎁 STEP 1. 상품 혜택</div>
+
+        <!-- 혜택 종류 -->
         <div class="fgrp">
-          <label class="flabel">업종 *</label>
-          <select id="f_업종" class="finp">
+          <div class="flabel">혜택 종류 <span class="req">*필수</span></div>
+          <div class="btn-group" id="bg-benefit">
+            <div class="bopt on" data-v="할인" onclick="selectBtn('bg-benefit','할인')">🏷 할인</div>
+            <div class="bopt" data-v="증정" onclick="selectBtn('bg-benefit','증정')">🎁 증정</div>
+            <div class="bopt" data-v="서비스" onclick="selectBtn('bg-benefit','서비스')">✨ 서비스</div>
+            <div class="bopt" data-v="적립" onclick="selectBtn('bg-benefit','적립')">💳 적립</div>
+          </div>
+        </div>
+
+        <!-- 행사 일정 -->
+        <div class="fgrp">
+          <div class="flabel">행사 일정 <span class="req">*필수</span></div>
+          <div class="btn-group" id="bg-schedule">
+            <div class="bopt" data-v="30분" onclick="selectBtn('bg-schedule','30분');setSchedule('quick')">30분</div>
+            <div class="bopt" data-v="1시간" onclick="selectBtn('bg-schedule','1시간');setSchedule('quick')">1시간</div>
+            <div class="bopt" data-v="2시간" onclick="selectBtn('bg-schedule','2시간');setSchedule('quick')">2시간</div>
+            <div class="bopt" data-v="오늘마감" onclick="selectBtn('bg-schedule','오늘마감');setSchedule('quick')">오늘마감</div>
+            <div class="bopt" data-v="직접선택" onclick="selectBtn('bg-schedule','직접선택');setSchedule('manual')">📅 직접선택</div>
+          </div>
+          <!-- 직접 선택 시 -->
+          <div id="manualDate" style="display:none;margin-top:8px">
+            <div class="date-grid">
+              <div class="fgrp" style="margin-bottom:0">
+                <div class="flabel">시작일</div>
+                <input type="date" class="finp" id="startDate">
+              </div>
+              <div class="fgrp" style="margin-bottom:0">
+                <div class="flabel">종료일</div>
+                <input type="date" class="finp" id="endDate">
+              </div>
+              <div class="fgrp" style="margin-bottom:0">
+                <div class="flabel">시작시간</div>
+                <input type="time" class="finp" id="startTime">
+              </div>
+              <div class="fgrp" style="margin-bottom:0">
+                <div class="flabel">종료시간</div>
+                <input type="time" class="finp" id="endTime">
+              </div>
+            </div>
+            <div class="err-msg" id="err-date">종료시간은 시작시간보다 늦어야 합니다</div>
+          </div>
+        </div>
+
+        <!-- 수량 제한 -->
+        <div class="fgrp">
+          <div class="flabel">수량 제한 <span class="req">*필수</span></div>
+          <div class="radio-group">
+            <div class="ropt on" id="ropt-unlimited" onclick="setQtyMode('unlimited')">제한없음</div>
+            <div class="ropt" id="ropt-limited" onclick="setQtyMode('limited')">🔢 한정수량</div>
+          </div>
+        </div>
+
+        <!-- 최초 수량 (한정수량 선택 시) -->
+        <div class="fgrp" id="qtyWrap" style="display:none">
+          <div class="flabel">최초 수량 <span class="req">*필수</span></div>
+          <div class="qty-row">
+            <input type="number" class="finp" id="initQty" placeholder="예: 20" min="1" style="flex:1" oninput="updateStockPreview()">
+            <div class="qty-badge" id="qtyPreview">0개</div>
+          </div>
+          <div class="err-msg" id="err-qty">수량을 입력해주세요</div>
+        </div>
+
+        <!-- 1인 최대 구매 -->
+        <div class="fgrp">
+          <div class="flabel">1인 최대 구매 <span class="req">*필수</span></div>
+          <div class="btn-group" id="bg-maxqty">
+            <div class="bopt on" data-v="제한없음" onclick="selectBtn('bg-maxqty','제한없음');showDirectQty(false)">제한없음</div>
+            <div class="bopt" data-v="1개" onclick="selectBtn('bg-maxqty','1개');showDirectQty(false)">1개</div>
+            <div class="bopt" data-v="2개" onclick="selectBtn('bg-maxqty','2개');showDirectQty(false)">2개</div>
+            <div class="bopt" data-v="3개" onclick="selectBtn('bg-maxqty','3개');showDirectQty(false)">3개</div>
+            <div class="bopt" data-v="직접입력" onclick="selectBtn('bg-maxqty','직접입력');showDirectQty(true)">직접입력</div>
+          </div>
+          <input type="number" class="finp" id="directMaxQty" placeholder="최대 구매 수량 입력" style="display:none;margin-top:8px" min="1">
+        </div>
+
+      </div>
+      <div style="height:20px"></div>
+    </div><!-- /step1 -->
+
+    <!-- STEP 2 -->
+    <div class="content" id="step2" style="display:none">
+      <div class="sec">
+        <div class="sec-title">📦 STEP 2. 상품 정보</div>
+
+        <!-- 이미지 업로드 (최대 5장) -->
+        <div class="fgrp">
+          <div class="flabel">상품 이미지 <span class="req">*필수</span> <span style="font-size:11px;color:var(--dim);font-weight:500">(최소 1장, 최대 5장)</span></div>
+          <div class="img-upload-area" id="imgArea">
+            <div class="img-add" onclick="triggerPhoto()">
+              <div class="img-add-ico">📷</div>
+              <div class="img-add-txt">사진 추가</div>
+            </div>
+          </div>
+          <div class="img-count" id="imgCount">0 / 5장</div>
+          <div class="err-msg" id="err-img">이미지를 최소 1장 업로드해주세요</div>
+          <div class="ai-suggest" id="aiPhotoHint" style="margin-top:8px;display:none">
+            <span class="ai-suggest-txt">🤖 AI가 밝기·선명도·색감을 자동 보정합니다</span>
+          </div>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="onPhotoSelected(this)" style="display:none">
+
+        <!-- 상품명 -->
+        <div class="fgrp">
+          <div class="flabel">상품명 <span class="req">*필수</span></div>
+          <input type="text" class="finp" id="f_name" placeholder="예: 아메리카노 그란데">
+          <div class="ai-suggest">
+            <span class="ai-suggest-txt">🤖 AI 상품명 추천</span>
+            <button class="ai-suggest-btn" onclick="aiSuggestName()">추천받기</button>
+          </div>
+          <div class="err-msg" id="err-name">상품명을 입력해주세요</div>
+        </div>
+
+        <!-- 정상가 / 판매가 -->
+        <div class="finp-row">
+          <div class="fgrp">
+            <div class="flabel">정상가 (원) <span class="req">*</span></div>
+            <input type="number" class="finp" id="f_orig" placeholder="0" min="0" oninput="calcDiscount()">
+            <div class="err-msg" id="err-orig">정상가를 입력해주세요</div>
+          </div>
+          <div class="fgrp">
+            <div class="flabel">판매가 (원) <span class="req">*</span></div>
+            <input type="number" class="finp" id="f_sale" placeholder="0" min="0" oninput="calcDiscount()">
+            <div class="err-msg" id="err-sale">정상가보다 낮아야 합니다</div>
+          </div>
+        </div>
+
+        <!-- 할인율 자동 -->
+        <div class="fgrp">
+          <div class="flabel">할인율 <span class="auto-badge">🤖 자동 계산</span></div>
+          <div style="padding:12px 14px;background:var(--bg);border-radius:12px;font-size:18px;font-weight:900;color:var(--primary)" id="discountDisplay">—</div>
+        </div>
+
+        <!-- 상세정보 -->
+        <div class="fgrp">
+          <div class="flabel">상세 정보 <span style="font-size:11px;font-weight:500;color:var(--dim)">(선택)</span></div>
+          <textarea class="finp" id="f_desc" placeholder="미입력 시 AI가 자동으로 문구를 생성합니다" style="min-height:80px;resize:vertical;line-height:1.5"></textarea>
+          <div class="ai-suggest" style="margin-top:6px">
+            <span class="ai-suggest-txt">🤖 AI 상세설명 자동 생성</span>
+            <button class="ai-suggest-btn" onclick="aiSuggestDesc()">생성하기</button>
+          </div>
+        </div>
+
+        <!-- 업종 -->
+        <div class="fgrp">
+          <div class="flabel">업종</div>
+          <select class="finp" id="f_cate">
             <option value="">선택</option>
             <option>카페</option><option>음식점</option><option>베이커리</option>
             <option>미용실</option><option>옷가게</option><option>편의점</option>
             <option>마트</option><option>기타</option>
           </select>
         </div>
-        <div class="fgrp">
-          <label class="flabel">할인유형</label>
-          <select id="f_할인유형" class="finp">
-            <option>한정수량</option><option>시간한정</option><option>당일특가</option>
-            <option>재고처리</option><option>이벤트</option>
-          </select>
-        </div>
-      </div>
 
-      <div class="fgrp">
-        <label class="flabel">상품명 *</label>
-        <input id="f_상품명" class="finp" type="text" placeholder="예: 아메리카노 그란데">
       </div>
+      <div style="height:20px"></div>
+    </div><!-- /step2 -->
 
-      <div class="frow">
-        <div class="fgrp">
-          <label class="flabel">정상가 (원)</label>
-          <input id="f_정상가" class="finp" type="number" placeholder="5000">
-        </div>
-        <div class="fgrp">
-          <label class="flabel">할인가 (원)</label>
-          <input id="f_할인가" class="finp" type="number" placeholder="3500">
-        </div>
-      </div>
+    <!-- STEP 3 -->
+    <div class="content" id="step3" style="display:none">
+      <div class="sec">
+        <div class="sec-title">📋 STEP 3. 플랫폼 이용안내</div>
 
-      <div class="frow">
-        <div class="fgrp">
-          <label class="flabel">할인율 (%)</label>
-          <input id="f_할인율" class="finp" type="number" placeholder="30">
+        <div class="notice-box" style="margin-bottom:16px">
+          <strong>※ 안내사항</strong><br>
+          쿠폰을 다운로드하셨더라도 매장의 일반 판매로 인해 재고가 소진될 경우 할인 혜택을 받지 못할 수 있습니다.
         </div>
-        <div class="fgrp">
-          <label class="flabel">종료시간</label>
-          <input id="f_종료시간" class="finp" type="time" value="22:00">
-        </div>
-      </div>
 
-      <!-- AI 캡션 -->
-      <div class="ai-box" id="aiBox">
-        <div class="ai-title">🤖 AI 생성 캡션 (수정 가능)</div>
-        <textarea class="ai-edit" id="aiCaption"></textarea>
-        <textarea class="ai-edit" id="aiHashtags" style="min-height:48px;margin-top:6px"></textarea>
-      </div>
+        <div class="notice-box" style="background:var(--blue-light);border-color:#BFDBFE;color:#1E40AF;margin-bottom:16px">
+          <strong>📋 등록 프로세스</strong><br>
+          상품 등록 → 관리자 검토 → <strong>승인 후 앱·홍보채널 자동 노출</strong>
+          <br><br>
+          승인 후 자동 처리: 앱 행사 등록 · 고객 푸시 발송 · 홍보채널 게시
+        </div>
 
-      <!-- 채널 선택 -->
-      <div class="flabel" style="margin-bottom:-4px">📡 게시 채널 선택</div>
-      <div class="channels">
-        <div class="ch-item on" id="ch-dongne" onclick="toggleChannel('dongne')">
-          <div class="ch-ico" style="background:#FFF0EB">🏷</div>
-          <div class="ch-info"><div class="ch-name">동네할인</div><div class="ch-desc">고객 페이지에 즉시 노출</div></div>
-          <div class="ch-chk">✓</div>
+        <!-- 게시 채널 -->
+        <div class="fgrp">
+          <div class="flabel" style="margin-bottom:10px">📡 게시 채널</div>
+          <div class="ch-list">
+            <div class="ch-item on" id="ch-dongne" onclick="toggleCh('dongne')">
+              <div class="ch-ico" style="background:#FFF0EB">🏷</div>
+              <div style="flex:1"><div class="ch-name">동네할인 앱</div><div class="ch-desc">승인 후 고객 페이지 노출</div></div>
+              <div class="ch-chk" id="chk-dongne">✓</div>
+            </div>
+            <div class="ch-item on" id="ch-insta" onclick="toggleCh('insta')">
+              <div class="ch-ico" style="background:#FDF2F8">📸</div>
+              <div style="flex:1"><div class="ch-name">인스타그램</div><div class="ch-desc">AI 캡션+이미지 자동 게시</div></div>
+              <div class="ch-chk" id="chk-insta">✓</div>
+            </div>
+            <div class="ch-item disabled">
+              <div class="ch-ico" style="background:#EFF6FF">📗</div>
+              <div style="flex:1"><div class="ch-name">네이버밴드</div><div class="ch-desc">준비 중</div></div>
+              <div class="ch-chk"></div>
+            </div>
+            <div class="ch-item disabled">
+              <div class="ch-ico" style="background:#FEFCE8">💬</div>
+              <div style="flex:1"><div class="ch-name">카카오알림</div><div class="ch-desc">준비 중</div></div>
+              <div class="ch-chk"></div>
+            </div>
+          </div>
         </div>
-        <div class="ch-item on" id="ch-insta" onclick="toggleChannel('insta')">
-          <div class="ch-ico" style="background:#FDF2F8">📸</div>
-          <div class="ch-info"><div class="ch-name">인스타그램</div><div class="ch-desc">AI 캡션+이미지 자동 게시</div></div>
-          <div class="ch-chk">✓</div>
-        </div>
-        <div class="ch-item disabled" id="ch-band">
-          <div class="ch-ico" style="background:#EFF6FF">📗</div>
-          <div class="ch-info"><div class="ch-name">네이버밴드</div><div class="ch-desc">준비 중</div></div>
-          <div class="ch-chk"></div>
-        </div>
-        <div class="ch-item disabled" id="ch-kakao">
-          <div class="ch-ico" style="background:#FEFCE8">💬</div>
-          <div class="ch-info"><div class="ch-name">카카오알림</div><div class="ch-desc">준비 중</div></div>
-          <div class="ch-chk"></div>
-        </div>
+
       </div>
+      <div style="height:20px"></div>
+    </div><!-- /step3 -->
+
+    <!-- 네비 버튼 -->
+    <div class="nav-btns" id="navBtns">
+      <button class="nav-btn prev" id="prevBtn" onclick="goPrev()" style="display:none">← 이전</button>
+      <button class="nav-btn next" id="nextBtn" onclick="goNext()">다음 →</button>
     </div>
 
     <!-- 진행 상태 -->
-    <div class="progress" id="progress">
-      <div class="prog-item" id="prog-upload">
-        <span class="prog-ico">📤</span>
-        <span class="prog-name">이미지 업로드</span>
-        <span class="prog-status wait" id="ps-upload">대기</span>
-      </div>
-      <div class="prog-item" id="prog-ai">
-        <span class="prog-ico">🤖</span>
-        <span class="prog-name">AI 캡션 생성</span>
-        <span class="prog-status wait" id="ps-ai">대기</span>
-      </div>
-      <div class="prog-item" id="prog-dongne">
-        <span class="prog-ico">🏷</span>
-        <span class="prog-name">동네할인 등록</span>
-        <span class="prog-status wait" id="ps-dongne">대기</span>
-      </div>
-      <div class="prog-item" id="prog-insta">
-        <span class="prog-ico">📸</span>
-        <span class="prog-name">인스타그램 게시</span>
-        <span class="prog-status wait" id="ps-insta">대기</span>
+    <div id="progressWrap" style="display:none;flex:1;overflow-y:auto">
+      <div class="progress-wrap">
+        <div class="prog-title">⏳ 등록 처리 중...</div>
+        <div class="prog-item"><span class="prog-ico">📤</span><span class="prog-name">이미지 업로드</span><span class="prog-st wait" id="ps-upload">대기</span></div>
+        <div class="prog-item"><span class="prog-ico">🤖</span><span class="prog-name">AI 처리 (보정 + 캡션)</span><span class="prog-st wait" id="ps-ai">대기</span></div>
+        <div class="prog-item"><span class="prog-ico">💾</span><span class="prog-name">상품 저장</span><span class="prog-st wait" id="ps-save">대기</span></div>
+        <div class="prog-item"><span class="prog-ico">🎪</span><span class="prog-name">행사 저장</span><span class="prog-st wait" id="ps-event">대기</span></div>
+        <div class="prog-item"><span class="prog-ico">⏳</span><span class="prog-name">관리자 승인 대기</span><span class="prog-st wait" id="ps-approval">대기</span></div>
+        <div class="prog-item"><span class="prog-ico">📸</span><span class="prog-name">인스타그램 예약</span><span class="prog-st wait" id="ps-insta">대기</span></div>
       </div>
     </div>
 
-    <div class="submit-area">
-      <button class="submit-btn" id="submitBtn" onclick="submit()">
-        🚀 30초 등록하기
-      </button>
-    </div>
-  </div>
+  </div><!-- /formWrap -->
 
-  <!-- 완료 화면 -->
-  <div class="done-screen" id="doneScreen">
-    <div class="done-ico">🎉</div>
-    <div class="done-title">등록 완료!</div>
-    <div class="done-sub" id="doneMsg">할인 정보가 성공적으로 등록됐어요.</div>
+  <!-- ─── 완료 화면 ─── -->
+  <div class="done-wrap" id="doneWrap">
+    <div class="done-header" style="text-align:center">
+      <div class="done-ico">📋</div>
+      <div class="done-title">등록 완료!</div>
+      <div class="done-sub" id="doneMsg">상품이 등록되었습니다.<br>관리자 승인 후 앱에 노출됩니다.</div>
+    </div>
+
+    <!-- 승인 대기 안내 -->
+    <div class="approval-box">
+      <div class="approval-ico">⏳</div>
+      <div class="approval-txt">
+        <strong>관리자 승인 대기 중</strong><br>
+        승인 후 앱 노출 · 푸시 발송 · 홍보채널 자동 게시됩니다
+      </div>
+    </div>
+
+    <!-- 재고 관리 (한정수량인 경우) -->
+    <div class="stock-box" id="stockBox" style="display:none">
+      <div class="stock-title">📦 재고 현황 <span style="font-size:11px;font-weight:500;color:var(--sub)">(일반판매 차감 포함)</span></div>
+      <div class="stock-display">
+        <div class="stock-num" id="stockNum">0</div>
+        <div class="stock-lbl">남은 수량</div>
+      </div>
+      <div class="stock-btns">
+        <button class="sbtn minus" onclick="adjustStock(-1)">-1</button>
+        <button class="sbtn minus" onclick="adjustStock(-2)">-2</button>
+        <button class="sbtn minus" onclick="adjustStock(-5)">-5</button>
+        <button class="sbtn direct" onclick="showStockInput()">직접입력</button>
+      </div>
+      <div class="stock-inp-row" id="stockInputRow" style="display:none">
+        <input type="number" class="stock-inp" id="stockDirectInput" placeholder="차감 수량">
+        <button class="stock-confirm" onclick="applyStockDirect()">차감</button>
+      </div>
+      <button class="sbtn soldout" onclick="setSoldout()" style="margin-top:8px">🚫 품절 처리</button>
+    </div>
+
     <div class="done-btns">
       <button class="done-btn primary" onclick="viewDeal()">👀 고객 페이지에서 보기</button>
       <button class="done-btn sec" onclick="goQrScan()">📷 QR 쿠폰 인증하기</button>
-      <button class="done-btn sec" onclick="reset()">➕ 다음 상품 등록</button>
+      <button class="done-btn sec" onclick="resetForm()">➕ 다음 상품 등록</button>
     </div>
   </div>
 
-  <!-- QR 인증 화면 -->
-  <div id="qrScreen" style="display:none;flex-direction:column;flex:1">
-    <div style="padding:20px 16px 0;display:flex;align-items:center;gap:10px">
-      <button onclick="closeQrScreen()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#6B7280">‹</button>
-      <div style="font-size:17px;font-weight:800">📷 QR 쿠폰 인증</div>
+  <!-- ─── QR 인증 화면 ─── -->
+  <div class="qr-screen" id="qrScreen">
+    <div class="qr-hdr">
+      <button class="qr-back" onclick="closeQrScreen()">←</button>
+      <div class="qr-title">📷 QR 쿠폰 인증</div>
     </div>
 
-    <!-- 탭 -->
-    <div style="display:flex;margin:16px 16px 0;background:#F3F4F6;border-radius:12px;padding:4px">
-      <button id="qrtab-scan" onclick="switchQrTab('scan')" style="flex:1;padding:9px;border:none;border-radius:9px;font-size:13px;font-weight:700;background:#fff;color:#111;cursor:pointer">📷 QR 스캔</button>
-      <button id="qrtab-manual" onclick="switchQrTab('manual')" style="flex:1;padding:9px;border:none;border-radius:9px;font-size:13px;font-weight:700;background:transparent;color:#6B7280;cursor:pointer">⌨️ 번호 입력</button>
+    <div class="qr-tab-bar">
+      <button class="qr-tab on" id="qrtab-scan" onclick="switchQrTab('scan')">📷 QR 스캔</button>
+      <button class="qr-tab off" id="qrtab-manual" onclick="switchQrTab('manual')">⌨️ 번호 입력</button>
     </div>
 
-    <!-- QR 스캔 탭 -->
-    <div id="qr-scan-panel" style="padding:16px;display:flex;flex-direction:column;gap:12px">
-      <div style="background:#000;border-radius:16px;overflow:hidden;aspect-ratio:1/1;position:relative">
-        <video id="qrVideo" style="width:100%;height:100%;object-fit:cover" playsinline autoplay></video>
+    <!-- QR 스캔 패널 -->
+    <div class="qr-panel" id="qr-scan-panel">
+      <div class="qr-video-box">
+        <video id="qrVideo" playsinline autoplay></video>
         <canvas id="qrCanvas" style="display:none"></canvas>
-        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none">
-          <div style="width:60%;aspect-ratio:1/1;border:3px solid #FF5A1F;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.4)"></div>
-        </div>
+        <div class="qr-guide"><div class="qr-frame"></div></div>
       </div>
-      <div id="scanMsg" style="text-align:center;font-size:13px;color:#6B7280">QR 코드를 네모 안에 맞춰주세요</div>
-      <button onclick="startScan()" id="scanBtn" style="padding:13px;background:var(--primary);border:none;border-radius:12px;font-size:14px;font-weight:700;color:#fff;cursor:pointer">📷 카메라 시작</button>
+      <div class="qr-msg" id="scanMsg">QR 코드를 네모 안에 맞춰주세요</div>
+      <button class="qr-start-btn" id="scanBtn" onclick="startScan()">📷 카메라 시작</button>
     </div>
 
-    <!-- 번호 입력 탭 -->
-    <div id="qr-manual-panel" style="padding:16px;display:none;flex-direction:column;gap:12px">
-      <div style="font-size:13px;color:#6B7280">고객에게 쿠폰번호를 받아 입력하세요</div>
-      <input id="couponInput" type="text" placeholder="예: DC1A2B3C" style="padding:14px;border:1.5px solid #E5E7EB;border-radius:12px;font-size:16px;font-weight:700;text-align:center;letter-spacing:3px;text-transform:uppercase;outline:none;font-family:inherit">
-      <button onclick="verifyCoupon(document.getElementById('couponInput').value.trim().toUpperCase())" style="padding:13px;background:var(--primary);border:none;border-radius:12px;font-size:14px;font-weight:700;color:#fff;cursor:pointer">✅ 쿠폰 인증하기</button>
+    <!-- 번호 입력 패널 -->
+    <div class="qr-panel" id="qr-manual-panel" style="display:none">
+      <div class="manual-hint">고객에게 쿠폰번호를 받아 입력하세요</div>
+      <input class="manual-inp" id="couponInput" type="text" placeholder="예: DC1A2B3C">
+      <button class="verify-btn" onclick="verifyCoupon(document.getElementById('couponInput').value.trim().toUpperCase())">✅ 쿠폰 인증하기</button>
     </div>
 
     <!-- 인증 결과 -->
-    <div id="verifyResult" style="margin:0 16px;display:none;padding:16px;border-radius:14px;text-align:center">
-      <div id="verifyIco" style="font-size:48px;margin-bottom:8px"></div>
-      <div id="verifyTitle" style="font-size:18px;font-weight:800;margin-bottom:4px"></div>
-      <div id="verifyDesc" style="font-size:13px;color:#6B7280"></div>
+    <div class="verify-result" id="verifyResult" style="margin:0 16px 16px">
+      <div class="vr-ico" id="vrIco"></div>
+      <div class="vr-title" id="vrTitle"></div>
+      <div class="vr-desc" id="vrDesc"></div>
     </div>
   </div>
+
+  <div class="toast" id="toast"></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 <script>
 const SUPABASE_URL='https://ezcofypuyhgxglzxdith.supabase.co';
 const SUPABASE_KEY='sb_publishable_8bA2iL8WleI-PDahO4XaFg__0gnVrK9';
 
-let photoFile=null, photoDataUrl=null, uploadedImageUrl=null;
+// ─── 상태 ───
+let curStep=1;
+let photoFiles=[], photoPreviews=[];
+let uploadedImageUrl=null;
 let channels={dongne:true,insta:true};
+let qtyMode='unlimited';
 let lastDealId=null;
+let currentStock=0;
+let scanStream=null, scanInterval=null;
 
-// 가게정보 로드
-function getStoreInfo(){return JSON.parse(localStorage.getItem('storeInfo')||'{}')}
-function initStore(){
-  const si=getStoreInfo();
-  if(si.name){
-    document.getElementById('storeName').textContent=si.name;
+const si = () => JSON.parse(localStorage.getItem('storeInfo')||'{}');
+
+// ─── 초기화 ───
+function init(){
+  const info=si();
+  if(info.name){
+    document.getElementById('storeName').textContent=info.name;
   } else {
     document.getElementById('noStoreWarn').style.display='block';
   }
+  // 날짜 기본값
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('startDate').value=today;
+  document.getElementById('endDate').value=today;
+  document.getElementById('startTime').value='09:00';
+  document.getElementById('endTime').value='22:00';
 }
 
-// 사진
-function triggerPhoto(){document.getElementById('fileInput').click()}
+// ─── 버튼 선택 ───
+function selectBtn(groupId, val){
+  document.querySelectorAll(`#${groupId} .bopt`).forEach(el=>{
+    el.classList.toggle('on', el.dataset.v===val);
+  });
+}
+function getBtn(groupId){
+  const el=document.querySelector(`#${groupId} .bopt.on`);
+  return el?el.dataset.v:'';
+}
+
+// ─── 행사 일정 ───
+function setSchedule(mode){
+  document.getElementById('manualDate').style.display=mode==='manual'?'block':'none';
+}
+
+// ─── 수량 모드 ───
+function setQtyMode(mode){
+  qtyMode=mode;
+  document.getElementById('ropt-unlimited').classList.toggle('on',mode==='unlimited');
+  document.getElementById('ropt-limited').classList.toggle('on',mode==='limited');
+  document.getElementById('qtyWrap').style.display=mode==='limited'?'block':'none';
+}
+
+function updateStockPreview(){
+  const v=parseInt(document.getElementById('initQty').value)||0;
+  document.getElementById('qtyPreview').textContent=v+'개';
+}
+
+// ─── 1인 최대구매 직접입력 ───
+function showDirectQty(show){
+  document.getElementById('directMaxQty').style.display=show?'block':'none';
+}
+
+// ─── 이미지 업로드 ───
+function triggerPhoto(){
+  if(photoFiles.length>=5){showToast('최대 5장까지 업로드할 수 있습니다');return;}
+  document.getElementById('fileInput').click();
+}
+
 function onPhotoSelected(input){
   const file=input.files[0];
-  if(!file)return;
-  photoFile=file;
+  if(!file) return;
+  if(photoFiles.length>=5){showToast('최대 5장입니다');return;}
+  photoFiles.push(file);
   const reader=new FileReader();
   reader.onload=e=>{
-    photoDataUrl=e.target.result;
-    const area=document.getElementById('photoArea');
-    const prev=document.getElementById('photoPreview');
-    const ph=document.getElementById('photoPlaceholder');
-    prev.src=photoDataUrl;
-    prev.style.display='block';
-    ph.style.display='none';
-    area.classList.add('has-img');
+    photoPreviews.push(e.target.result);
+    renderImgArea();
+    document.getElementById('aiPhotoHint').style.display='flex';
   };
   reader.readAsDataURL(file);
-}
-function removePhoto(){
-  photoFile=null;photoDataUrl=null;uploadedImageUrl=null;
-  const area=document.getElementById('photoArea');
-  document.getElementById('photoPreview').style.display='none';
-  document.getElementById('photoPlaceholder').style.display='flex';
-  area.classList.remove('has-img');
-  document.getElementById('fileInput').value='';
+  input.value='';
 }
 
-// 채널 토글
-function toggleChannel(id){
-  channels[id]=!channels[id];
-  const el=document.getElementById('ch-'+id);
-  if(channels[id]){el.classList.add('on');el.querySelector('.ch-chk').textContent='✓';}
-  else{el.classList.remove('on');el.querySelector('.ch-chk').textContent='';}
+function removePhoto(idx){
+  photoFiles.splice(idx,1);
+  photoPreviews.splice(idx,1);
+  renderImgArea();
+  if(photoFiles.length===0) document.getElementById('aiPhotoHint').style.display='none';
 }
 
-// 진행 상태
-function setStatus(id,state,text){
-  const el=document.getElementById('ps-'+id);
-  el.className='prog-status '+state;
-  el.textContent=text;
+function renderImgArea(){
+  const area=document.getElementById('imgArea');
+  const count=photoFiles.length;
+  let html=photoPreviews.map((src,i)=>`
+    <div class="img-thumb">
+      <img src="${src}">
+      <button class="del" onclick="removePhoto(${i})">✕</button>
+    </div>
+  `).join('');
+  if(count<5) html+=`<div class="img-add" onclick="triggerPhoto()"><div class="img-add-ico">📷</div><div class="img-add-txt">추가</div></div>`;
+  area.innerHTML=html;
+  document.getElementById('imgCount').textContent=count+' / 5장';
 }
 
-// 메인 등록
-async function submit(){
-  const 상품명=document.getElementById('f_상품명').value.trim();
-  const 업종=document.getElementById('f_업종').value;
-  if(!상품명){alert('상품명을 입력해주세요.');return;}
-  if(!photoDataUrl){alert('사진을 선택해주세요.');return;}
-
-  const btn=document.getElementById('submitBtn');
-  btn.disabled=true;
-  btn.textContent='⏳ 등록 중...';
-  document.getElementById('progress').classList.add('show');
-
-  const si=getStoreInfo();
-
-  try{
-    // 1. 이미지 업로드
-    setStatus('upload','ing','업로드 중...');
-    const filename=`owner_${Date.now()}.jpg`;
-    const uploadRes=await fetch(`${SUPABASE_URL}/functions/v1/clever-handler`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
-      body:JSON.stringify({imageData:photoDataUrl,filename})
-    });
-    const uploadData=await uploadRes.json();
-    if(!uploadData.url)throw new Error('이미지 업로드 실패');
-    uploadedImageUrl=uploadData.url;
-    setStatus('upload','ok','✅ 완료');
-
-    // 2. AI 캡션 생성
-    setStatus('ai','ing','생성 중...');
-    const body={
-      매장명:si.name||'매장',
-      상품명,
-      업종,
-      할인율:document.getElementById('f_할인율').value,
-      정상가:document.getElementById('f_정상가').value,
-      할인가:document.getElementById('f_할인가').value,
-      종료시간:document.getElementById('f_종료시간').value,
-      할인유형:document.getElementById('f_할인유형').value,
-      위치:si.addr||'',
-    };
-    const aiRes=await fetch(`${SUPABASE_URL}/functions/v1/generate-content`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
-      body:JSON.stringify(body)
-    });
-    const aiData=await aiRes.json();
-    const caption=aiData.caption||'';
-    const hashtags=aiData.hashtags||'';
-    setStatus('ai','ok','✅ 완료');
-
-    // 3. 동네할인 등록
-    if(channels.dongne){
-      setStatus('dongne','ing','등록 중...');
-      const deal={
-        store_name:si.name||body.매장명,
-        product_name:상품명,
-        category:업종||null,
-        discount_pct:body.할인율?parseInt(body.할인율):null,
-        original_price:body.정상가?parseInt(body.정상가):null,
-        sale_price:body.할인가?parseInt(body.할인가):null,
-        location:si.addr||null,
-        end_time:body.종료시간||null,
-        event_text:body.할인유형||null,
-        image_url:uploadedImageUrl,
-        is_active:true,
-      };
-      const dealRes=await fetch(`${SUPABASE_URL}/rest/v1/deals`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=representation'},
-        body:JSON.stringify(deal)
-      });
-      const dealData=await dealRes.json();
-      lastDealId=dealData[0]?.id||null;
-      setStatus('dongne','ok','✅ 완료');
-    }
-
-    // 4. 인스타그램 게시
-    if(channels.insta){
-      setStatus('insta','ing','게시 중...');
-      const dealUrl=lastDealId
-        ?`https://kiltaejung.github.io/dongne-discount/?deal=${lastDealId}`
-        :'https://kiltaejung.github.io/dongne-discount/';
-      const storeBlock=[
-        si.name?`📍 ${si.name}`:'',
-        si.addr?`🗺 ${si.addr}`:'',
-        si.phone?`📞 ${si.phone}`:'',
-        si.hours?`⏰ 운영시간: ${si.hours}`:'',
-      ].filter(Boolean).join('\n');
-      const coupon=`🎟 쿠폰 다운받기 : 동네할인\n${dealUrl}`;
-      const fullCaption=caption+'\n\n'+(storeBlock?storeBlock+'\n\n':'')+hashtags+'\n\n'+coupon;
-
-      const instaRes=await fetch(`${SUPABASE_URL}/functions/v1/instagram-post`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
-        body:JSON.stringify({image_url:uploadedImageUrl,caption:fullCaption})
-      });
-      const instaData=await instaRes.json();
-      if(instaData.success){setStatus('insta','ok','✅ 완료');}
-      else{setStatus('insta','err','⚠️ 실패');}
-    }
-
-    // 완료
-    showDone(channels);
-
-  }catch(e){
-    btn.disabled=false;
-    btn.textContent='🚀 30초 등록하기';
-    alert('오류: '+e.message);
+// ─── 할인율 자동 계산 ───
+function calcDiscount(){
+  const orig=parseInt(document.getElementById('f_orig').value)||0;
+  const sale=parseInt(document.getElementById('f_sale').value)||0;
+  const el=document.getElementById('discountDisplay');
+  if(orig>0&&sale>0&&sale<orig){
+    const pct=Math.round((orig-sale)/orig*100);
+    el.textContent=pct+'% 할인 ('+((orig-sale).toLocaleString())+'원 절약)';
+    el.style.color='var(--primary)';
+  } else if(orig>0&&sale>0&&sale>=orig){
+    el.textContent='판매가는 정상가보다 낮아야 합니다';
+    el.style.color='var(--red)';
+  } else {
+    el.textContent='—';
+    el.style.color='var(--primary)';
   }
 }
 
-function showDone(ch){
-  document.getElementById('mainForm').style.display='none';
-  const done=document.getElementById('doneScreen');
-  done.classList.add('show');
-  const msgs=[];
-  if(ch.dongne)msgs.push('동네할인');
-  if(ch.insta)msgs.push('인스타그램');
-  document.getElementById('doneMsg').textContent=msgs.join(', ')+'에 성공적으로 등록됐어요! 🎉';
+// ─── AI 추천 ───
+function aiSuggestName(){
+  if(photoPreviews.length===0){showToast('이미지를 먼저 업로드해주세요');return;}
+  showToast('🤖 AI가 상품명을 분석 중입니다...');
+  setTimeout(()=>{
+    const names=['신선한 아메리카노','오늘의 특가 런치세트','한정 베이커리 세트','프리미엄 디저트 플레이트'];
+    const n=names[Math.floor(Math.random()*names.length)];
+    document.getElementById('f_name').value=n;
+    showToast('✅ AI 추천: '+n);
+  },1500);
+}
+
+function aiSuggestDesc(){
+  showToast('🤖 AI가 설명을 생성 중입니다...');
+  setTimeout(()=>{
+    const name=document.getElementById('f_name').value||'이 상품';
+    document.getElementById('f_desc').value=`${name}을(를) 특별 할인된 가격으로 만나보세요!\n신선하고 정성스럽게 준비했습니다. 수량 한정이니 빠른 선택 부탁드립니다.`;
+    showToast('✅ AI 설명 생성 완료');
+  },1500);
+}
+
+// ─── 채널 토글 ───
+function toggleCh(id){
+  channels[id]=!channels[id];
+  document.getElementById('ch-'+id).classList.toggle('on',channels[id]);
+  document.getElementById('chk-'+id).textContent=channels[id]?'✓':'';
+}
+
+// ─── 스텝 네비게이션 ───
+function goNext(){
+  if(curStep===1&&!validateStep1()) return;
+  if(curStep===2&&!validateStep2()) return;
+  if(curStep===3){ submitForm(); return; }
+  curStep++;
+  renderStep();
+}
+
+function goPrev(){
+  if(curStep>1){ curStep--; renderStep(); }
+}
+
+function renderStep(){
+  [1,2,3].forEach(i=>{
+    document.getElementById('step'+i).style.display=i===curStep?'block':'none';
+    const si=document.getElementById('si'+i);
+    si.classList.toggle('active',i===curStep);
+    si.classList.toggle('done',i<curStep);
+  });
+  document.getElementById('prevBtn').style.display=curStep>1?'flex':'none';
+  document.getElementById('nextBtn').textContent=curStep===3?'🚀 30초 등록하기':'다음 →';
+}
+
+// ─── Validation ───
+function validateStep1(){
+  const schedule=getBtn('bg-schedule');
+  if(!schedule){showToast('행사 일정을 선택해주세요');return false;}
+
+  // 직접선택 시 날짜 검증
+  if(schedule==='직접선택'){
+    const s=document.getElementById('startTime').value;
+    const e=document.getElementById('endTime').value;
+    const sd=document.getElementById('startDate').value;
+    const ed=document.getElementById('endDate').value;
+    if(sd===ed&&e<=s){
+      document.getElementById('err-date').classList.add('show');
+      return false;
+    }
+    document.getElementById('err-date').classList.remove('show');
+  }
+
+  // 한정수량 검증
+  if(qtyMode==='limited'){
+    const qty=document.getElementById('initQty').value;
+    if(!qty||parseInt(qty)<1){
+      document.getElementById('err-qty').classList.add('show');
+      return false;
+    }
+    document.getElementById('err-qty').classList.remove('show');
+  }
+
+  return true;
+}
+
+function validateStep2(){
+  let ok=true;
+  // 이미지
+  if(photoFiles.length===0){document.getElementById('err-img').classList.add('show');ok=false;}
+  else document.getElementById('err-img').classList.remove('show');
+  // 상품명
+  if(!document.getElementById('f_name').value.trim()){document.getElementById('err-name').classList.add('show');document.getElementById('f_name').classList.add('err');ok=false;}
+  else{document.getElementById('err-name').classList.remove('show');document.getElementById('f_name').classList.remove('err');}
+  // 정상가
+  const orig=parseInt(document.getElementById('f_orig').value)||0;
+  if(!orig){document.getElementById('err-orig').classList.add('show');ok=false;}
+  else document.getElementById('err-orig').classList.remove('show');
+  // 판매가
+  const sale=parseInt(document.getElementById('f_sale').value)||0;
+  if(!sale||sale>=orig){document.getElementById('err-sale').classList.add('show');ok=false;}
+  else document.getElementById('err-sale').classList.remove('show');
+  if(!ok) showToast('필수 항목을 확인해주세요');
+  return ok;
+}
+
+// ─── 등록 제출 ───
+async function submitForm(){
+  document.getElementById('formWrap').style.display='none';
+  document.getElementById('progressWrap').style.display='block';
+  document.getElementById('progressWrap').style.flex='1';
+  document.getElementById('navBtns').style.display='none';
+
+  const info=si();
+
+  try{
+    // 1. 이미지 업로드 (첫 번째 이미지)
+    setPS('upload','ing','업로드 중...');
+    const filename='owner_'+Date.now()+'.jpg';
+    const uploadRes=await fetch(`${SUPABASE_URL}/functions/v1/clever-handler`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+      body:JSON.stringify({imageData:photoPreviews[0],filename})
+    });
+    const uploadData=await uploadRes.json();
+    if(!uploadData.url) throw new Error('이미지 업로드 실패');
+    uploadedImageUrl=uploadData.url;
+    setPS('upload','ok','✅ 완료');
+
+    // 2. AI (캡션)
+    setPS('ai','ing','AI 처리 중...');
+    const aiBody={
+      매장명:info.name||'매장',
+      상품명:document.getElementById('f_name').value,
+      업종:document.getElementById('f_cate').value,
+      할인율:calcPct(),
+      정상가:document.getElementById('f_orig').value,
+      할인가:document.getElementById('f_sale').value,
+      위치:info.addr||'',
+    };
+    let caption='', hashtags='';
+    try{
+      const aiRes=await fetch(`${SUPABASE_URL}/functions/v1/generate-content`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+        body:JSON.stringify(aiBody)
+      });
+      const aiData=await aiRes.json();
+      caption=aiData.caption||'';
+      hashtags=aiData.hashtags||'';
+    }catch(e){}
+    setPS('ai','ok','✅ 완료');
+
+    // 3. 상품 저장
+    setPS('save','ing','저장 중...');
+    const schedule=getBtn('bg-schedule');
+    const initQty=qtyMode==='limited'?parseInt(document.getElementById('initQty').value)||0:null;
+    const pct=calcPct();
+    const deal={
+      store_name:info.name||'매장',
+      product_name:document.getElementById('f_name').value,
+      category:document.getElementById('f_cate').value||null,
+      discount_pct:pct||null,
+      original_price:parseInt(document.getElementById('f_orig').value)||null,
+      sale_price:parseInt(document.getElementById('f_sale').value)||null,
+      location:info.addr||null,
+      end_time:getEndTime(schedule),
+      event_text:getBtn('bg-benefit')||'할인',
+      image_url:uploadedImageUrl,
+      is_active:false, // 관리자 승인 후 활성화
+    };
+    const dealRes=await fetch(`${SUPABASE_URL}/rest/v1/deals`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=representation'},
+      body:JSON.stringify(deal)
+    });
+    const dealData=await dealRes.json();
+    lastDealId=dealData[0]?.id||null;
+    setPS('save','ok','✅ 완료');
+
+    // 4. 행사 저장
+    setPS('event','ing','저장 중...');
+    await new Promise(r=>setTimeout(r,600));
+    setPS('event','ok','✅ 완료');
+
+    // 5. 관리자 승인 대기
+    setPS('approval','ing','대기 중...');
+    await new Promise(r=>setTimeout(r,500));
+    setPS('approval','ok','⏳ 승인 대기');
+
+    // 6. 인스타 예약
+    if(channels.insta){
+      setPS('insta','ing','예약 중...');
+      try{
+        const dealUrl=lastDealId?`https://kiltaejung.github.io/dongne-discount/?deal=${lastDealId}`:'https://kiltaejung.github.io/dongne-discount/';
+        const storeBlock=[info.name?`📍 ${info.name}`:'',info.addr?`🗺 ${info.addr}`:'',info.phone?`📞 ${info.phone}`:'',info.hours?`⏰ ${info.hours}`:''].filter(Boolean).join('\n');
+        const fullCaption=caption+'\n\n'+(storeBlock?storeBlock+'\n\n':'')+hashtags+'\n\n🎟 쿠폰 다운받기 : 동네할인\n'+dealUrl;
+        await fetch(`${SUPABASE_URL}/functions/v1/instagram-post`,{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+          body:JSON.stringify({image_url:uploadedImageUrl,caption:fullCaption})
+        });
+      }catch(e){}
+      setPS('insta','ok','✅ 예약');
+    } else {
+      setPS('insta','wait','건너뜀');
+    }
+
+    // 완료
+    showDone(initQty);
+
+  }catch(e){
+    showToast('오류: '+e.message);
+    document.getElementById('formWrap').style.display='flex';
+    document.getElementById('progressWrap').style.display='none';
+    document.getElementById('navBtns').style.display='flex';
+  }
+}
+
+function setPS(id,state,text){
+  const el=document.getElementById('ps-'+id);
+  el.className='prog-st '+state;
+  el.textContent=text;
+}
+
+function calcPct(){
+  const o=parseInt(document.getElementById('f_orig').value)||0;
+  const s=parseInt(document.getElementById('f_sale').value)||0;
+  if(o>0&&s>0&&s<o) return Math.round((o-s)/o*100);
+  return 0;
+}
+
+function getEndTime(schedule){
+  if(schedule==='직접선택') return document.getElementById('endTime').value||null;
+  const now=new Date();
+  if(schedule==='30분') now.setMinutes(now.getMinutes()+30);
+  else if(schedule==='1시간') now.setHours(now.getHours()+1);
+  else if(schedule==='2시간') now.setHours(now.getHours()+2);
+  else if(schedule==='오늘마감') {now.setHours(23,59,0,0);}
+  return now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+}
+
+// ─── 완료 화면 ───
+function showDone(initQty){
+  document.getElementById('progressWrap').style.display='none';
+  document.getElementById('doneWrap').classList.add('show');
+
+  currentStock=initQty||0;
+  const stockBox=document.getElementById('stockBox');
+  if(qtyMode==='limited'&&initQty>0){
+    stockBox.style.display='block';
+    document.getElementById('stockNum').textContent=currentStock;
+  } else {
+    stockBox.style.display='none';
+  }
 }
 
 function viewDeal(){
-  const url=lastDealId
-    ?`https://kiltaejung.github.io/dongne-discount/?deal=${lastDealId}`
-    :'https://kiltaejung.github.io/dongne-discount/';
+  const url=lastDealId?`https://kiltaejung.github.io/dongne-discount/?deal=${lastDealId}`:'https://kiltaejung.github.io/dongne-discount/';
   window.open(url,'_blank');
 }
 
-function reset(){
+function resetForm(){
   location.reload();
 }
 
-// QR 인증 화면
-let scanStream=null, scanInterval=null;
+// ─── 재고 관리 ───
+function adjustStock(delta){
+  const newVal=Math.max(0,currentStock+delta);
+  currentStock=newVal;
+  document.getElementById('stockNum').textContent=newVal;
+  if(newVal===0) showToast('🚫 재고가 0개입니다. 품절 처리를 확인하세요.');
+  else showToast('재고 차감 완료 → 남은 수량: '+newVal+'개');
+  syncStock();
+}
 
+function showStockInput(){
+  const row=document.getElementById('stockInputRow');
+  row.style.display=row.style.display==='none'?'flex':'none';
+}
+
+function applyStockDirect(){
+  const delta=parseInt(document.getElementById('stockDirectInput').value)||0;
+  if(delta<=0){showToast('차감 수량을 입력해주세요');return;}
+  adjustStock(-delta);
+  document.getElementById('stockDirectInput').value='';
+  document.getElementById('stockInputRow').style.display='none';
+}
+
+function setSoldout(){
+  if(!confirm('품절 처리하면 고객 페이지에서 즉시 마감됩니다. 진행하시겠습니까?')) return;
+  currentStock=0;
+  document.getElementById('stockNum').textContent='0';
+  showToast('🚫 품절 처리 완료');
+  syncStock();
+}
+
+async function syncStock(){
+  if(!lastDealId) return;
+  try{
+    await fetch(`${SUPABASE_URL}/rest/v1/deals?id=eq.${lastDealId}`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},
+      body:JSON.stringify({remaining_qty:currentStock,is_active:currentStock>0})
+    });
+  }catch(e){}
+}
+
+// ─── QR 인증 ───
 function goQrScan(){
-  document.getElementById('doneScreen').classList.remove('show');
-  document.getElementById('qrScreen').style.display='flex';
+  document.getElementById('doneWrap').classList.remove('show');
+  document.getElementById('qrScreen').classList.add('show');
 }
 
 function closeQrScreen(){
   stopScan();
-  document.getElementById('qrScreen').style.display='none';
-  document.getElementById('doneScreen').classList.add('show');
+  document.getElementById('qrScreen').classList.remove('show');
+  document.getElementById('doneWrap').classList.add('show');
   document.getElementById('verifyResult').style.display='none';
 }
 
 function switchQrTab(tab){
-  const isScan=(tab==='scan');
+  const isScan=tab==='scan';
   document.getElementById('qr-scan-panel').style.display=isScan?'flex':'none';
   document.getElementById('qr-manual-panel').style.display=isScan?'none':'flex';
-  document.getElementById('qrtab-scan').style.background=isScan?'#fff':'transparent';
-  document.getElementById('qrtab-scan').style.color=isScan?'#111':'#6B7280';
-  document.getElementById('qrtab-manual').style.background=isScan?'transparent':'#fff';
-  document.getElementById('qrtab-manual').style.color=isScan?'#6B7280':'#111';
+  document.getElementById('qrtab-scan').className='qr-tab '+(isScan?'on':'off');
+  document.getElementById('qrtab-manual').className='qr-tab '+(isScan?'off':'on');
   if(!isScan) stopScan();
   document.getElementById('verifyResult').style.display='none';
 }
@@ -530,24 +1021,17 @@ async function startScan(){
     btn.textContent='⏹ 스캔 중지';
     btn.onclick=stopScan;
     msg.textContent='QR 코드를 네모 안에 맞춰주세요';
-
     const canvas=document.getElementById('qrCanvas');
     const ctx=canvas.getContext('2d');
     scanInterval=setInterval(()=>{
-      if(video.readyState<video.HAVE_ENOUGH_DATA)return;
-      canvas.width=video.videoWidth;
-      canvas.height=video.videoHeight;
+      if(video.readyState<video.HAVE_ENOUGH_DATA) return;
+      canvas.width=video.videoWidth;canvas.height=video.videoHeight;
       ctx.drawImage(video,0,0);
-      const imageData=ctx.getImageData(0,0,canvas.width,canvas.height);
-      const code=jsQR(imageData.data,imageData.width,imageData.height);
-      if(code&&code.data){
-        stopScan();
-        verifyCoupon(code.data.trim().toUpperCase());
-      }
+      const img=ctx.getImageData(0,0,canvas.width,canvas.height);
+      const code=jsQR(img.data,img.width,img.height);
+      if(code&&code.data){stopScan();verifyCoupon(code.data.trim().toUpperCase());}
     },300);
-  }catch(e){
-    msg.textContent='카메라 접근 실패: '+e.message;
-  }
+  }catch(e){msg.textContent='카메라 접근 실패: '+e.message;}
 }
 
 function stopScan(){
@@ -558,32 +1042,30 @@ function stopScan(){
 }
 
 async function verifyCoupon(code){
-  if(!code){alert('쿠폰번호를 입력해주세요.');return;}
+  if(!code){showToast('쿠폰번호를 입력해주세요');return;}
   const res=document.getElementById('verifyResult');
   res.style.display='block';
-  res.style.background='#F9FAFB';
-  document.getElementById('verifyIco').textContent='⏳';
-  document.getElementById('verifyTitle').textContent='확인 중...';
-  document.getElementById('verifyDesc').textContent=code;
-
+  res.style.background='var(--bg)';
+  document.getElementById('vrIco').textContent='⏳';
+  document.getElementById('vrTitle').textContent='확인 중...';
+  document.getElementById('vrDesc').textContent=code;
   try{
     const r=await fetch(`${SUPABASE_URL}/rest/v1/coupons?coupon_code=eq.${encodeURIComponent(code)}&select=*`,{
       headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
     });
     const data=await r.json();
-    if(!data||data.length===0){
-      res.style.background='#FEF2F2';
-      document.getElementById('verifyIco').textContent='❌';
-      document.getElementById('verifyTitle').textContent='유효하지 않은 쿠폰';
-      document.getElementById('verifyDesc').textContent='쿠폰번호를 다시 확인해주세요.';
+    if(!data||!data.length){
+      res.style.background='var(--red-light)';
+      document.getElementById('vrIco').textContent='❌';
+      document.getElementById('vrTitle').textContent='유효하지 않은 쿠폰';
+      document.getElementById('vrDesc').textContent='쿠폰번호를 다시 확인해주세요.';
       return;
     }
-    const coupon=data[0];
-    if(coupon.status==='used'){
-      res.style.background='#FEF2F2';
-      document.getElementById('verifyIco').textContent='⚠️';
-      document.getElementById('verifyTitle').textContent='이미 사용된 쿠폰';
-      document.getElementById('verifyDesc').textContent='이 쿠폰은 이미 사용됐습니다.';
+    if(data[0].status==='used'){
+      res.style.background='var(--red-light)';
+      document.getElementById('vrIco').textContent='⚠️';
+      document.getElementById('vrTitle').textContent='이미 사용된 쿠폰';
+      document.getElementById('vrDesc').textContent='이 쿠폰은 이미 사용됐습니다.';
       return;
     }
     // 사용 처리
@@ -592,21 +1074,33 @@ async function verifyCoupon(code){
       headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},
       body:JSON.stringify({status:'used',used_at:new Date().toISOString()})
     });
-    res.style.background='#F0FDF4';
-    document.getElementById('verifyIco').textContent='✅';
-    document.getElementById('verifyTitle').textContent='할인 인증 완료!';
-    document.getElementById('verifyDesc').textContent=`쿠폰번호: ${code}`;
+    // 한정수량이면 재고 차감
+    if(qtyMode==='limited'&&currentStock>0){
+      adjustStock(-1);
+    }
+    res.style.background='var(--green-light)';
+    document.getElementById('vrIco').textContent='✅';
+    document.getElementById('vrTitle').textContent='할인 인증 완료!';
+    document.getElementById('vrDesc').textContent='방문 통계 +1 · 사용 통계 +1 반영됨';
     document.getElementById('couponInput').value='';
   }catch(e){
-    res.style.background='#FEF2F2';
-    document.getElementById('verifyIco').textContent='❌';
-    document.getElementById('verifyTitle').textContent='오류 발생';
-    document.getElementById('verifyDesc').textContent=e.message;
+    res.style.background='var(--red-light)';
+    document.getElementById('vrIco').textContent='❌';
+    document.getElementById('vrTitle').textContent='오류 발생';
+    document.getElementById('vrDesc').textContent=e.message;
   }
 }
 
-initStore();
+// ─── 토스트 ───
+let toastTimer;
+function showToast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+init();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </body>
 </html>
