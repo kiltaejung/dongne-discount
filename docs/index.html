@@ -466,6 +466,13 @@ async function init(){
   renderPopTags();
   renderRecent();
   await loadDeals();
+  // 딥링크: ?deal=ID 로 접속하면 해당 상품 모달 자동 오픈
+  const params=new URLSearchParams(location.search);
+  const dealId=params.get('deal');
+  if(dealId){
+    const d=DEALS.find(x=>String(x.id)===dealId);
+    if(d) openModal(d.id);
+  }
 }
 
 async function loadDeals(){
