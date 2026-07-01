@@ -334,6 +334,9 @@ tr:hover td{background:#FAFBFC}
 
     <div class="snav-section">CS</div>
     <div class="snav-item" onclick="go('reports')" id="nav-reports"><span class="ico">🚨</span><span>신고관리</span><span class="badge" id="badge-reports">7</span></div>
+
+    <div class="snav-section">설정</div>
+    <div class="snav-item" onclick="go('storeinfo')" id="nav-storeinfo"><span class="ico">🏪</span><span>가게정보</span></div>
   </nav>
   <div class="suser">
     <div class="savatar">👤</div>
@@ -876,6 +879,33 @@ tr:hover td{background:#FAFBFC}
       </div>
     </div>
 
+    <!-- ── 가게정보 ── -->
+    <div class="screen" id="sc-storeinfo">
+      <div class="card" style="max-width:560px;margin:32px auto">
+        <div class="card-hdr"><div class="card-title">🏪 가게 정보 설정</div></div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">상호명 *</label>
+            <input id="si_name" type="text" placeholder="예: 미소라이브" style="width:100%;padding:10px 14px;border:1px solid #D1D5DB;border-radius:8px;font-size:14px">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">주소</label>
+            <input id="si_addr" type="text" placeholder="예: 부천시 상동 123-4" style="width:100%;padding:10px 14px;border:1px solid #D1D5DB;border-radius:8px;font-size:14px">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">연락처</label>
+            <input id="si_phone" type="text" placeholder="예: 032-123-4567" style="width:100%;padding:10px 14px;border:1px solid #D1D5DB;border-radius:8px;font-size:14px">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">업무시간</label>
+            <input id="si_hours" type="text" placeholder="예: 10:00-22:00" style="width:100%;padding:10px 14px;border:1px solid #D1D5DB;border-radius:8px;font-size:14px">
+          </div>
+          <button onclick="saveStoreInfo()" style="padding:12px;background:#FFC93C;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;color:#111">💾 저장</button>
+          <div id="si_msg" style="font-size:13px;color:#10B981;text-align:center;display:none">✅ 저장되었습니다!</div>
+        </div>
+      </div>
+    </div>
+
     <!-- ── SNS 콘텐츠 생성 모달 ── -->
     <div id="snsModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.45);overflow-y:auto">
       <div style="max-width:860px;margin:40px auto;background:#fff;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.2);overflow:hidden">
@@ -1293,6 +1323,24 @@ const PAGE_TITLES={
   stats:['통계','매출 · 전환율 · 푸시 효과'],
   reports:['신고관리','허위행사 · 민원'],
 };
+// 가게정보 저장/로드
+function saveStoreInfo(){
+  const info={name:document.getElementById('si_name').value,addr:document.getElementById('si_addr').value,phone:document.getElementById('si_phone').value,hours:document.getElementById('si_hours').value};
+  localStorage.setItem('storeInfo',JSON.stringify(info));
+  const msg=document.getElementById('si_msg');
+  msg.style.display='block';
+  setTimeout(()=>msg.style.display='none',2000);
+}
+function loadStoreInfo(){
+  const info=JSON.parse(localStorage.getItem('storeInfo')||'{}');
+  if(info.name)document.getElementById('si_name').value=info.name;
+  if(info.addr)document.getElementById('si_addr').value=info.addr;
+  if(info.phone)document.getElementById('si_phone').value=info.phone;
+  if(info.hours)document.getElementById('si_hours').value=info.hours||'10:00-22:00';
+  return info;
+}
+function getStoreInfo(){return JSON.parse(localStorage.getItem('storeInfo')||'{}');}
+
 let cur='dash';
 function go(id){
   document.getElementById('sc-'+cur).classList.remove('active');
@@ -1535,8 +1583,15 @@ async function postToInstagram(){
   const dealUrl=dealId
     ?`https://kiltaejung.github.io/dongne-discount/?deal=${dealId}`
     :'https://kiltaejung.github.io/dongne-discount/';
-  const siteUrl=`🎟 쿠폰 다운받기\n${dealUrl}`;
-  const fullCaption=caption+'\n\n'+hashtags+'\n\n'+siteUrl;
+  const si=getStoreInfo();
+  const storeBlock=[
+    si.name?`📍 ${si.name}`:'',
+    si.addr?`🗺 ${si.addr}`:'',
+    si.phone?`📞 ${si.phone}`:'',
+    si.hours?`⏰ 운영시간: ${si.hours}`:'',
+  ].filter(Boolean).join('\n');
+  const coupon=`🎟 쿠폰 다운받기 : 동네할인\n${dealUrl}`;
+  const fullCaption=caption+'\n\n'+(storeBlock?storeBlock+'\n\n':'')+hashtags+'\n\n'+coupon;
 
   const btn=document.getElementById('postBtn');
   btn.textContent='⏳ 게시 중...';
@@ -2005,6 +2060,7 @@ renderSns();renderSnsCards();
 renderBlogDrafts();
 renderSnsQ();renderSnsLog();renderSnsQCards();renderSnsLogCards();
 renderSnsStats();
+loadStoreInfo();
 
 /* enter key login */
 document.getElementById('loginEmail').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginPw').focus()});
