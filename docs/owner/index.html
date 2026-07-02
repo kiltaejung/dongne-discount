@@ -117,27 +117,38 @@ body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;mi
 .section-title{font-size:19px;font-weight:900;color:var(--text)}
 .section-more{font-size:13px;font-weight:700;color:var(--sub);background:none;border:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:2px}
 
-.deal-card{border:1.5px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px}
-.deal-card-top{display:flex;align-items:flex-start;gap:14px}
-.deal-thumb{width:68px;height:68px;border-radius:12px;background:var(--bg);object-fit:cover;flex-shrink:0}
-.deal-thumb-ph{width:68px;height:68px;border-radius:12px;background:var(--bg);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.deal-card{border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;cursor:pointer;display:flex;gap:14px;align-items:center}
+.deal-card:active{background:var(--bg)}
+.deal-thumb{width:72px;height:72px;border-radius:12px;background:var(--bg);object-fit:cover;flex-shrink:0}
+.deal-thumb-ph{width:72px;height:72px;border-radius:12px;background:var(--bg);flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .deal-thumb-ph svg{width:28px;height:28px;stroke:var(--dim);fill:none;stroke-width:1.5}
-.deal-info{flex:1;min-width:0}
-.deal-name{font-size:17px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.deal-price-row{display:flex;align-items:center;gap:8px;margin-top:5px}
-.deal-orig{font-size:13px;color:var(--dim);text-decoration:line-through;font-weight:500}
-.deal-sale{font-size:16px;font-weight:900;color:var(--primary)}
-.deal-pct{font-size:13px;font-weight:800;color:var(--primary);background:var(--primary-light);padding:2px 8px;border-radius:6px}
-.deal-status{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:800;padding:5px 12px;border-radius:20px;margin-top:8px}
-.deal-status::before{content:'';width:7px;height:7px;border-radius:50%}
-.deal-status.pending{background:var(--yellow-light);color:var(--yellow)}
-.deal-status.pending::before{background:var(--yellow)}
-.deal-status.active{background:var(--green-light);color:var(--green)}
-.deal-status.active::before{background:var(--green)}
-.deal-status.ended{background:var(--bg);color:var(--sub)}
-.deal-status.ended::before{background:var(--dim)}
-.deal-reapply-btn{width:100%;margin-top:14px;padding:13px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:800;color:var(--text);cursor:pointer;font-family:inherit}
+.deal-body{flex:1;min-width:0;display:flex;align-items:center;gap:10px}
+.deal-text{flex:1;min-width:0}
+.deal-line1{font-size:13px;font-weight:700;color:var(--sub);margin-bottom:4px}
+.deal-line2{font-size:16px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.deal-line3{font-size:13px;font-weight:600;color:var(--sub);margin-top:2px}
+.stamp{width:58px;height:58px;border-radius:50%;border:3px solid;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;text-align:center;transform:rotate(-12deg);flex-shrink:0;line-height:1.3;padding:6px}
+.stamp.pending{border-color:var(--yellow);color:var(--yellow)}
+.stamp.active{border-color:var(--green);color:var(--green)}
+.stamp.ended{border-color:var(--dim);color:var(--dim)}
+.deal-reapply-btn{width:100%;margin-top:12px;padding:12px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:800;color:var(--text);cursor:pointer;font-family:inherit;display:block}
 .deal-reapply-btn:active{border-color:var(--primary);color:var(--primary)}
+
+/* ── 고객뷰 모달 ── */
+.deal-modal{position:fixed;inset:0;z-index:300;display:none;flex-direction:column;justify-content:flex-end}
+.deal-modal.show{display:flex}
+.deal-modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+.deal-modal-box{position:relative;background:#fff;border-radius:22px 22px 0 0;max-height:85dvh;display:flex;flex-direction:column;z-index:1;overflow:hidden}
+.deal-modal-img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--bg);flex-shrink:0}
+.deal-modal-img-ph{width:100%;height:220px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.deal-modal-body{padding:20px 20px 40px;overflow-y:auto}
+.deal-modal-event{font-size:13px;font-weight:700;color:var(--primary);background:var(--primary-light);display:inline-block;padding:4px 12px;border-radius:20px;margin-bottom:10px}
+.deal-modal-name{font-size:22px;font-weight:900;color:var(--text);margin-bottom:8px}
+.deal-modal-price{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.deal-modal-orig{font-size:14px;color:var(--dim);text-decoration:line-through;font-weight:500}
+.deal-modal-sale{font-size:24px;font-weight:900;color:var(--primary)}
+.deal-modal-pct{font-size:14px;font-weight:800;color:var(--primary);background:var(--primary-light);padding:3px 10px;border-radius:8px}
+.deal-modal-close{position:absolute;top:14px;right:16px;background:rgba(0,0,0,.45);border:none;color:#fff;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2}
 
 .list-empty{text-align:center;padding:64px 20px}
 .list-empty-title{font-size:18px;font-weight:900;color:var(--text);margin-bottom:8px}
@@ -161,7 +172,7 @@ body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;mi
 .step-lbl{font-size:12px;font-weight:800;color:var(--dim)}
 .step-item.active .step-lbl,.step-item.done .step-lbl{color:var(--primary)}
 
-.form-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:20px}
+.form-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:160px}
 .form-content::-webkit-scrollbar{display:none}
 .form-sec{padding:20px 20px 0}
 .form-sec-title{font-size:20px;font-weight:900;color:var(--text);margin-bottom:20px;letter-spacing:-.3px}
@@ -173,7 +184,7 @@ body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;mi
 .ropt{flex:1;padding:14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:800;color:var(--sub);background:#fff;cursor:pointer;text-align:center;font-family:inherit}
 .ropt.on{border-color:var(--primary);background:var(--primary-light);color:var(--primary)}
 
-.img-upload-area{display:flex;gap:10px;flex-wrap:wrap}
+.img-upload-area{display:grid;grid-template-columns:repeat(auto-fill,90px);gap:8px}
 .img-thumb{width:90px;height:90px;border-radius:12px;border:1.5px solid var(--border);overflow:hidden;position:relative;flex-shrink:0}
 .img-thumb img{width:100%;height:100%;object-fit:cover}
 .img-thumb .del{position:absolute;top:4px;right:4px;width:22px;height:22px;background:rgba(0,0,0,.65);border-radius:50%;border:none;color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
@@ -188,7 +199,7 @@ body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;mi
 .qty-row{display:flex;align-items:center;gap:10px}
 .qty-badge{background:var(--primary-light);color:var(--primary);font-size:13px;font-weight:800;padding:8px 16px;border-radius:10px;white-space:nowrap}
 
-.nav-btns{padding:14px 20px 20px;display:flex;gap:10px;flex-shrink:0;background:#fff;border-top:1px solid var(--border)}
+.nav-btns{position:fixed;bottom:calc(58px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:12px 20px;display:flex;gap:10px;background:#fff;border-top:1px solid var(--border);z-index:50}
 .nav-btn{flex:1;padding:18px;border:none;border-radius:14px;font-size:17px;font-weight:900;cursor:pointer;font-family:inherit}
 .nav-btn.prev{background:var(--bg);color:var(--text);border:1.5px solid var(--border)}
 .nav-btn.next{background:var(--primary);color:#fff}
@@ -523,8 +534,17 @@ body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;mi
           <div class="err-msg" id="err-img">이미지를 최소 1장 업로드해주세요</div>
         </div>
         <input type="file" id="fileCamera" accept="image/*" capture="environment" onchange="onPhotoSelected(this)" style="display:none">
-        <input type="file" id="fileGallery" accept="image/*" onchange="onPhotoSelected(this)" style="display:none">
+        <input type="file" id="fileGallery" accept="image/*" multiple onchange="onPhotoSelected(this)" style="display:none">
 
+        <div class="fgrp">
+          <div class="flabel">혜택 종류 <span class="req">필수</span></div>
+          <div class="btn-group" id="bg-benefit">
+            <button class="bopt on" data-v="할인" onclick="selectBtn('bg-benefit','할인')">할인</button>
+            <button class="bopt" data-v="증정" onclick="selectBtn('bg-benefit','증정')">증정</button>
+            <button class="bopt" data-v="서비스" onclick="selectBtn('bg-benefit','서비스')">서비스</button>
+            <button class="bopt" data-v="적립" onclick="selectBtn('bg-benefit','적립')">적립</button>
+          </div>
+        </div>
         <div class="fgrp">
           <div class="flabel">상품명 <span class="req">필수</span></div>
           <input type="text" class="finp" id="f_name" placeholder="예: 아메리카노 그란데">
@@ -551,15 +571,7 @@ body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;mi
           <textarea class="finp" id="f_desc" placeholder="상품에 대한 간단한 설명을 입력해주세요"
             style="min-height:84px;resize:vertical;line-height:1.6"></textarea>
         </div>
-        <div class="fgrp">
-          <div class="flabel">업종</div>
-          <select class="finp" id="f_cate">
-            <option value="">선택</option>
-            <option>카페</option><option>음식점</option><option>베이커리</option>
-            <option>미용실</option><option>옷가게</option><option>편의점</option>
-            <option>마트</option><option>기타</option>
-          </select>
-        </div>
+        <input type="hidden" id="f_cate">
         <div style="height:8px"></div>
       </div>
     </div>
@@ -568,15 +580,6 @@ body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;mi
     <div class="form-content" id="step2" style="display:none">
       <div class="form-sec">
         <div class="form-sec-title">혜택 설정</div>
-        <div class="fgrp">
-          <div class="flabel">혜택 종류 <span class="req">필수</span></div>
-          <div class="btn-group" id="bg-benefit">
-            <button class="bopt on" data-v="할인" onclick="selectBtn('bg-benefit','할인')">할인</button>
-            <button class="bopt" data-v="증정" onclick="selectBtn('bg-benefit','증정')">증정</button>
-            <button class="bopt" data-v="서비스" onclick="selectBtn('bg-benefit','서비스')">서비스</button>
-            <button class="bopt" data-v="적립" onclick="selectBtn('bg-benefit','적립')">적립</button>
-          </div>
-        </div>
         <div class="fgrp">
           <div class="flabel">행사 일정 <span class="req">필수</span></div>
           <div class="btn-group" id="bg-schedule">
@@ -718,6 +721,25 @@ body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;mi
           <span class="stat-row-label">승인 대기중</span>
           <span class="stat-row-val" id="sr-pending">0개</span>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 고객뷰 모달 -->
+  <div class="deal-modal" id="dealModal">
+    <div class="deal-modal-bg" onclick="closeDealModal()"></div>
+    <div class="deal-modal-box">
+      <button class="deal-modal-close" onclick="closeDealModal()">✕</button>
+      <div id="dealModalImg"></div>
+      <div class="deal-modal-body">
+        <div class="deal-modal-event" id="dmEvent"></div>
+        <div class="deal-modal-name" id="dmName"></div>
+        <div class="deal-modal-price">
+          <span class="deal-modal-orig" id="dmOrig"></span>
+          <span class="deal-modal-sale" id="dmSale"></span>
+          <span class="deal-modal-pct" id="dmPct"></span>
+        </div>
+        <div id="dmDesc" style="font-size:14px;color:var(--sub);font-weight:500;line-height:1.7"></div>
       </div>
     </div>
   </div>
@@ -888,26 +910,48 @@ function getDealStatus(deal){
 
 function renderDealCard(deal){
   const status=getDealStatus(deal);
-  const labelMap={pending:'심사대기',active:'행사중',ended:'행사종료'};
+  const stampLabel={pending:'심사\n대기',active:'행사\n중',ended:'행사\n종료'};
   const thumb=deal.image_url
-    ?`<img class="deal-thumb" src="${deal.image_url}" onerror="this.parentNode.innerHTML='<div class=\\'deal-thumb-ph\\'><svg viewBox=\\'0 0 28 28\\' style=\\'width:28px;height:28px;stroke:var(--dim);fill:none;stroke-width:1.5\\'><rect x=\\'4\\' y=\\'4\\' width=\\'20\\' height=\\'20\\' rx=\\'3\\'/><circle cx=\\'10\\' cy=\\'10\\' r=\\'2\\'/><path d=\\'M4 18l5-5 4 4 3-3 6 6\\'/></svg></div>'">`
+    ?`<img class="deal-thumb" src="${deal.image_url}" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\\'deal-thumb-ph\\'><svg viewBox=\\'0 0 28 28\\'><rect x=\\'4\\' y=\\'4\\' width=\\'20\\' height=\\'20\\' rx=\\'3\\'/><circle cx=\\'10\\' cy=\\'10\\' r=\\'2\\'/><path d=\\'M4 18l5-5 4 4 3-3 6 6\\'/></svg></div>')">`
     :`<div class="deal-thumb-ph"><svg viewBox="0 0 28 28"><rect x="4" y="4" width="20" height="20" rx="3"/><circle cx="10" cy="10" r="2"/><path d="M4 18l5-5 4 4 3-3 6 6"/></svg></div>`;
-  const orig=deal.original_price?deal.original_price.toLocaleString()+'원':'';
-  const sale=deal.sale_price?deal.sale_price.toLocaleString()+'원':'';
-  const pct=deal.discount_pct?`<span class="deal-pct">${deal.discount_pct}%</span>`:'';
-  const priceRow=sale?`<div class="deal-price-row"><span class="deal-orig">${orig}</span><span class="deal-sale">${sale}</span>${pct}</div>`:'';
+  const eventType=deal.event_text||'할인';
+  const salePriceText=deal.sale_price?deal.sale_price.toLocaleString()+'원':'';
+  const pctText=deal.discount_pct&&deal.discount_pct>0?` · ${deal.discount_pct}% 할인`:'';
+  const line3=salePriceText?(salePriceText+pctText):'';
   const reapply=status==='ended'
-    ?`<button class="deal-reapply-btn" onclick='reapply(${JSON.stringify(deal)})'>행사 재신청하기</button>`:'';
-  return `<div class="deal-card">
-    <div class="deal-card-top">${thumb}
-      <div class="deal-info">
-        <div class="deal-name">${deal.product_name||'상품명 없음'}</div>
-        ${priceRow}
-        <div class="deal-status ${status}">${labelMap[status]}</div>
+    ?`<button class="deal-reapply-btn" onclick='event.stopPropagation();reapply(${JSON.stringify(deal)})'>행사 재신청하기</button>`:'';
+  return `<div class="deal-card" onclick='showDealDetail(${JSON.stringify(deal)})' style="flex-direction:column;align-items:stretch">
+    <div style="display:flex;gap:14px;align-items:center">
+      ${thumb}
+      <div class="deal-body">
+        <div class="deal-text">
+          <div class="deal-line1">${eventType}</div>
+          <div class="deal-line2">${deal.product_name||'상품명 없음'}</div>
+          ${line3?`<div class="deal-line3">${line3}</div>`:''}
+        </div>
+        <div class="stamp ${status}" style="white-space:pre-line">${stampLabel[status]}</div>
       </div>
     </div>${reapply}
   </div>`;
 }
+
+function showDealDetail(deal){
+  const modal=document.getElementById('dealModal');
+  const imgEl=document.getElementById('dealModalImg');
+  if(deal.image_url){
+    imgEl.innerHTML=`<img class="deal-modal-img" src="${deal.image_url}" onerror="this.parentNode.innerHTML='<div class=\\'deal-modal-img-ph\\'><svg viewBox=\\'0 0 48 48\\' style=\\'width:48px;height:48px;stroke:var(--dim);fill:none;stroke-width:1.5\\'><rect x=\\'6\\' y=\\'6\\' width=\\'36\\' height=\\'36\\' rx=\\'4\\'/><circle cx=\\'18\\' cy=\\'18\\' r=\\'4\\'/><path d=\\'M6 34l10-10 8 8 6-6 12 12\\'/></svg></div>'">`;
+  } else {
+    imgEl.innerHTML=`<div class="deal-modal-img-ph"><svg viewBox="0 0 48 48" style="width:48px;height:48px;stroke:var(--dim);fill:none;stroke-width:1.5"><rect x="6" y="6" width="36" height="36" rx="4"/><circle cx="18" cy="18" r="4"/><path d="M6 34l10-10 8 8 6-6 12 12"/></svg></div>`;
+  }
+  document.getElementById('dmEvent').textContent=deal.event_text||'행사';
+  document.getElementById('dmName').textContent=deal.product_name||'';
+  document.getElementById('dmOrig').textContent=deal.original_price?deal.original_price.toLocaleString()+'원':'';
+  document.getElementById('dmSale').textContent=deal.sale_price?deal.sale_price.toLocaleString()+'원':'';
+  document.getElementById('dmPct').textContent=deal.discount_pct&&deal.discount_pct>0?deal.discount_pct+'% 할인':'';
+  document.getElementById('dmDesc').textContent=deal.description||'';
+  modal.classList.add('show');
+}
+function closeDealModal(){document.getElementById('dealModal').classList.remove('show');}
 
 // ── 통계 ──
 async function showStatScreen(){
@@ -1059,12 +1103,19 @@ function showPhotoSheet(){ if(photoFiles.length>=5){showToast('최대 5장');ret
 function closePhotoSheet(){ document.getElementById('photoSheet').classList.remove('show'); }
 function pickPhoto(src){ closePhotoSheet(); document.getElementById(src==='camera'?'fileCamera':'fileGallery').click(); }
 function onPhotoSelected(input){
-  const file=input.files[0]; if(!file)return;
-  if(photoFiles.length>=5){showToast('최대 5장입니다');return;}
-  photoFiles.push(file);
-  const reader=new FileReader();
-  reader.onload=e=>{photoPreviews.push(e.target.result);renderImgArea();};
-  reader.readAsDataURL(file); input.value='';
+  const files=Array.from(input.files||[]);
+  if(!files.length)return;
+  const remain=5-photoFiles.length;
+  if(remain<=0){showToast('최대 5장입니다');return;}
+  const toAdd=files.slice(0,remain);
+  if(files.length>remain)showToast(`${files.length-remain}장은 초과로 제외됐습니다`);
+  toAdd.forEach(file=>{
+    photoFiles.push(file);
+    const reader=new FileReader();
+    reader.onload=e=>{photoPreviews.push(e.target.result);renderImgArea();};
+    reader.readAsDataURL(file);
+  });
+  input.value='';
 }
 function removePhoto(idx){photoFiles.splice(idx,1);photoPreviews.splice(idx,1);renderImgArea();}
 function renderImgArea(){
@@ -1079,10 +1130,11 @@ function calcDiscount(){
   const s=parseInt(document.getElementById('f_sale').value)||0;
   const el=document.getElementById('discountDisplay');
   if(o>0&&s>0&&s<o){el.textContent=Math.round((o-s)/o*100)+'% 할인 ('+((o-s).toLocaleString())+'원 절약)';el.style.color='var(--primary)';}
-  else if(o>0&&s>0&&s>=o){el.textContent='판매가는 정상가보다 낮아야 합니다';el.style.color='var(--red)';}
+  else if(o>0&&s>0&&s===o){el.textContent='정상가와 동일 (할인 없음)';el.style.color='var(--sub)';}
+  else if(o>0&&s>0&&s>o){el.textContent='판매가가 정상가보다 높습니다';el.style.color='var(--red)';}
   else{el.textContent='—';el.style.color='var(--primary)';}
 }
-function calcPct(){const o=parseInt(document.getElementById('f_orig').value)||0,s=parseInt(document.getElementById('f_sale').value)||0;if(o>0&&s>0&&s<o)return Math.round((o-s)/o*100);return 0;}
+function calcPct(){const o=parseInt(document.getElementById('f_orig').value)||0,s=parseInt(document.getElementById('f_sale').value)||0;if(o>0&&s>0&&s<=o)return Math.round((o-s)/o*100);return 0;}
 function selectBtn(gid,val){document.querySelectorAll(`#${gid} .bopt`).forEach(el=>el.classList.toggle('on',el.dataset.v===val));}
 function getBtn(gid){const el=document.querySelector(`#${gid} .bopt.on`);return el?el.dataset.v:'';}
 function setSchedule(mode){document.getElementById('manualDate').style.display=mode==='manual'?'block':'none';}
@@ -1114,7 +1166,7 @@ function validateStep1(){
   const o=parseInt(document.getElementById('f_orig').value)||0;
   if(!o){document.getElementById('err-orig').classList.add('show');ok=false;}else document.getElementById('err-orig').classList.remove('show');
   const s=parseInt(document.getElementById('f_sale').value)||0;
-  if(!s||s>=o){document.getElementById('err-sale').classList.add('show');ok=false;}else document.getElementById('err-sale').classList.remove('show');
+  if(!s||s>o){document.getElementById('err-sale').classList.add('show');document.getElementById('err-sale').textContent='판매가는 정상가 이하여야 합니다';ok=false;}else document.getElementById('err-sale').classList.remove('show');
   if(!ok)showToast('필수 항목을 확인해주세요');
   return ok;
 }
