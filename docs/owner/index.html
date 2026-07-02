@@ -105,12 +105,19 @@ body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;mi
 .home-stat-num{font-size:28px;font-weight:900;color:#fff}
 .home-stat-label{font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;font-weight:600}
 
-.quick-actions{background:#fff;padding:20px 20px 16px;border-bottom:8px solid var(--bg);flex-shrink:0}
-.quick-row{display:flex;justify-content:space-around}
-.quick-item{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;flex:1}
-.quick-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center}
-.quick-icon svg{width:26px;height:26px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.quick-label{font-size:13px;font-weight:800;color:var(--text)}
+/* detail image slider */
+.detail-imgs{overflow-x:auto;display:flex;gap:0;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.detail-imgs::-webkit-scrollbar{display:none}
+.detail-img-slide{min-width:100%;scroll-snap-align:start;aspect-ratio:4/3;object-fit:cover;background:var(--bg);flex-shrink:0}
+.detail-img-dots{display:flex;justify-content:center;gap:6px;padding:10px 0}
+.detail-dot{width:6px;height:6px;border-radius:50%;background:var(--border)}
+.detail-dot.on{background:var(--primary);width:18px;border-radius:3px}
+.detail-info-section{background:#fff;margin-bottom:8px;padding:20px}
+.detail-section-label{font-size:12px;font-weight:800;color:var(--sub);letter-spacing:.06em;margin-bottom:12px;text-transform:uppercase}
+.detail-row{display:flex;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
+.detail-row:last-child{border-bottom:none}
+.detail-row-key{font-size:14px;font-weight:700;color:var(--sub);width:90px;flex-shrink:0}
+.detail-row-val{font-size:15px;font-weight:700;color:var(--text);flex:1;line-height:1.5}
 
 .list-section{background:#fff;padding:20px}
 .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
@@ -448,35 +455,6 @@ body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;mi
       </div>
     </div>
 
-    <div class="quick-actions">
-      <div class="quick-row">
-        <div class="quick-item" onclick="goTab('register')">
-          <div class="quick-icon" style="background:#FFF3EE">
-            <svg viewBox="0 0 26 26" style="stroke:var(--primary)"><rect x="4" y="4" width="18" height="18" rx="3"/><path d="M13 9v8M9 13h8"/></svg>
-          </div>
-          <span class="quick-label">상품등록</span>
-        </div>
-        <div class="quick-item" onclick="goTab('qr')">
-          <div class="quick-icon" style="background:#F0FDF4">
-            <svg viewBox="0 0 26 26" style="stroke:var(--green)"><rect x="4" y="4" width="8" height="8" rx="1.5"/><rect x="14" y="4" width="8" height="8" rx="1.5"/><rect x="4" y="14" width="8" height="8" rx="1.5"/><rect x="14" y="14" width="3" height="3"/><rect x="19" y="14" width="3" height="3"/><rect x="14" y="19" width="3" height="3"/><rect x="19" y="19" width="3" height="3"/></svg>
-          </div>
-          <span class="quick-label">QR 인증</span>
-        </div>
-        <div class="quick-item" onclick="goTab('stat')">
-          <div class="quick-icon" style="background:#EFF6FF">
-            <svg viewBox="0 0 26 26" style="stroke:#2563EB"><path d="M4 20h18"/><rect x="6" y="12" width="4" height="8"/><rect x="11" y="8" width="4" height="12"/><rect x="16" y="5" width="4" height="15"/></svg>
-          </div>
-          <span class="quick-label">통계</span>
-        </div>
-        <div class="quick-item" onclick="goTab('store')">
-          <div class="quick-icon" style="background:#F5F3FF">
-            <svg viewBox="0 0 26 26" style="stroke:#7C3AED"><path d="M4 10l9-6 9 6v12a1 1 0 01-1 1H5a1 1 0 01-1-1V10z"/><path d="M10 22V16h6v6"/></svg>
-          </div>
-          <span class="quick-label">가게정보</span>
-        </div>
-      </div>
-    </div>
-
     <div class="scroll-content">
       <div class="list-section">
         <div class="section-hdr">
@@ -725,23 +703,23 @@ body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;mi
     </div>
   </div>
 
-  <!-- 고객뷰 모달 -->
-  <div class="deal-modal" id="dealModal">
-    <div class="deal-modal-bg" onclick="closeDealModal()"></div>
-    <div class="deal-modal-box">
-      <button class="deal-modal-close" onclick="closeDealModal()">✕</button>
-      <div id="dealModalImg"></div>
-      <div class="deal-modal-body">
-        <div class="deal-modal-event" id="dmEvent"></div>
-        <div class="deal-modal-name" id="dmName"></div>
-        <div class="deal-modal-price">
-          <span class="deal-modal-orig" id="dmOrig"></span>
-          <span class="deal-modal-sale" id="dmSale"></span>
-          <span class="deal-modal-pct" id="dmPct"></span>
+  <!-- 상품 상세 화면 -->
+  <div id="detailScreen" class="screen">
+    <div class="page-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-direction:row;padding:16px 20px">
+      <button style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center" onclick="goTab('home')">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.5" stroke-linecap="round"><path d="M15 4l-7 7 7 7"/></svg>
+      </button>
+      <div style="font-size:18px;font-weight:900;color:#fff">상품 상세</div>
+      <div style="position:relative">
+        <button id="detailMenuBtn" style="background:none;border:none;cursor:pointer;padding:4px 8px;color:#fff;font-size:22px;font-weight:900;letter-spacing:1px" onclick="toggleDetailMenu()">⋮</button>
+        <div id="detailMenu" style="display:none;position:absolute;right:0;top:36px;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:140px;overflow:hidden;z-index:10">
+          <button id="dmenu-edit" style="width:100%;padding:16px 18px;border:none;background:none;text-align:left;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;border-bottom:1px solid var(--border)" onclick="detailAction('edit')">수정</button>
+          <button id="dmenu-cancel" style="width:100%;padding:16px 18px;border:none;background:none;text-align:left;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--red)" onclick="detailAction('cancel')">행사 취소</button>
+          <button id="dmenu-reapply" style="width:100%;padding:16px 18px;border:none;background:none;text-align:left;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--primary);display:none" onclick="detailAction('reapply')">행사 재신청</button>
         </div>
-        <div id="dmDesc" style="font-size:14px;color:var(--sub);font-weight:500;line-height:1.7"></div>
       </div>
     </div>
+    <div class="scroll-content" id="detailContent"></div>
   </div>
 
   <!-- 사진 바텀시트 -->
@@ -802,7 +780,7 @@ const si=()=>JSON.parse(localStorage.getItem('storeInfo')||'{}');
 const SCREENS={
   login:'loginScreen', store:'storeScreen', home:'homeScreen',
   register:'registerScreen', progress:'progressScreen',
-  qr:'qrScreen', stat:'statScreen'
+  qr:'qrScreen', stat:'statScreen', detail:'detailScreen'
 };
 const TAB_SCREENS=['home','register','qr','stat'];
 
@@ -919,41 +897,131 @@ function renderDealCard(deal){
   const salePriceText=deal.sale_price?deal.sale_price.toLocaleString()+'원':'';
   const pctText=deal.discount_pct&&deal.discount_pct>0?` · ${deal.discount_pct}% 할인`:'';
   const line3=salePriceText?(salePriceText+pctText):'';
-  const reapply=status==='ended'
-    ?`<button class="deal-reapply-btn" onclick='event.stopPropagation();reapply(${JSON.stringify(deal)})'>행사 재신청하기</button>`:'';
-  return `<div class="deal-card" onclick='showDealDetail(${JSON.stringify(deal)})' style="flex-direction:column;align-items:stretch">
-    <div style="display:flex;gap:14px;align-items:center">
-      ${thumb}
-      <div class="deal-body">
-        <div class="deal-text">
-          <div class="deal-line1">${eventType}</div>
-          <div class="deal-line2">${deal.product_name||'상품명 없음'}</div>
-          ${line3?`<div class="deal-line3">${line3}</div>`:''}
-        </div>
-        <div class="stamp ${status}" style="white-space:pre-line">${stampLabel[status]}</div>
+  return `<div class="deal-card" onclick='showDealDetail(${JSON.stringify(deal).replace(/'/g,"&#39;")})' style="flex-direction:row;align-items:center">
+    ${thumb}
+    <div class="deal-body">
+      <div class="deal-text">
+        <div class="deal-line1">${eventType}</div>
+        <div class="deal-line2">${deal.product_name||'상품명 없음'}</div>
+        ${line3?`<div class="deal-line3">${line3}</div>`:''}
       </div>
-    </div>${reapply}
+      <div class="stamp ${status}" style="white-space:pre-line">${stampLabel[status]}</div>
+    </div>
   </div>`;
 }
 
+let currentDeal=null;
+
 function showDealDetail(deal){
-  const modal=document.getElementById('dealModal');
-  const imgEl=document.getElementById('dealModalImg');
+  currentDeal=deal;
+  const status=getDealStatus(deal);
+
+  // 메뉴 상태별 표시
+  document.getElementById('dmenu-cancel').style.display=(status==='pending'||status==='active')?'block':'none';
+  document.getElementById('dmenu-reapply').style.display=status==='ended'?'block':'none';
+  document.getElementById('detailMenu').style.display='none';
+
+  // 이미지 (로컬캐시 포함)
   const imgSrc=deal.image_url||(deal.id?localStorage.getItem('deal_img_'+deal.id):null);
-  if(imgSrc){
-    imgEl.innerHTML=`<img class="deal-modal-img" src="${imgSrc}" onerror="this.parentNode.innerHTML='<div class=\\'deal-modal-img-ph\\'><svg viewBox=\\'0 0 48 48\\' style=\\'width:48px;height:48px;stroke:var(--dim);fill:none;stroke-width:1.5\\'><rect x=\\'6\\' y=\\'6\\' width=\\'36\\' height=\\'36\\' rx=\\'4\\'/><circle cx=\\'18\\' cy=\\'18\\' r=\\'4\\'/><path d=\\'M6 34l10-10 8 8 6-6 12 12\\'/></svg></div>'">`;
-  } else {
-    imgEl.innerHTML=`<div class="deal-modal-img-ph"><svg viewBox="0 0 48 48" style="width:48px;height:48px;stroke:var(--dim);fill:none;stroke-width:1.5"><rect x="6" y="6" width="36" height="36" rx="4"/><circle cx="18" cy="18" r="4"/><path d="M6 34l10-10 8 8 6-6 12 12"/></svg></div>`;
-  }
-  document.getElementById('dmEvent').textContent=deal.event_text||'행사';
-  document.getElementById('dmName').textContent=deal.product_name||'';
-  document.getElementById('dmOrig').textContent=deal.original_price?deal.original_price.toLocaleString()+'원':'';
-  document.getElementById('dmSale').textContent=deal.sale_price?deal.sale_price.toLocaleString()+'원':'';
-  document.getElementById('dmPct').textContent=deal.discount_pct&&deal.discount_pct>0?deal.discount_pct+'% 할인':'';
-  document.getElementById('dmDesc').textContent=deal.description||'';
-  modal.classList.add('show');
+  const imgHtml=imgSrc
+    ?`<div class="detail-imgs" id="detailImgs">
+        <img class="detail-img-slide" src="${imgSrc}" onerror="this.style.background='var(--bg)'">
+      </div>
+      <div class="detail-img-dots"><div class="detail-dot on"></div></div>`
+    :`<div style="width:100%;height:220px;background:var(--bg);display:flex;align-items:center;justify-content:center">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="var(--dim)" stroke-width="1.5"><rect x="6" y="6" width="36" height="36" rx="4"/><circle cx="18" cy="18" r="4"/><path d="M6 34l10-10 8 8 6-6 12 12"/></svg>
+      </div>`;
+
+  const statusLabel={pending:'심사대기',active:'행사중',ended:'행사종료'};
+  const statusColor={pending:'var(--yellow)',active:'var(--green)',ended:'var(--dim)'};
+  const scheduleText=deal.end_time?`~ ${deal.end_time}`:'설정 없음';
+  const pctText=deal.discount_pct&&deal.discount_pct>0?deal.discount_pct+'%':'-';
+
+  document.getElementById('detailContent').innerHTML=`
+    ${imgHtml}
+    <div class="detail-info-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <span style="background:var(--primary-light);color:var(--primary);font-size:13px;font-weight:800;padding:5px 14px;border-radius:20px">${deal.event_text||'할인'}</span>
+        <span style="font-size:13px;font-weight:800;color:${statusColor[status]}">${statusLabel[status]}</span>
+      </div>
+      <div style="font-size:22px;font-weight:900;color:var(--text);margin-bottom:12px">${deal.product_name||''}</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        ${deal.original_price?`<span style="font-size:14px;color:var(--dim);text-decoration:line-through;font-weight:500">${deal.original_price.toLocaleString()}원</span>`:''}
+        ${deal.sale_price?`<span style="font-size:24px;font-weight:900;color:var(--primary)">${deal.sale_price.toLocaleString()}원</span>`:''}
+        ${deal.discount_pct&&deal.discount_pct>0?`<span style="background:var(--primary-light);color:var(--primary);font-size:14px;font-weight:800;padding:3px 10px;border-radius:8px">${deal.discount_pct}% 할인</span>`:''}
+      </div>
+    </div>
+    <div class="detail-info-section">
+      <div class="detail-section-label">행사 정보</div>
+      <div class="detail-row">
+        <div class="detail-row-key">혜택 종류</div>
+        <div class="detail-row-val">${deal.event_text||'-'}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row-key">행사 일정</div>
+        <div class="detail-row-val">${scheduleText}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row-key">할인율</div>
+        <div class="detail-row-val">${pctText}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row-key">정상가</div>
+        <div class="detail-row-val">${deal.original_price?deal.original_price.toLocaleString()+'원':'-'}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row-key">판매가</div>
+        <div class="detail-row-val">${deal.sale_price?deal.sale_price.toLocaleString()+'원':'-'}</div>
+      </div>
+    </div>
+    <div class="detail-info-section">
+      <div class="detail-section-label">상품 정보</div>
+      <div class="detail-row">
+        <div class="detail-row-key">상품명</div>
+        <div class="detail-row-val">${deal.product_name||'-'}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row-key">매장</div>
+        <div class="detail-row-val">${deal.store_name||'-'}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row-key">위치</div>
+        <div class="detail-row-val">${deal.location||'-'}</div>
+      </div>
+      ${deal.description?`<div class="detail-row"><div class="detail-row-key">상세설명</div><div class="detail-row-val">${deal.description}</div></div>`:''}
+    </div>
+  `;
+  showScreen('detail');
 }
-function closeDealModal(){document.getElementById('dealModal').classList.remove('show');}
+
+function toggleDetailMenu(){
+  const m=document.getElementById('detailMenu');
+  m.style.display=m.style.display==='none'?'block':'none';
+}
+
+function detailAction(action){
+  document.getElementById('detailMenu').style.display='none';
+  if(!currentDeal)return;
+  if(action==='edit'){
+    showToast('수정 기능 준비 중입니다');
+  } else if(action==='cancel'){
+    if(!confirm('행사를 취소하시겠습니까?'))return;
+    showToast('행사가 취소됐습니다');
+    allDeals=[];
+    setTimeout(()=>goTab('home'),800);
+  } else if(action==='reapply'){
+    reapply(currentDeal);
+  }
+}
+
+// 외부 클릭 시 메뉴 닫기
+document.addEventListener('click',e=>{
+  const menu=document.getElementById('detailMenu');
+  const btn=document.getElementById('detailMenuBtn');
+  if(menu&&btn&&!menu.contains(e.target)&&!btn.contains(e.target)){
+    menu.style.display='none';
+  }
+});
 
 // ── 통계 ──
 async function showStatScreen(){
