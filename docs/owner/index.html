@@ -107,7 +107,8 @@ body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;mi
 
 /* ── 상품 상세 ── */
 #detailScreen{background:var(--bg)}
-.detail-slider-wrap{position:relative;width:100%;aspect-ratio:1/1;background:#000;flex-shrink:0;overflow:hidden}
+.detail-slider-wrap{position:relative;width:100%;aspect-ratio:1/1;background:#000;flex-shrink:0;overflow:hidden;cursor:grab;user-select:none}
+.detail-slider-wrap:active{cursor:grabbing}
 .detail-slider-track{display:flex;width:100%;height:100%;transition:transform .4s ease}
 .detail-slide{min-width:100%;height:100%;object-fit:cover;background:var(--bg)}
 .detail-slide-ph{min-width:100%;height:100%;background:var(--bg);display:flex;align-items:center;justify-content:center}
@@ -1045,13 +1046,52 @@ function showDealDetail(deal){
 
   showScreen('detail');
   document.getElementById('detailContent').scrollTop=0;
+  initSliderTouch();
 }
 
-function updateSlide(){
+function updateSlide(animate=true){
   const track=document.getElementById('detailSliderTrack');
   const counter=document.getElementById('detailCounter');
-  if(track) track.style.transform=`translateX(-${slideIdx*100}%)`;
+  if(track){
+    track.style.transition=animate?'transform .35s ease':'none';
+    track.style.transform=`translateX(-${slideIdx*100}%)`;
+  }
   if(counter) counter.textContent=(slideIdx+1)+' / '+slideImages.length;
+}
+
+function initSliderTouch(){
+  const wrap=document.getElementById('detailSliderWrap');
+  if(!wrap) return;
+  let startX=0, startY=0, isDragging=false, moved=false;
+  const onStart=e=>{
+    startX=e.touches?e.touches[0].clientX:e.clientX;
+    startY=e.touches?e.touches[0].clientY:e.clientY;
+    isDragging=true; moved=false;
+  };
+  const onEnd=e=>{
+    if(!isDragging)return; isDragging=false;
+    if(!moved)return;
+    const endX=e.changedTouches?e.changedTouches[0].clientX:e.clientX;
+    const dx=endX-startX;
+    if(Math.abs(dx)<30)return;
+    clearInterval(slideTimer);
+    if(dx<0&&slideIdx<slideImages.length-1) slideIdx++;
+    else if(dx>0&&slideIdx>0) slideIdx--;
+    updateSlide();
+    slideTimer=setInterval(()=>{slideIdx=(slideIdx+1)%slideImages.length;updateSlide();},4000);
+  };
+  const onMove=e=>{
+    if(!isDragging)return;
+    const dy=Math.abs((e.touches?e.touches[0].clientY:e.clientY)-startY);
+    const dx=Math.abs((e.touches?e.touches[0].clientX:e.clientX)-startX);
+    if(dx>8||dy>8) moved=true;
+    if(dx>dy&&e.cancelable) e.preventDefault();
+  };
+  wrap.addEventListener('touchstart',onStart,{passive:true});
+  wrap.addEventListener('touchmove',onMove,{passive:false});
+  wrap.addEventListener('touchend',onEnd);
+  wrap.addEventListener('mousedown',onStart);
+  wrap.addEventListener('mouseup',onEnd);
 }
 
 function toggleDetailMenu(){
