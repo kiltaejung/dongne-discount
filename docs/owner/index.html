@@ -105,19 +105,43 @@ body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;mi
 .home-stat-num{font-size:28px;font-weight:900;color:#fff}
 .home-stat-label{font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;font-weight:600}
 
-/* detail image slider */
-.detail-imgs{overflow-x:auto;display:flex;gap:0;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
-.detail-imgs::-webkit-scrollbar{display:none}
-.detail-img-slide{min-width:100%;scroll-snap-align:start;aspect-ratio:4/3;object-fit:cover;background:var(--bg);flex-shrink:0}
-.detail-img-dots{display:flex;justify-content:center;gap:6px;padding:10px 0}
-.detail-dot{width:6px;height:6px;border-radius:50%;background:var(--border)}
-.detail-dot.on{background:var(--primary);width:18px;border-radius:3px}
-.detail-info-section{background:#fff;margin-bottom:8px;padding:20px}
-.detail-section-label{font-size:12px;font-weight:800;color:var(--sub);letter-spacing:.06em;margin-bottom:12px;text-transform:uppercase}
-.detail-row{display:flex;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
+/* ── 상품 상세 ── */
+#detailScreen{background:var(--bg)}
+.detail-slider-wrap{position:relative;width:100%;aspect-ratio:1/1;background:#000;flex-shrink:0;overflow:hidden}
+.detail-slider-track{display:flex;width:100%;height:100%;transition:transform .4s ease}
+.detail-slide{min-width:100%;height:100%;object-fit:cover;background:var(--bg)}
+.detail-slide-ph{min-width:100%;height:100%;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.detail-counter{position:absolute;bottom:14px;right:14px;background:rgba(0,0,0,.55);color:#fff;font-size:13px;font-weight:800;padding:5px 12px;border-radius:20px}
+.detail-float-back{position:absolute;top:14px;left:14px;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.4);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5}
+.detail-float-menu{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.4);border:none;cursor:pointer;color:#fff;font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:center;z-index:5;letter-spacing:1px}
+.detail-menu-popup{position:absolute;top:58px;right:14px;background:#fff;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.18);min-width:150px;overflow:hidden;z-index:10;display:none}
+.detail-menu-popup.show{display:block}
+.detail-menu-item{width:100%;padding:17px 20px;border:none;background:none;text-align:left;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;border-bottom:1px solid var(--border)}
+.detail-menu-item:last-child{border-bottom:none}
+.detail-menu-item.danger{color:var(--red)}
+.detail-menu-item.accent{color:var(--primary)}
+
+.detail-main-card{background:#fff;margin-bottom:8px;padding:22px 20px}
+.detail-badge{display:inline-block;background:var(--primary-light);color:var(--primary);font-size:13px;font-weight:800;padding:5px 14px;border-radius:20px;margin-bottom:12px}
+.detail-name{font-size:24px;font-weight:900;color:var(--text);line-height:1.3;margin-bottom:20px}
+.detail-price-row{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-top:1px solid var(--border)}
+.detail-price-label{font-size:16px;font-weight:700;color:var(--text)}
+.detail-price-val{font-size:22px;font-weight:900;color:var(--primary)}
+.detail-orig-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--border)}
+.detail-orig-label{font-size:15px;font-weight:600;color:var(--sub)}
+.detail-orig-val{font-size:16px;font-weight:700;color:var(--sub);text-decoration:line-through}
+.detail-pct-badge{background:var(--primary-light);color:var(--primary);font-size:14px;font-weight:800;padding:4px 12px;border-radius:8px}
+
+.detail-section{background:#fff;margin-bottom:8px;padding:0 20px}
+.detail-section-title{font-size:18px;font-weight:900;color:var(--text);padding:20px 0 14px;border-bottom:1.5px solid var(--border)}
+.detail-row{display:flex;align-items:flex-start;padding:15px 0;border-bottom:1px solid var(--border)}
 .detail-row:last-child{border-bottom:none}
-.detail-row-key{font-size:14px;font-weight:700;color:var(--sub);width:90px;flex-shrink:0}
-.detail-row-val{font-size:15px;font-weight:700;color:var(--text);flex:1;line-height:1.5}
+.detail-row-key{font-size:15px;font-weight:700;color:var(--sub);width:90px;flex-shrink:0}
+.detail-row-val{font-size:15px;font-weight:700;color:var(--text);flex:1;line-height:1.6}
+
+.detail-status-bar{background:#fff;margin-bottom:8px;padding:16px 20px;display:flex;align-items:center;gap:10px}
+.detail-status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.detail-status-text{font-size:16px;font-weight:800}
 
 .list-section{background:#fff;padding:20px}
 .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
@@ -704,22 +728,26 @@ body{background:var(--bg);font-family:'Noto Sans KR',-apple-system,sans-serif;mi
   </div>
 
   <!-- 상품 상세 화면 -->
-  <div id="detailScreen" class="screen">
-    <div class="page-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-direction:row;padding:16px 20px">
-      <button style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center" onclick="goTab('home')">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.5" stroke-linecap="round"><path d="M15 4l-7 7 7 7"/></svg>
+  <div id="detailScreen" class="screen" style="flex-direction:column">
+    <div style="position:relative;flex-shrink:0">
+      <!-- 이미지 슬라이더 -->
+      <div class="detail-slider-wrap" id="detailSliderWrap">
+        <div class="detail-slider-track" id="detailSliderTrack"></div>
+        <div class="detail-counter" id="detailCounter" style="display:none">1 / 1</div>
+      </div>
+      <!-- 플로팅 버튼 (이미지 위) -->
+      <button class="detail-float-back" onclick="goTab('home')">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M13 4l-6 6 6 6"/></svg>
       </button>
-      <div style="font-size:18px;font-weight:900;color:#fff">상품 상세</div>
-      <div style="position:relative">
-        <button id="detailMenuBtn" style="background:none;border:none;cursor:pointer;padding:4px 8px;color:#fff;font-size:22px;font-weight:900;letter-spacing:1px" onclick="toggleDetailMenu()">⋮</button>
-        <div id="detailMenu" style="display:none;position:absolute;right:0;top:36px;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:140px;overflow:hidden;z-index:10">
-          <button id="dmenu-edit" style="width:100%;padding:16px 18px;border:none;background:none;text-align:left;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;border-bottom:1px solid var(--border)" onclick="detailAction('edit')">수정</button>
-          <button id="dmenu-cancel" style="width:100%;padding:16px 18px;border:none;background:none;text-align:left;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--red)" onclick="detailAction('cancel')">행사 취소</button>
-          <button id="dmenu-reapply" style="width:100%;padding:16px 18px;border:none;background:none;text-align:left;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--primary);display:none" onclick="detailAction('reapply')">행사 재신청</button>
-        </div>
+      <button class="detail-float-menu" id="detailMenuBtn" onclick="toggleDetailMenu()">⋮</button>
+      <div class="detail-menu-popup" id="detailMenu">
+        <button class="detail-menu-item" onclick="detailAction('edit')">수정</button>
+        <button class="detail-menu-item danger" id="dmenu-cancel" onclick="detailAction('cancel')">행사 취소</button>
+        <button class="detail-menu-item accent" id="dmenu-reapply" onclick="detailAction('reapply')" style="display:none">행사 재신청</button>
       </div>
     </div>
-    <div class="scroll-content" id="detailContent"></div>
+    <!-- 스크롤 본문 -->
+    <div class="scroll-content" id="detailContent" style="padding-bottom:20px"></div>
   </div>
 
   <!-- 사진 바텀시트 -->
@@ -826,6 +854,7 @@ function goHomeOrLogin(){
 }
 
 function goTab(tab){
+  clearInterval(slideTimer);
   if(tab==='home') showHomeScreen();
   else if(tab==='register') goRegister();
   else if(tab==='qr'){ stopScan(); showScreen('qr'); }
@@ -910,78 +939,94 @@ function renderDealCard(deal){
   </div>`;
 }
 
-let currentDeal=null;
+let currentDeal=null, slideTimer=null, slideIdx=0, slideImages=[];
 
 function showDealDetail(deal){
   currentDeal=deal;
   const status=getDealStatus(deal);
-
-  // 메뉴 상태별 표시
-  document.getElementById('dmenu-cancel').style.display=(status==='pending'||status==='active')?'block':'none';
-  document.getElementById('dmenu-reapply').style.display=status==='ended'?'block':'none';
-  document.getElementById('detailMenu').style.display='none';
-
-  // 이미지 (로컬캐시 포함)
-  const imgSrc=deal.image_url||(deal.id?localStorage.getItem('deal_img_'+deal.id):null);
-  const imgHtml=imgSrc
-    ?`<div class="detail-imgs" id="detailImgs">
-        <img class="detail-img-slide" src="${imgSrc}" onerror="this.style.background='var(--bg)'">
-      </div>
-      <div class="detail-img-dots"><div class="detail-dot on"></div></div>`
-    :`<div style="width:100%;height:220px;background:var(--bg);display:flex;align-items:center;justify-content:center">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="var(--dim)" stroke-width="1.5"><rect x="6" y="6" width="36" height="36" rx="4"/><circle cx="18" cy="18" r="4"/><path d="M6 34l10-10 8 8 6-6 12 12"/></svg>
-      </div>`;
-
   const statusLabel={pending:'심사대기',active:'행사중',ended:'행사종료'};
   const statusColor={pending:'var(--yellow)',active:'var(--green)',ended:'var(--dim)'};
-  const scheduleText=deal.end_time?`~ ${deal.end_time}`:'설정 없음';
-  const pctText=deal.discount_pct&&deal.discount_pct>0?deal.discount_pct+'%':'-';
 
+  // ── 메뉴 상태별 표시 ──
+  document.getElementById('dmenu-cancel').style.display=(status==='pending'||status==='active')?'block':'none';
+  document.getElementById('dmenu-reapply').style.display=status==='ended'?'block':'none';
+  document.getElementById('detailMenu').classList.remove('show');
+
+  // ── 이미지 슬라이더 구성 ──
+  clearInterval(slideTimer); slideIdx=0; slideImages=[];
+  const mainImg=deal.image_url||(deal.id?localStorage.getItem('deal_img_'+deal.id):null);
+  if(mainImg) slideImages.push(mainImg);
+  // 추가 이미지가 있으면 여기서 push (현재는 1장)
+
+  const track=document.getElementById('detailSliderTrack');
+  const counter=document.getElementById('detailCounter');
+  if(slideImages.length>0){
+    track.innerHTML=slideImages.map(src=>`<img class="detail-slide" src="${src}" onerror="this.style.background='var(--bg)'">`).join('');
+    counter.textContent='1 / '+slideImages.length;
+    counter.style.display=slideImages.length>1?'block':'none';
+    updateSlide();
+    if(slideImages.length>1){
+      slideTimer=setInterval(()=>{
+        slideIdx=(slideIdx+1)%slideImages.length;
+        updateSlide();
+      },4000);
+    }
+  } else {
+    track.innerHTML=`<div class="detail-slide-ph"><svg width="56" height="56" viewBox="0 0 56 56" fill="none" stroke="var(--dim)" stroke-width="1.5"><rect x="6" y="6" width="44" height="44" rx="5"/><circle cx="20" cy="20" r="5"/><path d="M6 40l12-12 10 10 8-8 14 14"/></svg></div>`;
+    counter.style.display='none';
+  }
+
+  // ── 본문 ──
+  const pct=deal.discount_pct&&deal.discount_pct>0;
   document.getElementById('detailContent').innerHTML=`
-    ${imgHtml}
-    <div class="detail-info-section">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-        <span style="background:var(--primary-light);color:var(--primary);font-size:13px;font-weight:800;padding:5px 14px;border-radius:20px">${deal.event_text||'할인'}</span>
-        <span style="font-size:13px;font-weight:800;color:${statusColor[status]}">${statusLabel[status]}</span>
-      </div>
-      <div style="font-size:22px;font-weight:900;color:var(--text);margin-bottom:12px">${deal.product_name||''}</div>
-      <div style="display:flex;align-items:center;gap:10px">
-        ${deal.original_price?`<span style="font-size:14px;color:var(--dim);text-decoration:line-through;font-weight:500">${deal.original_price.toLocaleString()}원</span>`:''}
-        ${deal.sale_price?`<span style="font-size:24px;font-weight:900;color:var(--primary)">${deal.sale_price.toLocaleString()}원</span>`:''}
-        ${deal.discount_pct&&deal.discount_pct>0?`<span style="background:var(--primary-light);color:var(--primary);font-size:14px;font-weight:800;padding:3px 10px;border-radius:8px">${deal.discount_pct}% 할인</span>`:''}
+    <!-- 상태 바 -->
+    <div class="detail-status-bar">
+      <div class="detail-status-dot" style="background:${statusColor[status]}"></div>
+      <div class="detail-status-text" style="color:${statusColor[status]}">${statusLabel[status]}</div>
+      <div style="font-size:13px;color:var(--sub);font-weight:600;margin-left:auto">${deal.end_time?'~ '+deal.end_time:''}</div>
+    </div>
+    <!-- 메인 정보 -->
+    <div class="detail-main-card">
+      <div class="detail-badge">${deal.event_text||'할인'}</div>
+      <div class="detail-name">${deal.product_name||'상품명 없음'}</div>
+      ${deal.original_price&&deal.original_price!==deal.sale_price?`
+      <div class="detail-orig-row">
+        <div class="detail-orig-label">정상가</div>
+        <div class="detail-orig-val">${deal.original_price.toLocaleString()}원</div>
+      </div>`:''}
+      <div class="detail-price-row">
+        <div class="detail-price-label">판매가</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          ${pct?`<div class="detail-pct-badge">${deal.discount_pct}% 할인</div>`:''}
+          <div class="detail-price-val">${deal.sale_price?deal.sale_price.toLocaleString()+'원':'-'}</div>
+        </div>
       </div>
     </div>
-    <div class="detail-info-section">
-      <div class="detail-section-label">행사 정보</div>
+    <!-- 행사 정보 -->
+    <div class="detail-section">
+      <div class="detail-section-title">행사 정보</div>
       <div class="detail-row">
         <div class="detail-row-key">혜택 종류</div>
         <div class="detail-row-val">${deal.event_text||'-'}</div>
       </div>
       <div class="detail-row">
         <div class="detail-row-key">행사 일정</div>
-        <div class="detail-row-val">${scheduleText}</div>
+        <div class="detail-row-val">${deal.end_time?'~ '+deal.end_time:'설정 없음'}</div>
       </div>
       <div class="detail-row">
         <div class="detail-row-key">할인율</div>
-        <div class="detail-row-val">${pctText}</div>
-      </div>
-      <div class="detail-row">
-        <div class="detail-row-key">정상가</div>
-        <div class="detail-row-val">${deal.original_price?deal.original_price.toLocaleString()+'원':'-'}</div>
-      </div>
-      <div class="detail-row">
-        <div class="detail-row-key">판매가</div>
-        <div class="detail-row-val">${deal.sale_price?deal.sale_price.toLocaleString()+'원':'-'}</div>
+        <div class="detail-row-val">${pct?deal.discount_pct+'%':'0% (동일가)'}</div>
       </div>
     </div>
-    <div class="detail-info-section">
-      <div class="detail-section-label">상품 정보</div>
+    <!-- 상품 정보 -->
+    <div class="detail-section">
+      <div class="detail-section-title">상품 정보</div>
       <div class="detail-row">
         <div class="detail-row-key">상품명</div>
         <div class="detail-row-val">${deal.product_name||'-'}</div>
       </div>
       <div class="detail-row">
-        <div class="detail-row-key">매장</div>
+        <div class="detail-row-key">매장명</div>
         <div class="detail-row-val">${deal.store_name||'-'}</div>
       </div>
       <div class="detail-row">
@@ -991,16 +1036,24 @@ function showDealDetail(deal){
       ${deal.description?`<div class="detail-row"><div class="detail-row-key">상세설명</div><div class="detail-row-val">${deal.description}</div></div>`:''}
     </div>
   `;
+
   showScreen('detail');
+  document.getElementById('detailContent').scrollTop=0;
+}
+
+function updateSlide(){
+  const track=document.getElementById('detailSliderTrack');
+  const counter=document.getElementById('detailCounter');
+  track.style.transform=`translateX(-${slideIdx*100}%)`;
+  counter.textContent=(slideIdx+1)+' / '+slideImages.length;
 }
 
 function toggleDetailMenu(){
-  const m=document.getElementById('detailMenu');
-  m.style.display=m.style.display==='none'?'block':'none';
+  document.getElementById('detailMenu').classList.toggle('show');
 }
 
 function detailAction(action){
-  document.getElementById('detailMenu').style.display='none';
+  document.getElementById('detailMenu').classList.remove('show');
   if(!currentDeal)return;
   if(action==='edit'){
     showToast('수정 기능 준비 중입니다');
@@ -1008,18 +1061,19 @@ function detailAction(action){
     if(!confirm('행사를 취소하시겠습니까?'))return;
     showToast('행사가 취소됐습니다');
     allDeals=[];
+    clearInterval(slideTimer);
     setTimeout(()=>goTab('home'),800);
   } else if(action==='reapply'){
+    clearInterval(slideTimer);
     reapply(currentDeal);
   }
 }
 
-// 외부 클릭 시 메뉴 닫기
 document.addEventListener('click',e=>{
   const menu=document.getElementById('detailMenu');
   const btn=document.getElementById('detailMenuBtn');
   if(menu&&btn&&!menu.contains(e.target)&&!btn.contains(e.target)){
-    menu.style.display='none';
+    menu.classList.remove('show');
   }
 });
 
