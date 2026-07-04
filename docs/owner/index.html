@@ -954,16 +954,22 @@ function showDealDetail(deal){
 
   // ── 이미지 슬라이더 구성 ──
   clearInterval(slideTimer); slideIdx=0; slideImages=[];
-  const mainImg=deal.image_url||(deal.id?localStorage.getItem('deal_img_'+deal.id):null);
-  if(mainImg) slideImages.push(mainImg);
-  // 추가 이미지가 있으면 여기서 push (현재는 1장)
+
+  // 로컬 캐시에서 전체 이미지 배열 우선 로드
+  if(deal.id){
+    try{ const arr=JSON.parse(localStorage.getItem('deal_imgs_'+deal.id)||'[]'); if(arr.length) slideImages=arr; }catch(e){}
+  }
+  // 배열이 없으면 단건 캐시 또는 DB URL 사용
+  if(!slideImages.length){
+    const single=deal.image_url||(deal.id?localStorage.getItem('deal_img_'+deal.id):null);
+    if(single) slideImages=[single];
+  }
 
   const track=document.getElementById('detailSliderTrack');
   const counter=document.getElementById('detailCounter');
   if(slideImages.length>0){
     track.innerHTML=slideImages.map(src=>`<img class="detail-slide" src="${src}" onerror="this.style.background='var(--bg)'">`).join('');
-    counter.textContent='1 / '+slideImages.length;
-    counter.style.display=slideImages.length>1?'block':'none';
+    counter.style.display='block';
     updateSlide();
     if(slideImages.length>1){
       slideTimer=setInterval(()=>{
@@ -1044,8 +1050,8 @@ function showDealDetail(deal){
 function updateSlide(){
   const track=document.getElementById('detailSliderTrack');
   const counter=document.getElementById('detailCounter');
-  track.style.transform=`translateX(-${slideIdx*100}%)`;
-  counter.textContent=(slideIdx+1)+' / '+slideImages.length;
+  if(track) track.style.transform=`translateX(-${slideIdx*100}%)`;
+  if(counter) counter.textContent=(slideIdx+1)+' / '+slideImages.length;
 }
 
 function toggleDetailMenu(){
@@ -1353,7 +1359,10 @@ async function submitForm(){
     if(!dr.ok){const errText=await dr.text();throw new Error('DB 저장 실패 ('+dr.status+'): '+errText);}
     const dd=await dr.json();lastDealId=dd[0]?.id||null;currentStock=initQty||0;
     // 로컬 이미지 캐시 (image_url이 없을 때 대비)
-    if(lastDealId&&photoPreviews[0]) localStorage.setItem('deal_img_'+lastDealId, photoPreviews[0]);
+    if(lastDealId&&photoPreviews.length){
+      localStorage.setItem('deal_img_'+lastDealId, photoPreviews[0]);
+      localStorage.setItem('deal_imgs_'+lastDealId, JSON.stringify(photoPreviews));
+    }
     setPS('save','ok','완료');
     setPS('event','ing','저장 중...');await new Promise(r=>setTimeout(r,600));setPS('event','ok','완료');
     setPS('approval','ing','대기 중...');await new Promise(r=>setTimeout(r,500));setPS('approval','ok','승인 대기 중');
